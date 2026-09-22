@@ -64,3 +64,18 @@ See [docs/security-model.md](docs/security-model.md) for the full model.
 
 `.env` is gitignored; `.env.example` holds testnet endpoints only. Never commit private
 keys, and never add a key to a ledger event or to agent context.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and PRDs live in Exponential (workspace `personal-cmud5hla1001ol704yn0kg180`,
+product `aegisproof`) via the `exponential` CLI. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` at the root + `docs/adr/`. See `docs/agents/domain.md`.
+
+### Git flow
+
+Trunk-based on `dev` (featureBase `dev`, deployTrigger `dev`). See `docs/agents/git-flow.md`.
