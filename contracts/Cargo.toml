@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = ["aegis-proof"]
+
+[workspace.dependencies]
+# Pinned to the 27.x line to match the installed stellar-cli 27.0.0.
+# 28.0.0 exists but was published 2026-09-18 and moves ahead of the CLI;
+# do not bump without re-verifying `stellar contract build` end to end.
+soroban-sdk = "27"
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1
+lto = true

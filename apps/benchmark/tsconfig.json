@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
+  },
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/plugin-eliza" },
+    { "path": "../../packages/proof" },
+    { "path": "../../packages/signer" }
+  ],
+  "include": ["src/**/*.ts"]
+}

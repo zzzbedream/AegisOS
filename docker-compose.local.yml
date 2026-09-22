@@ -1,0 +1,15 @@
+services:
+  stellar-quickstart:
+    image: stellar/quickstart:latest
+    command: --standalone
+    ports:
+      - "8000:8000"
+      - "11626:11626"
+    profiles: ["stellar-local"]
+
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    command: anvil --host 0.0.0.0 --chain-id 31337
+    ports:
+      - "8545:8545"
+    profiles: ["evm-local"]

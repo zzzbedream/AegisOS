@@ -1,0 +1,26 @@
+{
+  "mode": "enforced",
+  "networks": {
+    "stellar": {
+      "network": "testnet",
+      "rpcUrl": "https://soroban-testnet.stellar.org",
+      "networkPassphrase": "Test SDF Network ; September 2015"
+    },
+    "ethereum": {
+      "chainId": 11155111,
+      "rpcUrl": "https://sepolia.example-rpc.invalid"
+    }
+  },
+  "policy": {
+    "perOperationCap": "100000000",
+    "dailyCap": "500000000",
+    "maxSlippageBps": 100,
+    "maxFee": "100000",
+    "approvalTtlSeconds": 300
+  },
+  "security": {
+    "quarantineOnRisk": true,
+    "requireExplicitOwnerApproval": true,
+    "allowDelegatedAccounts": true
+  }
+}

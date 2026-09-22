@@ -1,0 +1,26 @@
+{
+  "name": "aegisos-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.2.17",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "typecheck": "tsc -b --pretty false",
+    "test": "tsx --test packages/*/test/*.test.ts apps/*/test/*.test.ts",
+    "benchmark": "tsx apps/benchmark/src/run.ts",
+    "demo": "tsx apps/dashboard/src/server.ts",
+    "demo:attack": "tsx apps/demo-x402/src/run.ts",
+    "demo:external": "tsx apps/demo-x402/src/external.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0"
+  }
+}

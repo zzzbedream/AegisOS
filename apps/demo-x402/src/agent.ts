@@ -1,0 +1,229 @@
+import type { Keypair } from "@stellar/stellar-sdk";
+import { ExactStellarScheme } from "@x402/stellar/exact/client";
+
+import {
+  generateLocalContentKey,
+  sha256Canonical,
+  type SigningIdentityV1,
+} from "../../../packages/core/src/index.js";
+import { AegisMemoryGateway, assessMemoryRisk } from "../../../packages/plugin-eliza/src/index.js";
+import {
+  admitDelivery,
+  computePaymentHash,
+  createPurchaseCommitment,
+  sellerIdFromAccount,
+  type AdmitDeliveryResult,
+  type PurchaseCommitmentV1,
+} from "../../../packages/proof/src/index.js";
+import {
+  AegisAnchorClient,
+  createRemoteSigner,
+  decodePaymentResponse,
+  encodePaymentSignature,
+  parsePaymentRequired,
+  selectAccepts,
+  type ForkedSigner,
+  type PaymentRequiredV2,
+  type PaymentRequirements,
+} from "../../../packages/x402/src/index.js";
+
+const COMMITMENT_TTL_MS = 900_000;
+const PAYABLE = { scheme: "exact", network: "stellar:testnet" } as const;
+
+export interface DiscoveredOffer {
+  readonly url: string;
+  readonly required: PaymentRequiredV2;
+  readonly requirements: PaymentRequirements;
+}
+
+/**
+ * Knobs that only exist to prove the guard. In normal use the commitment is
+ * derived from the offer; the refusal tests deliberately commit to something
+ * narrower than what the seller asks, and expect the signer to say no.
+ */
+export interface CommitmentOverrides {
+  readonly maxAmountAtomic?: string;
+  readonly sellerAccount?: string;
+  readonly expectedContentType?: string;
+}
+
+export interface PurchaseOutcome {
+  readonly commitment: PurchaseCommitmentV1;
+  readonly paymentHash: string;
+  readonly settlementTx?: string;
+  /** The bytes the seller actually returned. Kept as evidence. */
+  readonly deliveredBody: Uint8Array;
+  readonly deliveredContentType?: string;
+  readonly admission: AdmitDeliveryResult<ReturnType<AegisMemoryGateway["ingest"]>>;
+  readonly anchorTx?: string;
+  readonly anchorError?: string;
+}
+
+export interface AgentOptions {
+  readonly signer: ForkedSigner;
+  readonly buyer: Keypair;
+  readonly attester: SigningIdentityV1;
+  readonly buyerPublicKey: string;
+  readonly rpcUrl: string;
+  readonly anchorClient?: AegisAnchorClient;
+}
+
+/**
+ * The buying agent.
+ *
+ * It holds no key: signing goes through a transport to a separate process. Its
+ * only job is to produce a commitment BEFORE paying, and to route everything
+ * that comes back through the single admission path.
+ */
+export class DemoAgent {
+  readonly gateway: AegisMemoryGateway;
+  readonly #options: AgentOptions;
+  #sequence = 0;
+
+  public constructor(options: AgentOptions) {
+    this.#options = options;
+    this.gateway = new AegisMemoryGateway({ encryptionKey: generateLocalContentKey() });
+  }
+
+  /**
+   * Ask a seller what it wants, without paying.
+   *
+   * The seller dictates the offer; we only choose whether to accept it. For a
+   * seller we did not write, this is the only honest source of requirements.
+   */
+  public async discover(url: string): Promise<DiscoveredOffer> {
+    const response = await fetch(url);
+    if (response.status !== 402) {
+      throw new Error(`Expected 402 from ${url}, got ${String(response.status)}.`);
+    }
+    let body: unknown;
+    try {
+      body = (await response.json()) as unknown;
+    } catch {
+      body = undefined;
+    }
+    const required = parsePaymentRequired((name) => response.headers.get(name), body);
+    return { url, required, requirements: selectAccepts(required, PAYABLE) };
+  }
+
+  /**
+   * Buy once, then decide whether what arrived may become context.
+   *
+   * The commitment is signed before the money moves. Without that there is
+   * nothing to compare the delivery against, and "mismatch" has no meaning.
+   */
+  public async buy(input: {
+    readonly resourceUrl: string;
+    readonly requirements: PaymentRequirements;
+    readonly memoryId: string;
+    readonly overrides?: CommitmentOverrides;
+  }): Promise<PurchaseOutcome> {
+    this.#sequence += 1;
+    const now = new Date();
+    const overrides = input.overrides ?? {};
+    const commitment = createPurchaseCommitment(
+      {
+        version: "1",
+        id: `commitment:${now.getTime()}:${this.#sequence}`,
+        resourceUrl: input.resourceUrl,
+        sellerId: sellerIdFromAccount(overrides.sellerAccount ?? input.requirements.payTo),
+        expectedContentType: overrides.expectedContentType ?? "application/json",
+        maxAmountAtomic: overrides.maxAmountAtomic ?? input.requirements.amount,
+        assetId: "stellar:USDC",
+        committedAt: now.toISOString(),
+        expiresAt: new Date(now.getTime() + COMMITMENT_TTL_MS).toISOString(),
+        nonce: `nonce:${now.getTime()}:${this.#sequence}`,
+      },
+      this.#options.attester,
+    );
+
+    // One signer proxy per purchase: SEP-43 has no slot for intent, so binding
+    // the commitment at construction is what stops a single approval becoming a
+    // general-purpose signing oracle.
+    const remote = await createRemoteSigner({
+      transport: this.#options.signer,
+      commitment,
+      buyerPublicKey: this.#options.buyerPublicKey,
+    });
+
+    const scheme = new ExactStellarScheme(remote, { url: this.#options.rpcUrl });
+    const created = await scheme.createPaymentPayload(2, input.requirements as never);
+    const paymentPayload = {
+      x402Version: created.x402Version,
+      accepted: input.requirements,
+      payload: created.payload,
+    };
+
+    const started = Date.now();
+    const response = await fetch(input.resourceUrl, {
+      headers: { ...encodePaymentSignature(paymentPayload) },
+    });
+    const bodyBytes = new Uint8Array(await response.arrayBuffer());
+    const elapsedMs = Date.now() - started;
+    // Reads PAYMENT-RESPONSE, falling back to the legacy name. Our first version
+    // read only the legacy name, so a spec-compliant seller's settlement came
+    // back undefined and the payment hash silently said "unsettled".
+    const settlement = decodePaymentResponse((name) => response.headers.get(name));
+
+    const paymentHash = computePaymentHash({
+      scheme: input.requirements.scheme,
+      network: input.requirements.network,
+      payer: this.#options.buyer.publicKey(),
+      payee: input.requirements.payTo,
+      transactionRef: settlement?.transaction ?? `unsettled:${commitment.id}`,
+      // The offer itself, verbatim. A seller that binds its inputs into `extra`
+      // (an inputHash, say) thereby has that binding carried into ours.
+      paymentRequirementsHash: sha256Canonical(input.requirements),
+    });
+
+    const admission = admitDelivery(
+      commitment,
+      {
+        responseReceived: response.ok,
+        bodyBytes,
+        ...(response.headers.get("content-type") === null
+          ? {}
+          : { contentType: response.headers.get("content-type") as string }),
+        sellerId: commitment.sellerId,
+        receivedAt: new Date().toISOString(),
+        elapsedMs,
+      },
+      {
+        assessRisk: (content) => assessMemoryRisk(content, "tool"),
+        gateway: this.gateway,
+        paymentHash,
+        attesterId: `buyer:${this.#options.buyer.publicKey()}`,
+        signer: this.#options.attester,
+        memoryId: input.memoryId,
+      },
+    );
+
+    let anchorTx: string | undefined;
+    let anchorError: string | undefined;
+    if (this.#options.anchorClient !== undefined) {
+      try {
+        const anchored = await this.#options.anchorClient.anchorDelivery(
+          admission.receipt,
+          this.#options.buyer,
+        );
+        anchorTx = anchored.transactionHash;
+      } catch (error: unknown) {
+        // Anchoring is evidence, not enforcement. The verdict already stands
+        // locally, so a chain hiccup must not change what the agent may do.
+        anchorError = error instanceof Error ? error.message : String(error);
+      }
+    }
+
+    const deliveredContentType = response.headers.get("content-type");
+    return {
+      commitment,
+      paymentHash,
+      deliveredBody: bodyBytes,
+      ...(deliveredContentType === null ? {} : { deliveredContentType }),
+      ...(settlement?.transaction === undefined ? {} : { settlementTx: settlement.transaction }),
+      admission,
+      ...(anchorTx === undefined ? {} : { anchorTx }),
+      ...(anchorError === undefined ? {} : { anchorError }),
+    };
+  }
+}

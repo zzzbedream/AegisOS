@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "aegisos.deployment.v1",
+  "network": "testnet",
+  "networkPassphrase": "Test SDF Network ; September 2015",
+  "rpcUrl": "https://soroban-testnet.stellar.org",
+  "contracts": {
+    "aegis-proof": {
+      "contractId": "CBG2DFZBHC3MEBN4UIVIVVNZX4YGI6TMRVRIK3TD4CVFKHMIKDXIJXZV",
+      "wasmHash": "3f5f841c3e04c2df6e49ad87c4599ea5301b306e148b01f06f98b5dd5306c7af",
+      "wasmBytes": 6393,
+      "deployedAt": "2026-09-19",
+      "uploadTx": "817b58fded10d09429e29da8468a5ba177fdd407e613aed2360097df9d724d35",
+      "deployTx": "62b25ed3293f770b9f82ad4e3efa1e87b2a43827408d0112e675580d1ddf9671",
+      "deployer": "GDVDUXJL7S2QPIASC5AMEKMW3T5VRZNLFMMQAKLLZZDXK645FDYTYUSZ",
+      "exportedFunctions": ["anchor_delivery", "get_delivery", "seller_score"],
+      "toolchain": {
+        "stellarCli": "27.0.0",
+        "sorobanSdk": "27.0.6",
+        "rustc": "1.92.0",
+        "target": "wasm32v1-none"
+      },
+      "firstAnchorTx": "9746e98537a97e7f19d74d304eb7b3e626e78b9565c6874f23880e8fc5c9070b"
+    }
+  },
+  "note": "Testnet only. This contract anchors buyer attestations about deliveries; it does not verify x402 settlement, seller receipt, or content authenticity. See contracts/aegis-proof/src/lib.rs for the full list of what it does and does not prove."
+}

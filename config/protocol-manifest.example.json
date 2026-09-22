@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "aegisos.protocol-manifest.v1",
+  "mode": "testnet-only",
+  "protocols": [
+    {
+      "id": "stellar-soroswap-testnet",
+      "chain": "stellar-testnet",
+      "kind": "soroswap",
+      "enabled": false,
+      "allowedOperations": ["SWAP_EXACT_INPUT", "ADD_LIQUIDITY", "REMOVE_LIQUIDITY"],
+      "contractIds": [],
+      "assetIds": [],
+      "note": "Populate only after independently verifying Testnet contract IDs and ABI hashes."
+    },
+    {
+      "id": "ethereum-uniswap-v4-sepolia",
+      "chain": "ethereum-sepolia",
+      "kind": "uniswap-v4",
+      "enabled": false,
+      "allowedOperations": ["SWAP_EXACT_INPUT", "ADD_LIQUIDITY", "REMOVE_LIQUIDITY", "ERC20_APPROVE_EXACT"],
+      "contracts": [],
+      "pools": [],
+      "note": "Populate target, selector/ABI digest and runtime code hash together; never enable an unpinned route."
+    }
+  ]
+}

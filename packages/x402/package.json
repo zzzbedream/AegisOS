@@ -1,0 +1,30 @@
+{
+  "name": "@aegisos/x402",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty false",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@aegisos/core": "file:../core",
+    "@aegisos/proof": "file:../proof",
+    "@stellar/stellar-sdk": "^16.3.0",
+    "@x402/core": "^2.26.0",
+    "@x402/fetch": "^2.26.0",
+    "@x402/stellar": "^2.26.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

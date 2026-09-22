@@ -1,0 +1,17 @@
+{
+  "name": "@aegisos/benchmark",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@aegisos/core": "file:../../packages/core",
+    "@aegisos/plugin-eliza": "file:../../packages/plugin-eliza",
+    "@aegisos/signer": "file:../../packages/signer",
+    "@aegisos/proof": "file:../../packages/proof"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty false",
+    "test": "tsx --test test/*.test.ts"
+  }
+}

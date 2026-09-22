@@ -1,0 +1,20 @@
+{
+  "name": "@aegisos/demo-x402",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b --pretty false",
+    "test": "tsx --test test/*.test.ts",
+    "demo": "tsx src/run.ts"
+  },
+  "dependencies": {
+    "@aegisos/core": "file:../../packages/core",
+    "@aegisos/plugin-eliza": "file:../../packages/plugin-eliza",
+    "@aegisos/proof": "file:../../packages/proof",
+    "@aegisos/x402": "file:../../packages/x402",
+    "@stellar/stellar-sdk": "^16.3.0",
+    "@x402/stellar": "^2.26.0"
+  }
+}

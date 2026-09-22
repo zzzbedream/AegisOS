@@ -1,0 +1,3 @@
+interface:
+  display_name: "Ship Ticket"
+  short_description: "Open a PR and move the Ticket to QA"

@@ -1,0 +1,13 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/plugin-eliza" },
+    { "path": "./packages/signer" },
+    { "path": "./packages/proof" },
+    { "path": "./packages/x402" },
+    { "path": "./apps/demo-x402" },
+    { "path": "./apps/benchmark" },
+    { "path": "./apps/dashboard" }
+  ]
+}

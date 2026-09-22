@@ -1,0 +1,5 @@
+interface:
+  display_name: "To PRD"
+  short_description: "Write the human PRD page for a feature"
+policy:
+  allow_implicit_invocation: false

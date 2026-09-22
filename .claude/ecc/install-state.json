@@ -1,0 +1,3746 @@
+{
+  "schemaVersion": "ecc.install.v1",
+  "installedAt": "2026-09-19T13:32:40.429Z",
+  "target": {
+    "id": "claude-project",
+    "target": "claude-project",
+    "kind": "project",
+    "root": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude",
+    "installStatePath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\ecc\\install-state.json"
+  },
+  "request": {
+    "profile": "minimal",
+    "modules": [],
+    "includeComponents": [],
+    "excludeComponents": [],
+    "legacyLanguages": [],
+    "legacyMode": false
+  },
+  "resolution": {
+    "selectedModules": [
+      "rules-core",
+      "agents-core",
+      "commands-core",
+      "platform-configs",
+      "workflow-quality"
+    ],
+    "skippedModules": []
+  },
+  "source": {
+    "repoVersion": "2.0.0-rc.1",
+    "repoCommit": "64cd1ba248e77e377e76f70fc4e6434bfdddd511",
+    "manifestVersion": 1
+  },
+  "operations": [
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\README.md",
+      "sourceRelativePath": "rules\\README.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\README.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\angular\\coding-style.md",
+      "sourceRelativePath": "rules\\angular\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\angular\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\angular\\hooks.md",
+      "sourceRelativePath": "rules\\angular\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\angular\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\angular\\patterns.md",
+      "sourceRelativePath": "rules\\angular\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\angular\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\angular\\security.md",
+      "sourceRelativePath": "rules\\angular\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\angular\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\angular\\testing.md",
+      "sourceRelativePath": "rules\\angular\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\angular\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\arkts\\coding-style.md",
+      "sourceRelativePath": "rules\\arkts\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\arkts\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\arkts\\hooks.md",
+      "sourceRelativePath": "rules\\arkts\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\arkts\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\arkts\\patterns.md",
+      "sourceRelativePath": "rules\\arkts\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\arkts\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\arkts\\security.md",
+      "sourceRelativePath": "rules\\arkts\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\arkts\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\arkts\\testing.md",
+      "sourceRelativePath": "rules\\arkts\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\arkts\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\agents.md",
+      "sourceRelativePath": "rules\\common\\agents.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\agents.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\code-review.md",
+      "sourceRelativePath": "rules\\common\\code-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\code-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\coding-style.md",
+      "sourceRelativePath": "rules\\common\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\development-workflow.md",
+      "sourceRelativePath": "rules\\common\\development-workflow.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\development-workflow.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\git-workflow.md",
+      "sourceRelativePath": "rules\\common\\git-workflow.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\git-workflow.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\hooks.md",
+      "sourceRelativePath": "rules\\common\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\patterns.md",
+      "sourceRelativePath": "rules\\common\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\performance.md",
+      "sourceRelativePath": "rules\\common\\performance.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\performance.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\security.md",
+      "sourceRelativePath": "rules\\common\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\common\\testing.md",
+      "sourceRelativePath": "rules\\common\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\common\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\cpp\\coding-style.md",
+      "sourceRelativePath": "rules\\cpp\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\cpp\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\cpp\\hooks.md",
+      "sourceRelativePath": "rules\\cpp\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\cpp\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\cpp\\patterns.md",
+      "sourceRelativePath": "rules\\cpp\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\cpp\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\cpp\\security.md",
+      "sourceRelativePath": "rules\\cpp\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\cpp\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\cpp\\testing.md",
+      "sourceRelativePath": "rules\\cpp\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\cpp\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\csharp\\coding-style.md",
+      "sourceRelativePath": "rules\\csharp\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\csharp\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\csharp\\hooks.md",
+      "sourceRelativePath": "rules\\csharp\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\csharp\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\csharp\\patterns.md",
+      "sourceRelativePath": "rules\\csharp\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\csharp\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\csharp\\security.md",
+      "sourceRelativePath": "rules\\csharp\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\csharp\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\csharp\\testing.md",
+      "sourceRelativePath": "rules\\csharp\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\csharp\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\dart\\coding-style.md",
+      "sourceRelativePath": "rules\\dart\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\dart\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\dart\\hooks.md",
+      "sourceRelativePath": "rules\\dart\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\dart\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\dart\\patterns.md",
+      "sourceRelativePath": "rules\\dart\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\dart\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\dart\\security.md",
+      "sourceRelativePath": "rules\\dart\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\dart\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\dart\\testing.md",
+      "sourceRelativePath": "rules\\dart\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\dart\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\fsharp\\coding-style.md",
+      "sourceRelativePath": "rules\\fsharp\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\fsharp\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\fsharp\\hooks.md",
+      "sourceRelativePath": "rules\\fsharp\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\fsharp\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\fsharp\\patterns.md",
+      "sourceRelativePath": "rules\\fsharp\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\fsharp\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\fsharp\\security.md",
+      "sourceRelativePath": "rules\\fsharp\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\fsharp\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\fsharp\\testing.md",
+      "sourceRelativePath": "rules\\fsharp\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\fsharp\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\golang\\coding-style.md",
+      "sourceRelativePath": "rules\\golang\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\golang\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\golang\\hooks.md",
+      "sourceRelativePath": "rules\\golang\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\golang\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\golang\\patterns.md",
+      "sourceRelativePath": "rules\\golang\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\golang\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\golang\\security.md",
+      "sourceRelativePath": "rules\\golang\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\golang\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\golang\\testing.md",
+      "sourceRelativePath": "rules\\golang\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\golang\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\java\\coding-style.md",
+      "sourceRelativePath": "rules\\java\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\java\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\java\\hooks.md",
+      "sourceRelativePath": "rules\\java\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\java\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\java\\patterns.md",
+      "sourceRelativePath": "rules\\java\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\java\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\java\\security.md",
+      "sourceRelativePath": "rules\\java\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\java\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\java\\testing.md",
+      "sourceRelativePath": "rules\\java\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\java\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\kotlin\\coding-style.md",
+      "sourceRelativePath": "rules\\kotlin\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\kotlin\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\kotlin\\hooks.md",
+      "sourceRelativePath": "rules\\kotlin\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\kotlin\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\kotlin\\patterns.md",
+      "sourceRelativePath": "rules\\kotlin\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\kotlin\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\kotlin\\security.md",
+      "sourceRelativePath": "rules\\kotlin\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\kotlin\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\kotlin\\testing.md",
+      "sourceRelativePath": "rules\\kotlin\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\kotlin\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\perl\\coding-style.md",
+      "sourceRelativePath": "rules\\perl\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\perl\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\perl\\hooks.md",
+      "sourceRelativePath": "rules\\perl\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\perl\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\perl\\patterns.md",
+      "sourceRelativePath": "rules\\perl\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\perl\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\perl\\security.md",
+      "sourceRelativePath": "rules\\perl\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\perl\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\perl\\testing.md",
+      "sourceRelativePath": "rules\\perl\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\perl\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\php\\coding-style.md",
+      "sourceRelativePath": "rules\\php\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\php\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\php\\hooks.md",
+      "sourceRelativePath": "rules\\php\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\php\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\php\\patterns.md",
+      "sourceRelativePath": "rules\\php\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\php\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\php\\security.md",
+      "sourceRelativePath": "rules\\php\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\php\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\php\\testing.md",
+      "sourceRelativePath": "rules\\php\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\php\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\python\\coding-style.md",
+      "sourceRelativePath": "rules\\python\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\python\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\python\\fastapi.md",
+      "sourceRelativePath": "rules\\python\\fastapi.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\python\\fastapi.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\python\\hooks.md",
+      "sourceRelativePath": "rules\\python\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\python\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\python\\patterns.md",
+      "sourceRelativePath": "rules\\python\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\python\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\python\\security.md",
+      "sourceRelativePath": "rules\\python\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\python\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\python\\testing.md",
+      "sourceRelativePath": "rules\\python\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\python\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\react\\coding-style.md",
+      "sourceRelativePath": "rules\\react\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\react\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\react\\hooks.md",
+      "sourceRelativePath": "rules\\react\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\react\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\react\\patterns.md",
+      "sourceRelativePath": "rules\\react\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\react\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\react\\security.md",
+      "sourceRelativePath": "rules\\react\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\react\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\react\\testing.md",
+      "sourceRelativePath": "rules\\react\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\react\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\ruby\\coding-style.md",
+      "sourceRelativePath": "rules\\ruby\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\ruby\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\ruby\\hooks.md",
+      "sourceRelativePath": "rules\\ruby\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\ruby\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\ruby\\patterns.md",
+      "sourceRelativePath": "rules\\ruby\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\ruby\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\ruby\\security.md",
+      "sourceRelativePath": "rules\\ruby\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\ruby\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\ruby\\testing.md",
+      "sourceRelativePath": "rules\\ruby\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\ruby\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\rust\\coding-style.md",
+      "sourceRelativePath": "rules\\rust\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\rust\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\rust\\hooks.md",
+      "sourceRelativePath": "rules\\rust\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\rust\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\rust\\patterns.md",
+      "sourceRelativePath": "rules\\rust\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\rust\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\rust\\security.md",
+      "sourceRelativePath": "rules\\rust\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\rust\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\rust\\testing.md",
+      "sourceRelativePath": "rules\\rust\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\rust\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\swift\\coding-style.md",
+      "sourceRelativePath": "rules\\swift\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\swift\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\swift\\hooks.md",
+      "sourceRelativePath": "rules\\swift\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\swift\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\swift\\patterns.md",
+      "sourceRelativePath": "rules\\swift\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\swift\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\swift\\security.md",
+      "sourceRelativePath": "rules\\swift\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\swift\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\swift\\testing.md",
+      "sourceRelativePath": "rules\\swift\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\swift\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\typescript\\coding-style.md",
+      "sourceRelativePath": "rules\\typescript\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\typescript\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\typescript\\hooks.md",
+      "sourceRelativePath": "rules\\typescript\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\typescript\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\typescript\\patterns.md",
+      "sourceRelativePath": "rules\\typescript\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\typescript\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\typescript\\security.md",
+      "sourceRelativePath": "rules\\typescript\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\typescript\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\typescript\\testing.md",
+      "sourceRelativePath": "rules\\typescript\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\typescript\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\web\\coding-style.md",
+      "sourceRelativePath": "rules\\web\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\web\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\web\\design-quality.md",
+      "sourceRelativePath": "rules\\web\\design-quality.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\web\\design-quality.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\web\\hooks.md",
+      "sourceRelativePath": "rules\\web\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\web\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\web\\patterns.md",
+      "sourceRelativePath": "rules\\web\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\web\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\web\\performance.md",
+      "sourceRelativePath": "rules\\web\\performance.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\web\\performance.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\web\\security.md",
+      "sourceRelativePath": "rules\\web\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\web\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\web\\testing.md",
+      "sourceRelativePath": "rules\\web\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\web\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\README.md",
+      "sourceRelativePath": "rules\\zh\\README.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\README.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\agents.md",
+      "sourceRelativePath": "rules\\zh\\agents.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\agents.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\code-review.md",
+      "sourceRelativePath": "rules\\zh\\code-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\code-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\coding-style.md",
+      "sourceRelativePath": "rules\\zh\\coding-style.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\coding-style.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\development-workflow.md",
+      "sourceRelativePath": "rules\\zh\\development-workflow.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\development-workflow.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\git-workflow.md",
+      "sourceRelativePath": "rules\\zh\\git-workflow.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\git-workflow.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\hooks.md",
+      "sourceRelativePath": "rules\\zh\\hooks.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\hooks.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\patterns.md",
+      "sourceRelativePath": "rules\\zh\\patterns.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\patterns.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\performance.md",
+      "sourceRelativePath": "rules\\zh\\performance.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\performance.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\security.md",
+      "sourceRelativePath": "rules\\zh\\security.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\security.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "rules-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\rules\\zh\\testing.md",
+      "sourceRelativePath": "rules\\zh\\testing.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\rules\\ecc\\zh\\testing.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\plugins\\marketplace.json",
+      "sourceRelativePath": ".agents\\plugins\\marketplace.json",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\plugins\\marketplace.json",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\agent-introspection-debugging\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\agent-introspection-debugging\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\agent-introspection-debugging\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\agent-introspection-debugging\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\agent-introspection-debugging\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\agent-introspection-debugging\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\agent-sort\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\agent-sort\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\agent-sort\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\agent-sort\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\agent-sort\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\agent-sort\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\api-design\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\api-design\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\api-design\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\api-design\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\api-design\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\api-design\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\article-writing\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\article-writing\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\article-writing\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\article-writing\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\article-writing\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\article-writing\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\backend-patterns\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\backend-patterns\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\backend-patterns\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\backend-patterns\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\backend-patterns\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\backend-patterns\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\brand-voice\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\brand-voice\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\brand-voice\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\brand-voice\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\brand-voice\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\brand-voice\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\brand-voice\\references\\voice-profile-schema.md",
+      "sourceRelativePath": ".agents\\skills\\brand-voice\\references\\voice-profile-schema.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\brand-voice\\references\\voice-profile-schema.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\bun-runtime\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\bun-runtime\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\bun-runtime\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\bun-runtime\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\bun-runtime\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\bun-runtime\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\coding-standards\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\coding-standards\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\coding-standards\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\coding-standards\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\coding-standards\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\coding-standards\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\content-engine\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\content-engine\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\content-engine\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\content-engine\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\content-engine\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\content-engine\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\crosspost\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\crosspost\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\crosspost\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\crosspost\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\crosspost\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\crosspost\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\deep-research\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\deep-research\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\deep-research\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\deep-research\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\deep-research\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\deep-research\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\dmux-workflows\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\dmux-workflows\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\dmux-workflows\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\dmux-workflows\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\dmux-workflows\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\dmux-workflows\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\documentation-lookup\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\documentation-lookup\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\documentation-lookup\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\documentation-lookup\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\documentation-lookup\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\documentation-lookup\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\e2e-testing\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\e2e-testing\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\e2e-testing\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\e2e-testing\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\e2e-testing\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\e2e-testing\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\eval-harness\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\eval-harness\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\eval-harness\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\eval-harness\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\eval-harness\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\eval-harness\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\everything-claude-code\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\everything-claude-code\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\everything-claude-code\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\everything-claude-code\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\everything-claude-code\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\everything-claude-code\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\exa-search\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\exa-search\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\exa-search\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\exa-search\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\exa-search\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\exa-search\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\fal-ai-media\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\fal-ai-media\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\fal-ai-media\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\fal-ai-media\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\fal-ai-media\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\fal-ai-media\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\frontend-patterns\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\frontend-patterns\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\frontend-patterns\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\frontend-patterns\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\frontend-patterns\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\frontend-patterns\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\frontend-slides\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\frontend-slides\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\frontend-slides\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\frontend-slides\\STYLE_PRESETS.md",
+      "sourceRelativePath": ".agents\\skills\\frontend-slides\\STYLE_PRESETS.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\frontend-slides\\STYLE_PRESETS.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\frontend-slides\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\frontend-slides\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\frontend-slides\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\investor-materials\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\investor-materials\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\investor-materials\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\investor-materials\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\investor-materials\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\investor-materials\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\investor-outreach\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\investor-outreach\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\investor-outreach\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\investor-outreach\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\investor-outreach\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\investor-outreach\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\market-research\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\market-research\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\market-research\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\market-research\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\market-research\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\market-research\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\mcp-server-patterns\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\mcp-server-patterns\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\mcp-server-patterns\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\mcp-server-patterns\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\mcp-server-patterns\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\mcp-server-patterns\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\mle-workflow\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\mle-workflow\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\mle-workflow\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\mle-workflow\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\mle-workflow\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\mle-workflow\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\nextjs-turbopack\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\nextjs-turbopack\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\nextjs-turbopack\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\nextjs-turbopack\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\nextjs-turbopack\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\nextjs-turbopack\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\product-capability\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\product-capability\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\product-capability\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\product-capability\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\product-capability\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\product-capability\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\security-review\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\security-review\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\security-review\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\security-review\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\security-review\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\security-review\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\strategic-compact\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\strategic-compact\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\strategic-compact\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\strategic-compact\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\strategic-compact\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\strategic-compact\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\tdd-workflow\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\tdd-workflow\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\tdd-workflow\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\tdd-workflow\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\tdd-workflow\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\tdd-workflow\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\verification-loop\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\verification-loop\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\verification-loop\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\verification-loop\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\verification-loop\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\verification-loop\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\video-editing\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\video-editing\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\video-editing\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\video-editing\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\video-editing\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\video-editing\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\x-api\\SKILL.md",
+      "sourceRelativePath": ".agents\\skills\\x-api\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\x-api\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.agents\\skills\\x-api\\agents\\openai.yaml",
+      "sourceRelativePath": ".agents\\skills\\x-api\\agents\\openai.yaml",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\.agents\\skills\\x-api\\agents\\openai.yaml",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\a11y-architect.md",
+      "sourceRelativePath": "agents\\a11y-architect.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\a11y-architect.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\architect.md",
+      "sourceRelativePath": "agents\\architect.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\architect.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\build-error-resolver.md",
+      "sourceRelativePath": "agents\\build-error-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\build-error-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\chief-of-staff.md",
+      "sourceRelativePath": "agents\\chief-of-staff.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\chief-of-staff.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\code-architect.md",
+      "sourceRelativePath": "agents\\code-architect.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\code-architect.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\code-explorer.md",
+      "sourceRelativePath": "agents\\code-explorer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\code-explorer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\code-reviewer.md",
+      "sourceRelativePath": "agents\\code-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\code-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\code-simplifier.md",
+      "sourceRelativePath": "agents\\code-simplifier.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\code-simplifier.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\comment-analyzer.md",
+      "sourceRelativePath": "agents\\comment-analyzer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\comment-analyzer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\conversation-analyzer.md",
+      "sourceRelativePath": "agents\\conversation-analyzer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\conversation-analyzer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\cpp-build-resolver.md",
+      "sourceRelativePath": "agents\\cpp-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\cpp-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\cpp-reviewer.md",
+      "sourceRelativePath": "agents\\cpp-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\cpp-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\csharp-reviewer.md",
+      "sourceRelativePath": "agents\\csharp-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\csharp-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\dart-build-resolver.md",
+      "sourceRelativePath": "agents\\dart-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\dart-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\database-reviewer.md",
+      "sourceRelativePath": "agents\\database-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\database-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\django-build-resolver.md",
+      "sourceRelativePath": "agents\\django-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\django-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\django-reviewer.md",
+      "sourceRelativePath": "agents\\django-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\django-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\doc-updater.md",
+      "sourceRelativePath": "agents\\doc-updater.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\doc-updater.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\docs-lookup.md",
+      "sourceRelativePath": "agents\\docs-lookup.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\docs-lookup.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\e2e-runner.md",
+      "sourceRelativePath": "agents\\e2e-runner.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\e2e-runner.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\fastapi-reviewer.md",
+      "sourceRelativePath": "agents\\fastapi-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\fastapi-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\flutter-reviewer.md",
+      "sourceRelativePath": "agents\\flutter-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\flutter-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\fsharp-reviewer.md",
+      "sourceRelativePath": "agents\\fsharp-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\fsharp-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\gan-evaluator.md",
+      "sourceRelativePath": "agents\\gan-evaluator.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\gan-evaluator.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\gan-generator.md",
+      "sourceRelativePath": "agents\\gan-generator.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\gan-generator.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\gan-planner.md",
+      "sourceRelativePath": "agents\\gan-planner.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\gan-planner.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\go-build-resolver.md",
+      "sourceRelativePath": "agents\\go-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\go-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\go-reviewer.md",
+      "sourceRelativePath": "agents\\go-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\go-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\harmonyos-app-resolver.md",
+      "sourceRelativePath": "agents\\harmonyos-app-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\harmonyos-app-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\harness-optimizer.md",
+      "sourceRelativePath": "agents\\harness-optimizer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\harness-optimizer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\healthcare-reviewer.md",
+      "sourceRelativePath": "agents\\healthcare-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\healthcare-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\homelab-architect.md",
+      "sourceRelativePath": "agents\\homelab-architect.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\homelab-architect.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\java-build-resolver.md",
+      "sourceRelativePath": "agents\\java-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\java-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\java-reviewer.md",
+      "sourceRelativePath": "agents\\java-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\java-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\kotlin-build-resolver.md",
+      "sourceRelativePath": "agents\\kotlin-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\kotlin-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\kotlin-reviewer.md",
+      "sourceRelativePath": "agents\\kotlin-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\kotlin-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\loop-operator.md",
+      "sourceRelativePath": "agents\\loop-operator.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\loop-operator.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\marketing-agent.md",
+      "sourceRelativePath": "agents\\marketing-agent.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\marketing-agent.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\mle-reviewer.md",
+      "sourceRelativePath": "agents\\mle-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\mle-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\network-architect.md",
+      "sourceRelativePath": "agents\\network-architect.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\network-architect.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\network-config-reviewer.md",
+      "sourceRelativePath": "agents\\network-config-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\network-config-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\network-troubleshooter.md",
+      "sourceRelativePath": "agents\\network-troubleshooter.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\network-troubleshooter.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\opensource-forker.md",
+      "sourceRelativePath": "agents\\opensource-forker.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\opensource-forker.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\opensource-packager.md",
+      "sourceRelativePath": "agents\\opensource-packager.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\opensource-packager.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\opensource-sanitizer.md",
+      "sourceRelativePath": "agents\\opensource-sanitizer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\opensource-sanitizer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\performance-optimizer.md",
+      "sourceRelativePath": "agents\\performance-optimizer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\performance-optimizer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\planner.md",
+      "sourceRelativePath": "agents\\planner.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\planner.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\pr-test-analyzer.md",
+      "sourceRelativePath": "agents\\pr-test-analyzer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\pr-test-analyzer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\python-reviewer.md",
+      "sourceRelativePath": "agents\\python-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\python-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\pytorch-build-resolver.md",
+      "sourceRelativePath": "agents\\pytorch-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\pytorch-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\react-build-resolver.md",
+      "sourceRelativePath": "agents\\react-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\react-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\react-reviewer.md",
+      "sourceRelativePath": "agents\\react-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\react-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\refactor-cleaner.md",
+      "sourceRelativePath": "agents\\refactor-cleaner.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\refactor-cleaner.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\rust-build-resolver.md",
+      "sourceRelativePath": "agents\\rust-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\rust-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\rust-reviewer.md",
+      "sourceRelativePath": "agents\\rust-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\rust-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\security-reviewer.md",
+      "sourceRelativePath": "agents\\security-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\security-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\seo-specialist.md",
+      "sourceRelativePath": "agents\\seo-specialist.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\seo-specialist.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\silent-failure-hunter.md",
+      "sourceRelativePath": "agents\\silent-failure-hunter.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\silent-failure-hunter.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\swift-build-resolver.md",
+      "sourceRelativePath": "agents\\swift-build-resolver.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\swift-build-resolver.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\swift-reviewer.md",
+      "sourceRelativePath": "agents\\swift-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\swift-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\tdd-guide.md",
+      "sourceRelativePath": "agents\\tdd-guide.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\tdd-guide.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\type-design-analyzer.md",
+      "sourceRelativePath": "agents\\type-design-analyzer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\type-design-analyzer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\agents\\typescript-reviewer.md",
+      "sourceRelativePath": "agents\\typescript-reviewer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\agents\\typescript-reviewer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "agents-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\AGENTS.md",
+      "sourceRelativePath": "AGENTS.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\AGENTS.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\aside.md",
+      "sourceRelativePath": "commands\\aside.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\aside.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\auto-update.md",
+      "sourceRelativePath": "commands\\auto-update.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\auto-update.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\build-fix.md",
+      "sourceRelativePath": "commands\\build-fix.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\build-fix.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\checkpoint.md",
+      "sourceRelativePath": "commands\\checkpoint.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\checkpoint.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\code-review.md",
+      "sourceRelativePath": "commands\\code-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\code-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\cost-report.md",
+      "sourceRelativePath": "commands\\cost-report.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\cost-report.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\cpp-build.md",
+      "sourceRelativePath": "commands\\cpp-build.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\cpp-build.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\cpp-review.md",
+      "sourceRelativePath": "commands\\cpp-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\cpp-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\cpp-test.md",
+      "sourceRelativePath": "commands\\cpp-test.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\cpp-test.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\ecc-guide.md",
+      "sourceRelativePath": "commands\\ecc-guide.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\ecc-guide.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\evolve.md",
+      "sourceRelativePath": "commands\\evolve.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\evolve.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\fastapi-review.md",
+      "sourceRelativePath": "commands\\fastapi-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\fastapi-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\feature-dev.md",
+      "sourceRelativePath": "commands\\feature-dev.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\feature-dev.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\flutter-build.md",
+      "sourceRelativePath": "commands\\flutter-build.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\flutter-build.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\flutter-review.md",
+      "sourceRelativePath": "commands\\flutter-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\flutter-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\flutter-test.md",
+      "sourceRelativePath": "commands\\flutter-test.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\flutter-test.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\gan-build.md",
+      "sourceRelativePath": "commands\\gan-build.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\gan-build.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\gan-design.md",
+      "sourceRelativePath": "commands\\gan-design.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\gan-design.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\go-build.md",
+      "sourceRelativePath": "commands\\go-build.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\go-build.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\go-review.md",
+      "sourceRelativePath": "commands\\go-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\go-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\go-test.md",
+      "sourceRelativePath": "commands\\go-test.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\go-test.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\gradle-build.md",
+      "sourceRelativePath": "commands\\gradle-build.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\gradle-build.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\harness-audit.md",
+      "sourceRelativePath": "commands\\harness-audit.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\harness-audit.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\hookify-configure.md",
+      "sourceRelativePath": "commands\\hookify-configure.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\hookify-configure.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\hookify-help.md",
+      "sourceRelativePath": "commands\\hookify-help.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\hookify-help.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\hookify-list.md",
+      "sourceRelativePath": "commands\\hookify-list.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\hookify-list.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\hookify.md",
+      "sourceRelativePath": "commands\\hookify.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\hookify.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\instinct-export.md",
+      "sourceRelativePath": "commands\\instinct-export.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\instinct-export.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\instinct-import.md",
+      "sourceRelativePath": "commands\\instinct-import.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\instinct-import.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\instinct-status.md",
+      "sourceRelativePath": "commands\\instinct-status.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\instinct-status.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\jira.md",
+      "sourceRelativePath": "commands\\jira.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\jira.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\kotlin-build.md",
+      "sourceRelativePath": "commands\\kotlin-build.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\kotlin-build.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\kotlin-review.md",
+      "sourceRelativePath": "commands\\kotlin-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\kotlin-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\kotlin-test.md",
+      "sourceRelativePath": "commands\\kotlin-test.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\kotlin-test.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\learn-eval.md",
+      "sourceRelativePath": "commands\\learn-eval.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\learn-eval.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\learn.md",
+      "sourceRelativePath": "commands\\learn.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\learn.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\loop-start.md",
+      "sourceRelativePath": "commands\\loop-start.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\loop-start.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\loop-status.md",
+      "sourceRelativePath": "commands\\loop-status.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\loop-status.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\marketing-campaign.md",
+      "sourceRelativePath": "commands\\marketing-campaign.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\marketing-campaign.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\model-route.md",
+      "sourceRelativePath": "commands\\model-route.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\model-route.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\multi-backend.md",
+      "sourceRelativePath": "commands\\multi-backend.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\multi-backend.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\multi-execute.md",
+      "sourceRelativePath": "commands\\multi-execute.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\multi-execute.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\multi-frontend.md",
+      "sourceRelativePath": "commands\\multi-frontend.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\multi-frontend.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\multi-plan.md",
+      "sourceRelativePath": "commands\\multi-plan.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\multi-plan.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\multi-workflow.md",
+      "sourceRelativePath": "commands\\multi-workflow.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\multi-workflow.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\plan-prd.md",
+      "sourceRelativePath": "commands\\plan-prd.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\plan-prd.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\plan.md",
+      "sourceRelativePath": "commands\\plan.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\plan.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\pm2.md",
+      "sourceRelativePath": "commands\\pm2.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\pm2.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\pr.md",
+      "sourceRelativePath": "commands\\pr.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\pr.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\project-init.md",
+      "sourceRelativePath": "commands\\project-init.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\project-init.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\projects.md",
+      "sourceRelativePath": "commands\\projects.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\projects.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\promote.md",
+      "sourceRelativePath": "commands\\promote.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\promote.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\prp-commit.md",
+      "sourceRelativePath": "commands\\prp-commit.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\prp-commit.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\prp-implement.md",
+      "sourceRelativePath": "commands\\prp-implement.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\prp-implement.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\prp-plan.md",
+      "sourceRelativePath": "commands\\prp-plan.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\prp-plan.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\prp-pr.md",
+      "sourceRelativePath": "commands\\prp-pr.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\prp-pr.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\prp-prd.md",
+      "sourceRelativePath": "commands\\prp-prd.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\prp-prd.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\prune.md",
+      "sourceRelativePath": "commands\\prune.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\prune.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\python-review.md",
+      "sourceRelativePath": "commands\\python-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\python-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\quality-gate.md",
+      "sourceRelativePath": "commands\\quality-gate.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\quality-gate.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\react-build.md",
+      "sourceRelativePath": "commands\\react-build.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\react-build.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\react-review.md",
+      "sourceRelativePath": "commands\\react-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\react-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\react-test.md",
+      "sourceRelativePath": "commands\\react-test.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\react-test.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\refactor-clean.md",
+      "sourceRelativePath": "commands\\refactor-clean.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\refactor-clean.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\resume-session.md",
+      "sourceRelativePath": "commands\\resume-session.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\resume-session.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\review-pr.md",
+      "sourceRelativePath": "commands\\review-pr.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\review-pr.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\rust-build.md",
+      "sourceRelativePath": "commands\\rust-build.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\rust-build.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\rust-review.md",
+      "sourceRelativePath": "commands\\rust-review.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\rust-review.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\rust-test.md",
+      "sourceRelativePath": "commands\\rust-test.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\rust-test.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\santa-loop.md",
+      "sourceRelativePath": "commands\\santa-loop.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\santa-loop.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\save-session.md",
+      "sourceRelativePath": "commands\\save-session.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\save-session.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\security-scan.md",
+      "sourceRelativePath": "commands\\security-scan.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\security-scan.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\sessions.md",
+      "sourceRelativePath": "commands\\sessions.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\sessions.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\setup-pm.md",
+      "sourceRelativePath": "commands\\setup-pm.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\setup-pm.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\skill-create.md",
+      "sourceRelativePath": "commands\\skill-create.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\skill-create.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\skill-health.md",
+      "sourceRelativePath": "commands\\skill-health.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\skill-health.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\test-coverage.md",
+      "sourceRelativePath": "commands\\test-coverage.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\test-coverage.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\update-codemaps.md",
+      "sourceRelativePath": "commands\\update-codemaps.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\update-codemaps.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "commands-core",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\commands\\update-docs.md",
+      "sourceRelativePath": "commands\\update-docs.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\commands\\update-docs.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "platform-configs",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.claude-plugin\\PLUGIN_SCHEMA_NOTES.md",
+      "sourceRelativePath": ".claude-plugin\\PLUGIN_SCHEMA_NOTES.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\PLUGIN_SCHEMA_NOTES.md",
+      "strategy": "sync-root-children",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "platform-configs",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.claude-plugin\\README.md",
+      "sourceRelativePath": ".claude-plugin\\README.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\README.md",
+      "strategy": "sync-root-children",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "platform-configs",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.claude-plugin\\marketplace.json",
+      "sourceRelativePath": ".claude-plugin\\marketplace.json",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\marketplace.json",
+      "strategy": "sync-root-children",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "platform-configs",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\.claude-plugin\\plugin.json",
+      "sourceRelativePath": ".claude-plugin\\plugin.json",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\plugin.json",
+      "strategy": "sync-root-children",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "platform-configs",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\mcp-configs\\mcp-servers.json",
+      "sourceRelativePath": "mcp-configs\\mcp-servers.json",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\mcp-configs\\mcp-servers.json",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "platform-configs",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\scripts\\auto-update.js",
+      "sourceRelativePath": "scripts/auto-update.js",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\scripts\\auto-update.js",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "platform-configs",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\scripts\\setup-package-manager.js",
+      "sourceRelativePath": "scripts/setup-package-manager.js",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\scripts\\setup-package-manager.js",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\agent-sort\\SKILL.md",
+      "sourceRelativePath": "skills\\agent-sort\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\agent-sort\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\agent-introspection-debugging\\SKILL.md",
+      "sourceRelativePath": "skills\\agent-introspection-debugging\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\agent-introspection-debugging\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\ai-regression-testing\\SKILL.md",
+      "sourceRelativePath": "skills\\ai-regression-testing\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\ai-regression-testing\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\configure-ecc\\SKILL.md",
+      "sourceRelativePath": "skills\\configure-ecc\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\configure-ecc\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\code-tour\\SKILL.md",
+      "sourceRelativePath": "skills\\code-tour\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\code-tour\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning\\SKILL.md",
+      "sourceRelativePath": "skills\\continuous-learning\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning\\config.json",
+      "sourceRelativePath": "skills\\continuous-learning\\config.json",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning\\config.json",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning\\evaluate-session.sh",
+      "sourceRelativePath": "skills\\continuous-learning\\evaluate-session.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning\\evaluate-session.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\SKILL.md",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\agents\\observer-loop.sh",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\agents\\observer-loop.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\agents\\observer-loop.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\agents\\observer.md",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\agents\\observer.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\agents\\observer.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\agents\\session-guardian.sh",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\agents\\session-guardian.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\agents\\session-guardian.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\agents\\start-observer.sh",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\agents\\start-observer.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\agents\\start-observer.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\config.json",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\config.json",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\config.json",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\hooks\\observe.sh",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\hooks\\observe.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\hooks\\observe.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\scripts\\detect-project.sh",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\scripts\\detect-project.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\scripts\\detect-project.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\scripts\\instinct-cli.py",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\scripts\\instinct-cli.py",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\scripts\\instinct-cli.py",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\scripts\\lib\\homunculus-dir.sh",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\scripts\\lib\\homunculus-dir.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\scripts\\lib\\homunculus-dir.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\scripts\\migrate-homunculus.sh",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\scripts\\migrate-homunculus.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\scripts\\migrate-homunculus.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\continuous-learning-v2\\scripts\\test_parse_instinct.py",
+      "sourceRelativePath": "skills\\continuous-learning-v2\\scripts\\test_parse_instinct.py",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\continuous-learning-v2\\scripts\\test_parse_instinct.py",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\council\\SKILL.md",
+      "sourceRelativePath": "skills\\council\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\council\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\e2e-testing\\SKILL.md",
+      "sourceRelativePath": "skills\\e2e-testing\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\e2e-testing\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\error-handling\\SKILL.md",
+      "sourceRelativePath": "skills\\error-handling\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\error-handling\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\eval-harness\\SKILL.md",
+      "sourceRelativePath": "skills\\eval-harness\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\eval-harness\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\hookify-rules\\SKILL.md",
+      "sourceRelativePath": "skills\\hookify-rules\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\hookify-rules\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\iterative-retrieval\\SKILL.md",
+      "sourceRelativePath": "skills\\iterative-retrieval\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\iterative-retrieval\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\plankton-code-quality\\SKILL.md",
+      "sourceRelativePath": "skills\\plankton-code-quality\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\plankton-code-quality\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\production-audit\\SKILL.md",
+      "sourceRelativePath": "skills\\production-audit\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\production-audit\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\skill-scout\\SKILL.md",
+      "sourceRelativePath": "skills\\skill-scout\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\skill-scout\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\skill-stocktake\\SKILL.md",
+      "sourceRelativePath": "skills\\skill-stocktake\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\skill-stocktake\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\skill-stocktake\\scripts\\quick-diff.sh",
+      "sourceRelativePath": "skills\\skill-stocktake\\scripts\\quick-diff.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\skill-stocktake\\scripts\\quick-diff.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\skill-stocktake\\scripts\\save-results.sh",
+      "sourceRelativePath": "skills\\skill-stocktake\\scripts\\save-results.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\skill-stocktake\\scripts\\save-results.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\skill-stocktake\\scripts\\scan.sh",
+      "sourceRelativePath": "skills\\skill-stocktake\\scripts\\scan.sh",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\skill-stocktake\\scripts\\scan.sh",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\strategic-compact\\SKILL.md",
+      "sourceRelativePath": "skills\\strategic-compact\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\strategic-compact\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\tdd-workflow\\SKILL.md",
+      "sourceRelativePath": "skills\\tdd-workflow\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\tdd-workflow\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\verification-loop\\SKILL.md",
+      "sourceRelativePath": "skills\\verification-loop\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\verification-loop\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    },
+    {
+      "kind": "copy-file",
+      "moduleId": "workflow-quality",
+      "sourcePath": "C:\\Users\\lcifuentes\\.claude\\plugins\\marketplaces\\ecc\\skills\\windows-desktop-e2e\\SKILL.md",
+      "sourceRelativePath": "skills\\windows-desktop-e2e\\SKILL.md",
+      "destinationPath": "C:\\Users\\lcifuentes\\Downloads\\AegisOS\\.claude\\skills\\ecc\\windows-desktop-e2e\\SKILL.md",
+      "strategy": "preserve-relative-path",
+      "ownership": "managed",
+      "scaffoldOnly": false
+    }
+  ]
+}
