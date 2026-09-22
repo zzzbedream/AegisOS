@@ -30,6 +30,38 @@ import {
 const COMMITMENT_TTL_MS = 900_000;
 const PAYABLE = { scheme: "exact", network: "stellar:testnet" } as const;
 
+/**
+ * One idempotent GET for the offer, allowed to survive a single transport blip.
+ *
+ * Only a rejected fetch is retried — if the seller answers with any status,
+ * that is a response, not a network failure, and the caller decides. The retry
+ * is immediate and singular: no backoff library on a demo with a deadline.
+ * This never wraps buy(): retrying a payment risks paying twice.
+ *
+ * When both attempts reject, the thrown error names the URL and keeps the
+ * first transport error as `cause`, so nothing the network said is discarded.
+ */
+async function fetchWithRetry(url: string): Promise<Response> {
+  let first: unknown;
+  try {
+    return await fetch(url);
+  } catch (error: unknown) {
+    first = error;
+  }
+  try {
+    return await fetch(url);
+  } catch (error: unknown) {
+    const describe = (value: unknown): string =>
+      value instanceof Error
+        ? `${value.name}: ${value.message}`
+        : String(value);
+    throw new Error(
+      `Network error requesting ${url}: ${describe(error)} (retry after: ${describe(first)})`,
+      { cause: first },
+    );
+  }
+}
+
 export interface DiscoveredOffer {
   readonly url: string;
   readonly required: PaymentRequiredV2;
@@ -92,7 +124,7 @@ export class DemoAgent {
    * seller we did not write, this is the only honest source of requirements.
    */
   public async discover(url: string): Promise<DiscoveredOffer> {
-    const response = await fetch(url);
+    const response = await fetchWithRetry(url);
     if (response.status !== 402) {
       throw new Error(`Expected 402 from ${url}, got ${String(response.status)}.`);
     }
