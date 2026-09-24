@@ -9,7 +9,7 @@ import {
   type DeliveryReceiptV1,
   type DeliveryVerdict,
 } from "../../proof/src/index.js";
-import { AegisAnchorClient, AnchorClientError } from "../src/index.js";
+import { AegisAnchorClient, AnchorClientError, decodeDeliveryRecord } from "../src/index.js";
 
 // A real deployed id, so construction is realistic; no test here reaches the
 // network — every assertion is about validation that happens BEFORE submit.
@@ -82,4 +82,44 @@ test("a non-stellar seller id is refused before anything is built", async () => 
   const bad = { ...receipt(), sellerId: "seller-good" } as unknown as DeliveryReceiptV1;
 
   await assert.rejects(() => client().anchorDelivery(bad, buyer));
+});
+
+// ------------------------------------------------------------ get_delivery
+
+function nativeRecord(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    buyer: buyer.publicKey(),
+    seller: seller.publicKey(),
+    payment_hash: Buffer.from("b".repeat(64), "hex"),
+    commitment_hash: Buffer.from("a".repeat(64), "hex"),
+    content_hash: Buffer.from("c".repeat(64), "hex"),
+    verdict: ["Tainted"],
+    anchored_at: 1_790_000_000n,
+    ...overrides,
+  };
+}
+
+test("a missing delivery decodes as undefined, the contract None", () => {
+  assert.equal(decodeDeliveryRecord(undefined), undefined);
+  assert.equal(decodeDeliveryRecord(null), undefined);
+});
+
+test("an anchored record decodes into our own formats", () => {
+  assert.deepEqual(decodeDeliveryRecord(nativeRecord()), {
+    buyer: buyer.publicKey(),
+    seller: seller.publicKey(),
+    paymentHash: "b".repeat(64),
+    commitmentHash: "a".repeat(64),
+    contentHash: "c".repeat(64),
+    verdict: "TAINTED",
+    anchoredAt: 1_790_000_000,
+  });
+});
+
+test("a record with an unknown verdict or a short hash is refused, not guessed", () => {
+  assert.throws(() => decodeDeliveryRecord(nativeRecord({ verdict: ["Maybe"] })), AnchorClientError);
+  assert.throws(
+    () => decodeDeliveryRecord(nativeRecord({ content_hash: Buffer.alloc(31) })),
+    AnchorClientError,
+  );
 });

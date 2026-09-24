@@ -84,6 +84,59 @@ function deliveryInputScVal(input: {
   ]);
 }
 
+/** A delivery record as the contract stores it, in our own formats. */
+export interface AnchoredDeliveryV1 {
+  readonly buyer: string;
+  readonly seller: string;
+  readonly paymentHash: string;
+  readonly commitmentHash: string;
+  readonly contentHash: string;
+  readonly verdict: DeliveryVerdict;
+  /** Ledger close time of the anchor, in unix seconds — not the delivery time. */
+  readonly anchoredAt: number;
+}
+
+const VERDICT_FROM_ARM: Readonly<Record<string, DeliveryVerdict>> = Object.fromEntries(
+  Object.entries(VERDICT_ARM).map(([ours, arm]) => [arm, ours as DeliveryVerdict]),
+);
+
+function bytesToHex(value: unknown, label: string): string {
+  if (!(value instanceof Uint8Array) || value.length !== 32) {
+    throw new AnchorClientError("BAD_RECORD", `${label} is not 32 bytes.`);
+  }
+  return Buffer.from(value).toString("hex");
+}
+
+/**
+ * Decode `get_delivery`'s native value. `null`/`undefined` is the contract's
+ * `None`. Anything that does not have the expected shape is an error, never a
+ * best-effort guess: this output is what a verifier compares a receipt to.
+ */
+export function decodeDeliveryRecord(native: unknown): AnchoredDeliveryV1 | undefined {
+  if (native === null || native === undefined) return undefined;
+  if (typeof native !== "object") {
+    throw new AnchorClientError("BAD_RECORD", "get_delivery returned a non-struct value.");
+  }
+  const raw = native as Record<string, unknown>;
+  const arm = Array.isArray(raw["verdict"]) ? raw["verdict"][0] : raw["verdict"];
+  const verdict = typeof arm === "string" ? VERDICT_FROM_ARM[arm] : undefined;
+  if (verdict === undefined) {
+    throw new AnchorClientError("BAD_RECORD", `Unknown verdict arm: ${String(arm)}.`);
+  }
+  if (typeof raw["buyer"] !== "string" || typeof raw["seller"] !== "string") {
+    throw new AnchorClientError("BAD_RECORD", "buyer and seller must be addresses.");
+  }
+  return Object.freeze({
+    buyer: raw["buyer"],
+    seller: raw["seller"],
+    paymentHash: bytesToHex(raw["payment_hash"], "payment_hash"),
+    commitmentHash: bytesToHex(raw["commitment_hash"], "commitment_hash"),
+    contentHash: bytesToHex(raw["content_hash"], "content_hash"),
+    verdict,
+    anchoredAt: Number(raw["anchored_at"] ?? 0),
+  });
+}
+
 export interface AnchorClientOptions {
   readonly contractId: string;
   readonly rpcUrl?: string;
@@ -185,20 +238,11 @@ export class AegisAnchorClient {
    */
   public async sellerScore(sellerId: SellerId, reader: Keypair): Promise<SellerScoreV1> {
     const seller = accountFromSellerId(sellerId);
-    const source = await this.#server.getAccount(reader.publicKey());
-    const built = new TransactionBuilder(source, {
-      fee: BASE_FEE,
-      networkPassphrase: this.#passphrase,
-    })
-      .addOperation(this.#contract.call("seller_score", new Address(seller).toScVal()))
-      .setTimeout(TX_TIMEOUT_SECONDS)
-      .build();
-
-    const simulated = await this.#server.simulateTransaction(built);
-    if (rpc.Api.isSimulationError(simulated)) {
-      throw new AnchorClientError("SIMULATION_FAILED", simulated.error);
-    }
-    const retval = simulated.result?.retval;
+    const retval = await this.#simulateRead(
+      "seller_score",
+      [new Address(seller).toScVal()],
+      reader.publicKey(),
+    );
     if (retval === undefined) {
       throw new AnchorClientError("NO_RESULT", "seller_score returned no value.");
     }
@@ -217,5 +261,45 @@ export class AegisAnchorClient {
       total: count("total"),
       asOf: new Date().toISOString(),
     });
+  }
+
+  /**
+   * Read the anchored record for one payment, or `undefined` if none exists.
+   *
+   * Needs no secret: `readerAccount` is any existing account address, used only
+   * as the simulation source. That is what lets a third party check a receipt
+   * against the chain without being the buyer.
+   */
+  public async getDelivery(
+    paymentHash: string,
+    readerAccount: string,
+  ): Promise<AnchoredDeliveryV1 | undefined> {
+    const retval = await this.#simulateRead(
+      "get_delivery",
+      [hashToBytes(paymentHash, "payment_hash")],
+      readerAccount,
+    );
+    return retval === undefined ? undefined : decodeDeliveryRecord(scValToNative(retval));
+  }
+
+  async #simulateRead(
+    method: string,
+    args: readonly xdr.ScVal[],
+    readerAccount: string,
+  ): Promise<xdr.ScVal | undefined> {
+    const source = await this.#server.getAccount(readerAccount);
+    const built = new TransactionBuilder(source, {
+      fee: BASE_FEE,
+      networkPassphrase: this.#passphrase,
+    })
+      .addOperation(this.#contract.call(method, ...args))
+      .setTimeout(TX_TIMEOUT_SECONDS)
+      .build();
+
+    const simulated = await this.#server.simulateTransaction(built);
+    if (rpc.Api.isSimulationError(simulated)) {
+      throw new AnchorClientError("SIMULATION_FAILED", simulated.error);
+    }
+    return simulated.result?.retval;
   }
 }

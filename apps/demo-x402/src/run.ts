@@ -30,6 +30,8 @@ import {
 } from "../../../packages/proof/src/index.js";
 import { AegisAnchorClient, forkSigner } from "../../../packages/x402/src/index.js";
 import { DemoAgent, type PurchaseOutcome } from "./agent.js";
+import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
+import { saveReceipt } from "./receipt-check.js";
 import { honestMarketData, poisonedMarketData } from "./catalog.js";
 import { startSeller, type PaymentRequirements, type SellerHandle } from "./resource-server.js";
 
@@ -101,6 +103,7 @@ function reportPurchase(outcome: PurchaseOutcome): void {
   console.log(`  taintScore       : ${String(a.assessment.taintScore)} (umbral 60; base 35 por ser contenido externo)`);
   console.log(`  contentHash      : ${a.assessment.contentHash.slice(0, 24)}…`);
   console.log(`  admisión         : ${a.admission}`);
+  console.log(`  receipt          : ${saveReceipt(a.receipt)}`);
   if (a.assessment.riskSignals.length > 0) {
     console.log(`  señal            : ${a.assessment.riskSignals[0]?.evidence ?? ""}`);
   }
@@ -112,12 +115,14 @@ async function main(): Promise<void> {
   const buyer = Keypair.fromSecret(requireEnv("AEGIS_BUYER_SECRET"));
   const sellerAccount = requireEnv("AEGIS_SELLER_ACCOUNT");
   const sellerId = sellerIdFromAccount(sellerAccount);
-  const attester = generateEd25519KeyPair("key:demo-attester");
+  const attester = loadAttester(attesterPath());
 
   const deployments = JSON.parse(
     readFileSync(new URL("../../../contracts/deployments/testnet.json", import.meta.url), "utf8"),
   ) as { contracts: Record<string, { contractId: string }> };
   const contractId = deployments.contracts["aegis-proof"]?.contractId ?? "";
+  const published = readPublishedAttester(deployments);
+  const attesterPublished = published?.publicKey === attester.publicKey;
 
   const supported = (await (await fetch(`${FACILITATOR}/supported`)).json()) as {
     kinds?: { scheme?: string; network?: string; extra?: Record<string, unknown> }[];
@@ -147,6 +152,7 @@ async function main(): Promise<void> {
     console.log(`  agente (pid ${String(process.pid)})  ·  signer aislado (pid ${String(signer.pid)})`);
     console.log(`  la clave vive en el signer; el agente solo tiene un canal`);
     console.log(`  contrato: ${contractId}`);
+    console.log(`  attester: ${attester.keyId} · ${attesterPublished ? "clave publicada en deployments/testnet.json" : "NO coincide con la clave publicada: los receipts no serán verificables por terceros"}`);
 
     good = await startSeller({
       name: "seller-good", port: 4501, resourcePath: "/market-data",

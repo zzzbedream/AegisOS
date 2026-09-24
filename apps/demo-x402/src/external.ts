@@ -31,6 +31,8 @@ import {
   type ForkedSigner,
 } from "../../../packages/x402/src/index.js";
 import { DemoAgent, type PurchaseOutcome } from "./agent.js";
+import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
+import { saveReceipt } from "./receipt-check.js";
 import { describeErrorChain } from "./error-chain.js";
 
 const USDC_SAC = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA";
@@ -113,11 +115,12 @@ async function main(): Promise<void> {
   }
 
   const buyer = Keypair.fromSecret(requireEnv("AEGIS_BUYER_SECRET"));
-  const attester = generateEd25519KeyPair("key:external-attester");
+  const attester = loadAttester(attesterPath());
   const deployments = JSON.parse(
     readFileSync(new URL("../../../contracts/deployments/testnet.json", import.meta.url), "utf8"),
   ) as { contracts: Record<string, { contractId: string }> };
   const contractId = deployments.contracts["aegis-proof"]?.contractId ?? "";
+  const published = readPublishedAttester(deployments);
 
   const dir = mkdtempSync(join(tmpdir(), "aegis-external-"));
   const secretFile = join(dir, "buyer.secret");
@@ -144,6 +147,15 @@ async function main(): Promise<void> {
     console.log("AegisProof · interoperabilidad con un vendedor x402 que no controlamos");
     console.log(`  endpoint : ${url}`);
     console.log(`  agente pid ${String(process.pid)} · signer aislado pid ${String(signer.pid)}`);
+
+    const attesterPublished = published?.publicKey === attester.publicKey;
+    console.log(`  attester ${attester.keyId} · ${attesterPublished ? "publicado" : "NO publicado"} en deployments/testnet.json`);
+    record(
+      "attester",
+      "receipts signed by the published attester key",
+      attesterPublished ? "PASS" : "FAIL",
+      attesterPublished ? attester.keyId : "run npm run attester:init, or the key on disk differs from the published one",
+    );
 
     // ------------------------------------------------------- discovery
     line();
@@ -197,6 +209,7 @@ async function main(): Promise<void> {
       console.log(`  veredicto  : ${a.verdict}  (taint ${String(a.taintScore)}, umbral 60)`);
       console.log(`  contentHash: ${a.contentHash}`);
       console.log(`  admisión   : ${bought.admission.admission}`);
+      console.log(`  receipt    : ${saveReceipt(bought.admission.receipt)}  (npm run verify:receipt -- <ruta>)`);
       if (bought.anchorTx !== undefined) console.log(`  anclado    : ${tx(bought.anchorTx)}`);
       if (bought.anchorError !== undefined) console.log(`  anclaje    : falló — ${bought.anchorError}`);
       const settled = bought.settlementTx !== undefined;
@@ -222,7 +235,11 @@ async function main(): Promise<void> {
       const original = hashDeliveredContent({ bodyBytes: bought.deliveredBody, canonicalization });
       const forged = tamperedCopy(bought.deliveredBody);
       const forgedHash = hashDeliveredContent({ bodyBytes: forged, canonicalization: "raw-bytes-v1" });
-      const receiptHolds = verifyDeliveryReceipt(bought.admission.receipt, attester.publicKey);
+      // Verify against the PUBLISHED key, as a third party would — not against
+      // the key this process happens to hold.
+      const receiptHolds =
+        published !== undefined &&
+        verifyDeliveryReceipt(bought.admission.receipt, published.publicKey);
       const bindsOriginal = bought.admission.receipt.contentHash === original.contentHash;
       const rejectsForged = bought.admission.receipt.contentHash !== forgedHash.contentHash;
 

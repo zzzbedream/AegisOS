@@ -12,7 +12,11 @@
       "uploadTx": "817b58fded10d09429e29da8468a5ba177fdd407e613aed2360097df9d724d35",
       "deployTx": "62b25ed3293f770b9f82ad4e3efa1e87b2a43827408d0112e675580d1ddf9671",
       "deployer": "GDVDUXJL7S2QPIASC5AMEKMW3T5VRZNLFMMQAKLLZZDXK645FDYTYUSZ",
-      "exportedFunctions": ["anchor_delivery", "get_delivery", "seller_score"],
+      "exportedFunctions": [
+        "anchor_delivery",
+        "get_delivery",
+        "seller_score"
+      ],
       "toolchain": {
         "stellarCli": "27.0.0",
         "sorobanSdk": "27.0.6",
@@ -22,5 +26,13 @@
       "firstAnchorTx": "9746e98537a97e7f19d74d304eb7b3e626e78b9565c6874f23880e8fc5c9070b"
     }
   },
-  "note": "Testnet only. This contract anchors buyer attestations about deliveries; it does not verify x402 settlement, seller receipt, or content authenticity. See contracts/aegis-proof/src/lib.rs for the full list of what it does and does not prove."
+  "note": "Testnet only. This contract anchors buyer attestations about deliveries; it does not verify x402 settlement, seller receipt, or content authenticity. See contracts/aegis-proof/src/lib.rs for the full list of what it does and does not prove.",
+  "attester": {
+    "keyId": "ed25519:6848dcb2068c11bd1771b88e",
+    "publicKey": "MCowBQYDK2VwAyEA3JxBNrRR34PVH_55zFiAFW1yNcz4_rMpJdCDJuWVZmI",
+    "algorithm": "ed25519",
+    "encoding": "spki-der-base64url",
+    "role": "buyer",
+    "createdAt": "2026-09-24T22:07:03.649Z"
+  }
 }
