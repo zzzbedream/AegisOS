@@ -1,5 +1,5 @@
 /**
- * AegisProof against a seller we do not control.
+ * AegisOS against a seller we do not control.
  *
  *   AEGIS_BUYER_SECRET=... npm run demo:external -- "<x402 url>"
  *
@@ -144,7 +144,7 @@ async function main(): Promise<void> {
       ...(anchorClient === undefined ? {} : { anchorClient }),
     });
 
-    console.log("AegisProof · interoperabilidad con un vendedor x402 que no controlamos");
+    console.log("AegisOS · interoperabilidad con un vendedor x402 que no controlamos");
     console.log(`  endpoint : ${url}`);
     console.log(`  agente pid ${String(process.pid)} · signer aislado pid ${String(signer.pid)}`);
 

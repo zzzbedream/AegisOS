@@ -139,7 +139,7 @@ function commitmentFor(id: string, attester: ReturnType<typeof generateEd25519Ke
 
 /**
  * Run the corpus through the real admission path — `assessDelivery` plus the
- * gateway — so the metric describes what AegisProof actually does, not what a
+ * gateway — so the metric describes what AegisOS actually does, not what a
  * detector scores in isolation.
  */
 export function runCmmiCorpus(): CmmiReport {

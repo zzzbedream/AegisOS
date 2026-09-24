@@ -53,7 +53,7 @@ async function main(): Promise<void> {
   }
 
   const checks = checkReceipt(receipt, published, anchored);
-  console.log("AegisProof · verificación de receipt con datos públicos");
+  console.log("AegisOS · verificación de receipt con datos públicos");
   console.log(`  receipt  : ${file}`);
   console.log(`  veredicto: ${receipt.verdict} (atestación del comprador, no prueba contra el vendedor)`);
   console.log(`  cadena   : ${chainNote}`);

@@ -1,5 +1,5 @@
 /**
- * AegisProof — the four steps.
+ * AegisOS — the four steps.
  *
  *   AEGIS_BUYER_SECRET=... AEGIS_SELLER_ACCOUNT=G... npm run demo -w @aegisos/demo-x402
  *
@@ -148,7 +148,7 @@ async function main(): Promise<void> {
   });
 
   try {
-    console.log("AegisProof — procedencia verificable para compras agénticas");
+    console.log("AegisOS — procedencia verificable para compras agénticas");
     console.log(`  agente (pid ${String(process.pid)})  ·  signer aislado (pid ${String(signer.pid)})`);
     console.log(`  la clave vive en el signer; el agente solo tiene un canal`);
     console.log(`  contrato: ${contractId}`);
@@ -267,7 +267,7 @@ async function main(): Promise<void> {
 
     console.log("");
     line();
-    console.log("Un pago perfecto no basta. AegisProof decide si lo comprado puede");
+    console.log("Un pago perfecto no basta. AegisOS decide si lo comprado puede");
     console.log("convertirse en autoridad.");
     line();
   } finally {

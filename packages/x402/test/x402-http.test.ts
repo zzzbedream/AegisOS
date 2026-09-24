@@ -64,7 +64,7 @@ test("the seller's extra survives verbatim, including fields we never knew about
 
 test("the seller binds its inputs into the offer, not its output", () => {
   // inputHash is base64url of the query. The seller commits to what was
-  // asked; AegisProof commits to what was delivered. Complementary layers.
+  // asked; AegisOS commits to what was delivered. Complementary layers.
   const required = parsePaymentRequired(headersOf({ "Payment-Required": BAZAAR_PAYMENT_REQUIRED }));
   const inputHash = String(required.accepts[0]?.extra["inputHash"]);
 

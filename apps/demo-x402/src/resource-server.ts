@@ -21,7 +21,7 @@ export type { PaymentRequirements };
  * network, not a simulation.
  *
  * What it deliberately does NOT do is vouch for its own content. That is the
- * gap AegisProof exists to cover, and a seller that could vouch for itself
+ * gap AegisOS exists to cover, and a seller that could vouch for itself
  * would defeat the point of the demo.
  */
 
