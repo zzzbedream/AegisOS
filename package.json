@@ -18,7 +18,8 @@
     "demo:attack": "tsx apps/demo-x402/src/run.ts",
     "demo:external": "tsx apps/demo-x402/src/external.ts",
     "attester:init": "tsx apps/demo-x402/src/attester-init.ts",
-    "verify:receipt": "tsx apps/demo-x402/src/verify-receipt.ts"
+    "verify:receipt": "tsx apps/demo-x402/src/verify-receipt.ts",
+    "verify:deployment": "tsx packages/x402/scripts/verify-deployment.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
