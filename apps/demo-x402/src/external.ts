@@ -31,6 +31,7 @@ import {
   type ForkedSigner,
 } from "../../../packages/x402/src/index.js";
 import { DemoAgent, type PurchaseOutcome } from "./agent.js";
+import { describeErrorChain } from "./error-chain.js";
 
 const USDC_SAC = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA";
 const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
@@ -255,6 +256,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  console.error(error instanceof Error ? `${error.name}: ${error.message}` : error);
+  console.error(describeErrorChain(error));
   process.exitCode = 1;
 });
