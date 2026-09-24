@@ -15,6 +15,13 @@ export interface SignerGuardConfig {
   readonly allowedNetworkPassphrases: readonly string[];
   /** The signer's own account; a transfer must debit this and nothing else. */
   readonly signerAddress: string;
+  /**
+   * Commitment authorities, keyed by signature keyId, pinned when the signer
+   * process starts. Never taken from a request: if the agent could name the
+   * key that verifies its own commitment, a compromised agent would simply sign
+   * a commitment to the attacker with a key it made up.
+   */
+  readonly trustedCommitmentKeys: Readonly<Record<string, string>>;
   readonly now: () => Date;
 }
 
@@ -116,16 +123,29 @@ export function decodeTransferAuthEntry(authEntryXdr: string): DecodedTransfer {
 export function assertSignableTransfer(
   authEntryXdr: string,
   commitment: PurchaseCommitmentV1,
-  buyerPublicKey: string,
   config: SignerGuardConfig,
   networkPassphrase?: string,
 ): DecodedTransfer {
-  // 1. The commitment must be authentic. An agent that fabricates a commitment
-  //    to justify a payment gets nowhere.
-  if (!verifyPurchaseCommitment(commitment, buyerPublicKey)) {
+  // 1. The commitment must come from an authority this signer was configured
+  //    to trust — decided at launch, not by the caller. An agent that signs its
+  //    own commitment is refused even when the transfer matches it exactly.
+  const keyId = commitment.signature?.keyId;
+  // Own properties only: a keyId such as "constructor" must not resolve to
+  // something inherited from Object.prototype.
+  const trustedKey =
+    typeof keyId === "string" && Object.hasOwn(config.trustedCommitmentKeys, keyId)
+      ? config.trustedCommitmentKeys[keyId]
+      : undefined;
+  if (typeof trustedKey !== "string" || trustedKey.length === 0) {
+    throw new SignerDeniedError(
+      "COMMITMENT_KEY_UNTRUSTED",
+      "Purchase commitment is not signed by a trusted commitment authority.",
+    );
+  }
+  if (!verifyPurchaseCommitment(commitment, trustedKey)) {
     throw new SignerDeniedError(
       "COMMITMENT_SIGNATURE_INVALID",
-      "Purchase commitment does not verify under the buyer key.",
+      "Purchase commitment does not verify under its trusted authority key.",
     );
   }
 

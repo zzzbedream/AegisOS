@@ -29,7 +29,6 @@ function makeAgent(): DemoAgent {
     signer: { address: "GSTUB", pid: undefined } as unknown as ForkedSigner,
     buyer: Keypair.random(),
     attester: generateEd25519KeyPair("key:test-attester"),
-    buyerPublicKey: "GTEST",
     rpcUrl: "http://127.0.0.1:1",
   });
 }

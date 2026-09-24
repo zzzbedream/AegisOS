@@ -86,6 +86,7 @@ test("the signer runs in its own process and the agent never holds the key", asy
     network: "stellar:testnet",
     allowedAssets: { "stellar:USDC": USDC_TESTNET },
     allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
+    trustedCommitmentKeys: { [buyerIdentity.keyId]: buyerIdentity.publicKey },
     execArgv: ["--import", "tsx"],
     onAudit: (line) => audit.push(line),
   });
@@ -101,7 +102,6 @@ test("the signer runs in its own process and the agent never holds the key", asy
   const signer = await createRemoteSigner({
     transport: forked,
     commitment: commitment(),
-    buyerPublicKey: buyerIdentity.publicKey,
   });
 
   const ok = await signer.signAuthEntry(transferXdr(sellerKeypair.publicKey()), {

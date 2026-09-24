@@ -131,12 +131,13 @@ async function main(): Promise<void> {
       network: "stellar:testnet",
       allowedAssets: { "stellar:USDC": USDC_SAC },
       allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
+      trustedCommitmentKeys: { [attester.keyId]: attester.publicKey },
       execArgv: ["--import", "tsx"],
     });
 
     const anchorClient = SKIP_ANCHOR ? undefined : new AegisAnchorClient({ contractId });
     const agent = new DemoAgent({
-      signer, buyer, attester, buyerPublicKey: attester.publicKey, rpcUrl: RPC_URL,
+      signer, buyer, attester, rpcUrl: RPC_URL,
       ...(anchorClient === undefined ? {} : { anchorClient }),
     });
 
@@ -169,6 +170,18 @@ async function main(): Promise<void> {
     line();
     const wrong = await expectRefusal(agent, offer, "mem:ext-wrong", { sellerAccount: DECOY_SELLER }, "SELLER_NOT_ALLOWED");
     record("seller", "commitment names a different seller", wrong.refused ? "PASS" : "FAIL", wrong.detail);
+
+    line();
+    console.log("5  agente comprometido forja su propio commitment — el guard debe negarse (gratis)");
+    line();
+    const rogue = generateEd25519KeyPair("key:rogue-agent");
+    const forgedCommitment = await expectRefusal(agent, offer, "mem:ext-forged", { commitmentSigner: rogue }, "COMMITMENT_KEY_UNTRUSTED");
+    record(
+      "forged",
+      "agent-signed commitment, destination and amount matching it",
+      forgedCommitment.refused ? "PASS" : "FAIL",
+      forgedCommitment.detail,
+    );
 
     // ----------------------------------------------- paid: happy path
     line();

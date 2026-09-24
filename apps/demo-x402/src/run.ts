@@ -138,6 +138,7 @@ async function main(): Promise<void> {
     network: NETWORK,
     allowedAssets: { "stellar:USDC": USDC_SAC },
     allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
+    trustedCommitmentKeys: { [attester.keyId]: attester.publicKey },
     execArgv: ["--import", "tsx"],
   });
 
@@ -160,7 +161,7 @@ async function main(): Promise<void> {
 
     const anchorClient = SKIP_ANCHOR ? undefined : new AegisAnchorClient({ contractId });
     const agent = new DemoAgent({
-      signer, buyer, attester, buyerPublicKey: attester.publicKey,
+      signer, buyer, attester,
       rpcUrl: RPC_URL, ...(anchorClient === undefined ? {} : { anchorClient }),
     });
 

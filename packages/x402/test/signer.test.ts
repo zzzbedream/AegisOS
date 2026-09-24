@@ -15,6 +15,7 @@ import {
   inProcessTransport,
   type SignerAuditEntry,
 } from "../src/index.js";
+import { readSignerConfig } from "../src/signer-process.js";
 
 const USDC_TESTNET = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA";
 const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
@@ -79,7 +80,10 @@ function authEntry(shape: AuthEntryShape = {}): string {
   return entry.toXDR("base64");
 }
 
-function commitment(overrides: Partial<PurchaseCommitmentV1> = {}): PurchaseCommitmentV1 {
+function commitment(
+  overrides: Partial<PurchaseCommitmentV1> = {},
+  authority: ReturnType<typeof generateEd25519KeyPair> = buyerIdentity,
+): PurchaseCommitmentV1 {
   return createPurchaseCommitment(
     {
       version: "1",
@@ -94,7 +98,7 @@ function commitment(overrides: Partial<PurchaseCommitmentV1> = {}): PurchaseComm
       nonce: "nonce:x402-1",
       ...overrides,
     },
-    buyerIdentity,
+    authority,
   );
 }
 
@@ -104,6 +108,7 @@ function service(audit?: SignerAuditEntry[]): IsolatedSignerService {
     network: "stellar:testnet",
     allowedAssets: { "stellar:USDC": USDC_TESTNET },
     allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
+    trustedCommitmentKeys: { [buyerIdentity.keyId]: buyerIdentity.publicKey },
     now: () => NOW,
     ...(audit === undefined ? {} : { onDecision: (entry) => audit.push(entry) }),
   });
@@ -117,7 +122,6 @@ function signRequest(entryXdr: string, c: PurchaseCommitmentV1 = commitment()) {
     authEntryXdr: entryXdr,
     networkPassphrase: TESTNET_PASSPHRASE,
     commitment: c,
-    buyerPublicKey: buyerIdentity.publicKey,
   };
 }
 
@@ -203,6 +207,69 @@ test("a forged commitment cannot justify a payment", async () => {
   assert.equal(response.code, "COMMITMENT_SIGNATURE_INVALID");
 });
 
+test("an agent that signs its own commitment cannot redirect funds", async () => {
+  // The compromised-agent case: it mints a key, commits to the attacker, and
+  // builds a transfer that matches that commitment exactly. Only the key the
+  // signer was launched with may authorise a payment.
+  const rogue = generateEd25519KeyPair("key:rogue-agent");
+  const selfAuthorised = commitment(
+    { sellerId: sellerIdFromAccount(attackerKeypair.publicKey()) },
+    rogue,
+  );
+  const response = await service().handle(
+    signRequest(authEntry({ to: attackerKeypair.publicKey() }), selfAuthorised),
+  );
+
+  assert.equal(response.kind, "denied");
+  if (response.kind !== "denied") return;
+  assert.equal(response.code, "COMMITMENT_KEY_UNTRUSTED");
+});
+
+test("reusing a trusted keyId with a different key is still refused", async () => {
+  const impostor = { ...generateEd25519KeyPair(), keyId: buyerIdentity.keyId };
+  const spoofed = commitment(
+    { sellerId: sellerIdFromAccount(attackerKeypair.publicKey()) },
+    impostor,
+  );
+  const response = await service().handle(
+    signRequest(authEntry({ to: attackerKeypair.publicKey() }), spoofed),
+  );
+
+  assert.equal(response.kind, "denied");
+  if (response.kind !== "denied") return;
+  assert.equal(response.code, "COMMITMENT_SIGNATURE_INVALID");
+});
+
+test("a keyId naming an inherited property is not a trusted authority", async () => {
+  // Core refuses to sign under such a keyId, so a hostile agent writes the
+  // JSON by hand; the signer must still not resolve it to an inherited value.
+  for (const keyId of ["constructor", "__proto__", "toString"]) {
+    const signed = commitment();
+    const handcrafted = { ...signed, signature: { ...signed.signature, keyId } };
+    const response = await service().handle(signRequest(authEntry(), handcrafted));
+
+    assert.equal(response.kind, "denied");
+    if (response.kind !== "denied") continue;
+    assert.equal(response.code, "COMMITMENT_KEY_UNTRUSTED", keyId);
+  }
+});
+
+test("a request cannot smuggle in its own verification key", async () => {
+  const rogue = generateEd25519KeyPair("key:rogue-agent");
+  const response = await service().handle({
+    ...signRequest(
+      authEntry({ to: attackerKeypair.publicKey() }),
+      commitment({ sellerId: sellerIdFromAccount(attackerKeypair.publicKey()) }, rogue),
+    ),
+    buyerPublicKey: rogue.publicKey,
+    trustedCommitmentKeys: { [rogue.keyId]: rogue.publicKey },
+  });
+
+  assert.equal(response.kind, "denied");
+  if (response.kind !== "denied") return;
+  assert.equal(response.code, "COMMITMENT_KEY_UNTRUSTED");
+});
+
 test("an expired commitment cannot justify a payment", async () => {
   const stale = commitment({
     committedAt: "2027-05-10T10:00:00.000Z",
@@ -239,7 +306,6 @@ test("the agent-side signer holds a channel, never key material", async () => {
   const signer = await createRemoteSigner({
     transport: inProcessTransport(service()),
     commitment: commitment(),
-    buyerPublicKey: buyerIdentity.publicKey,
   });
 
   assert.equal(signer.address, signerKeypair.publicKey());
@@ -256,7 +322,6 @@ test("the proxy signs a committed payment and refuses a redirected one", async (
   const signer = await createRemoteSigner({
     transport: inProcessTransport(service()),
     commitment: commitment(),
-    buyerPublicKey: buyerIdentity.publicKey,
   });
 
   const ok = await signer.signAuthEntry(authEntry(), { networkPassphrase: TESTNET_PASSPHRASE });
@@ -269,4 +334,27 @@ test("the proxy signs a committed payment and refuses a redirected one", async (
       }),
     /SELLER_NOT_ALLOWED|not the committed seller/,
   );
+});
+
+// ------------------------------------------------------------ launch config
+
+test("the signer refuses to start without trusted commitment keys", () => {
+  const base = {
+    network: "stellar:testnet",
+    allowedAssets: { "stellar:USDC": USDC_TESTNET },
+    allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
+  };
+  const env = (config: unknown) => ({ AEGIS_SIGNER_CONFIG: JSON.stringify(config) });
+
+  assert.throws(() => readSignerConfig(env(base)), /incomplete/);
+  assert.throws(() => readSignerConfig(env({ ...base, trustedCommitmentKeys: {} })), /incomplete/);
+  assert.throws(
+    () => readSignerConfig(env({ ...base, trustedCommitmentKeys: { "key:a": 42 } })),
+    /incomplete/,
+  );
+
+  const ok = readSignerConfig(
+    env({ ...base, trustedCommitmentKeys: { [buyerIdentity.keyId]: buyerIdentity.publicKey } }),
+  );
+  assert.deepEqual(ok.trustedCommitmentKeys, { [buyerIdentity.keyId]: buyerIdentity.publicKey });
 });

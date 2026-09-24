@@ -33,6 +33,7 @@ export interface SignerProcessConfig {
   readonly network: Caip2Network;
   readonly allowedAssets: Readonly<Record<string, string>>;
   readonly allowedNetworkPassphrases: readonly string[];
+  readonly trustedCommitmentKeys: Readonly<Record<string, string>>;
 }
 
 export function readSignerConfig(env: NodeJS.ProcessEnv = process.env): SignerProcessConfig {
@@ -49,7 +50,13 @@ export function readSignerConfig(env: NodeJS.ProcessEnv = process.env): SignerPr
     typeof config.network !== "string" ||
     typeof config.allowedAssets !== "object" ||
     config.allowedAssets === null ||
-    !Array.isArray(config.allowedNetworkPassphrases)
+    !Array.isArray(config.allowedNetworkPassphrases) ||
+    typeof config.trustedCommitmentKeys !== "object" ||
+    config.trustedCommitmentKeys === null ||
+    Object.keys(config.trustedCommitmentKeys).length === 0 ||
+    !Object.values(config.trustedCommitmentKeys).every(
+      (key) => typeof key === "string" && key.length > 0,
+    )
   ) {
     throw new Error("AEGIS_SIGNER_CONFIG is incomplete.");
   }
@@ -57,6 +64,7 @@ export function readSignerConfig(env: NodeJS.ProcessEnv = process.env): SignerPr
     network: config.network as Caip2Network,
     allowedAssets: config.allowedAssets,
     allowedNetworkPassphrases: config.allowedNetworkPassphrases,
+    trustedCommitmentKeys: config.trustedCommitmentKeys,
   };
 }
 

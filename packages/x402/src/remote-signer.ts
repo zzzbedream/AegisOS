@@ -35,7 +35,6 @@ export interface RemoteSignerOptions {
    * general-purpose signing oracle.
    */
   readonly commitment: PurchaseCommitmentV1;
-  readonly buyerPublicKey: string;
   readonly idFactory?: () => string;
 }
 
@@ -81,7 +80,6 @@ export async function createRemoteSigner(
           : { networkPassphrase: opts.networkPassphrase }),
         ...(opts?.address === undefined ? {} : { address: opts.address }),
         commitment: options.commitment,
-        buyerPublicKey: options.buyerPublicKey,
       });
       return { signedAuthEntry, signerAddress: address };
     },

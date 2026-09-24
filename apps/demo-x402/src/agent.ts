@@ -77,6 +77,11 @@ export interface CommitmentOverrides {
   readonly maxAmountAtomic?: string;
   readonly sellerAccount?: string;
   readonly expectedContentType?: string;
+  /**
+   * Sign the commitment with a key the signer was never told to trust — what a
+   * compromised agent would do to authorise a payment of its own choosing.
+   */
+  readonly commitmentSigner?: SigningIdentityV1;
 }
 
 export interface PurchaseOutcome {
@@ -94,8 +99,11 @@ export interface PurchaseOutcome {
 export interface AgentOptions {
   readonly signer: ForkedSigner;
   readonly buyer: Keypair;
+  /**
+   * Signs commitments and receipts. Its public key is pinned in the signer at
+   * launch; the agent cannot swap in another one per request.
+   */
   readonly attester: SigningIdentityV1;
-  readonly buyerPublicKey: string;
   readonly rpcUrl: string;
   readonly anchorClient?: AegisAnchorClient;
 }
@@ -166,7 +174,7 @@ export class DemoAgent {
         expiresAt: new Date(now.getTime() + COMMITMENT_TTL_MS).toISOString(),
         nonce: `nonce:${now.getTime()}:${this.#sequence}`,
       },
-      this.#options.attester,
+      overrides.commitmentSigner ?? this.#options.attester,
     );
 
     // One signer proxy per purchase: SEP-43 has no slot for intent, so binding
@@ -175,7 +183,6 @@ export class DemoAgent {
     const remote = await createRemoteSigner({
       transport: this.#options.signer,
       commitment,
-      buyerPublicKey: this.#options.buyerPublicKey,
     });
 
     const scheme = new ExactStellarScheme(remote, { url: this.#options.rpcUrl });

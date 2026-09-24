@@ -16,6 +16,8 @@ export interface IsolatedSignerOptions {
   readonly network: Caip2Network;
   readonly allowedAssets: Readonly<Record<string, string>>;
   readonly allowedNetworkPassphrases: readonly string[];
+  /** keyId → public key of the commitment authorities this signer honours. */
+  readonly trustedCommitmentKeys: Readonly<Record<string, string>>;
   readonly now?: () => Date;
   /** Audit sink. Every decision is recorded, including the denials. */
   readonly onDecision?: (entry: SignerAuditEntry) => void;
@@ -57,6 +59,7 @@ export class IsolatedSignerService {
       allowedAssets: options.allowedAssets,
       allowedNetworkPassphrases: options.allowedNetworkPassphrases,
       signerAddress: this.#signer.address,
+      trustedCommitmentKeys: Object.freeze({ ...options.trustedCommitmentKeys }),
       now: this.#now,
     };
     this.#onDecision = options.onDecision ?? ((): void => {});
@@ -82,7 +85,6 @@ export class IsolatedSignerService {
       const transfer = assertSignableTransfer(
         request.authEntryXdr,
         request.commitment,
-        request.buyerPublicKey,
         this.#guard,
         request.networkPassphrase,
       );

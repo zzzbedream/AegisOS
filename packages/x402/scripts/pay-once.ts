@@ -64,6 +64,7 @@ async function main(): Promise<void> {
     network: NETWORK,
     allowedAssets: { "stellar:USDC": USDC_SAC },
     allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
+    trustedCommitmentKeys: { [buyerIdentity.keyId]: buyerIdentity.publicKey },
     execArgv: ["--import", "tsx"],
     onAudit: (line) => process.stderr.write(`[signer] ${line}\n`),
   });
@@ -94,7 +95,6 @@ async function main(): Promise<void> {
     const signer = await createRemoteSigner({
       transport: forked,
       commitment,
-      buyerPublicKey: buyerIdentity.publicKey,
     });
 
     // Take `extra` from what the facilitator advertises rather than guessing:

@@ -36,7 +36,6 @@ export interface SignAuthEntryRequest extends SignerRequestBase {
   readonly networkPassphrase?: string;
   readonly address?: string;
   readonly commitment: PurchaseCommitmentV1;
-  readonly buyerPublicKey: string;
 }
 
 export type SignerRequest = GetAddressRequest | SignAuthEntryRequest;
@@ -61,6 +60,7 @@ export type SignerResponse = SignerOkResponse | SignerDeniedResponse;
 export type SignerDenialCode =
   | "MALFORMED_REQUEST"
   | "UNKNOWN_OPERATION"
+  | "COMMITMENT_KEY_UNTRUSTED"
   | "COMMITMENT_SIGNATURE_INVALID"
   | "COMMITMENT_EXPIRED"
   | "SELLER_NOT_ALLOWED"
@@ -126,9 +126,6 @@ export function parseSignerRequest(value: unknown): SignerRequest {
     if (!isRecord(value["commitment"])) {
       throw new SignerDeniedError("MALFORMED_REQUEST", "A purchase commitment is required.");
     }
-    if (typeof value["buyerPublicKey"] !== "string") {
-      throw new SignerDeniedError("MALFORMED_REQUEST", "buyerPublicKey must be a string.");
-    }
     return {
       protocol: SIGNER_PROTOCOL_VERSION,
       id: value["id"],
@@ -139,7 +136,6 @@ export function parseSignerRequest(value: unknown): SignerRequest {
         : {}),
       ...(typeof value["address"] === "string" ? { address: value["address"] } : {}),
       commitment: value["commitment"] as unknown as PurchaseCommitmentV1,
-      buyerPublicKey: value["buyerPublicKey"],
     };
   }
   throw new SignerDeniedError("UNKNOWN_OPERATION", `Unsupported signer operation: ${String(kind)}`);

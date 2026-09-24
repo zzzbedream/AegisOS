@@ -8,6 +8,8 @@ export interface ForkSignerOptions {
   readonly network: string;
   readonly allowedAssets: Readonly<Record<string, string>>;
   readonly allowedNetworkPassphrases: readonly string[];
+  /** keyId → public key. Pinned here, at launch; requests cannot add to it. */
+  readonly trustedCommitmentKeys: Readonly<Record<string, string>>;
   /**
    * Path to a file containing the secret. Preferred: the parent passes the
    * path, so the agent process never holds the key bytes.
@@ -54,6 +56,7 @@ export async function forkSigner(options: ForkSignerOptions): Promise<ForkedSign
         network: options.network,
         allowedAssets: options.allowedAssets,
         allowedNetworkPassphrases: options.allowedNetworkPassphrases,
+        trustedCommitmentKeys: options.trustedCommitmentKeys,
       }),
       ...(options.secretFile === undefined ? {} : { AEGIS_SIGNER_SECRET_FILE: options.secretFile }),
       ...(options.secret === undefined ? {} : { AEGIS_SIGNER_SECRET: options.secret }),
