@@ -15,6 +15,10 @@
 //!   - That `content_hash` matches the HTTP body actually received.
 //!   - That a Mismatch/Tainted verdict is truthful.
 //!   - That buyer and seller are not the same party inflating reputation.
+//!   - For a batch: that the root has `count` leaves, that every leaf is an
+//!     OK delivery, or that a payment appears in only one batch. Inclusion of
+//!     a receipt is proven off-chain against the root; the contract never sees
+//!     the leaves.
 //!
 //! Therefore `seller_score` is an immutable aggregate of anchored attestations,
 //! NOT an objective measure of service quality. Evaluation happens off-chain
@@ -51,6 +55,11 @@ const DAY_IN_LEDGERS: u32 = 17_280;
 const RECORD_BUMP_AMOUNT: u32 = 30 * DAY_IN_LEDGERS;
 const RECORD_LIFETIME_THRESHOLD: u32 = RECORD_BUMP_AMOUNT - 5 * DAY_IN_LEDGERS;
 
+/// Upper bound on the deliveries one batch may claim. The contract cannot see
+/// the leaves behind a root, so `count` is the buyer's word; the cap bounds how
+/// much OK history a single cheap transaction can assert.
+pub const MAX_BATCH_COUNT: u32 = 1_024;
+
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 #[repr(u32)]
@@ -59,6 +68,9 @@ pub enum Error {
     ZeroHash = 2,
     CounterOverflow = 3,
     SelfDealing = 4,
+    EmptyBatch = 5,
+    BatchTooLarge = 6,
+    DuplicateBatch = 7,
 }
 
 #[contracttype]
@@ -106,7 +118,37 @@ pub struct SellerScore {
     pub mismatch: u32,
     pub not_delivered: u32,
     pub disputed: u32,
+    /// Individually anchored records only.
     pub total: u32,
+    /// OK deliveries asserted through batches. Kept apart from `ok` because a
+    /// batch count is not backed by one record per delivery, so consumers must
+    /// be able to weight it lower.
+    pub batched_ok: u32,
+}
+
+/// A Merkle root over OK delivery receipts to one seller.
+///
+/// Anchoring every micropayment individually costs more than the payment; a
+/// batch amortises one write over up to `MAX_BATCH_COUNT` deliveries. Only OK
+/// verdicts are batched: exceptions stay individual so they are visible per
+/// payment, immediately.
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BatchInput {
+    pub buyer: Address,
+    pub seller: Address,
+    pub root: BytesN<32>,
+    pub count: u32,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BatchRecord {
+    pub buyer: Address,
+    pub seller: Address,
+    pub root: BytesN<32>,
+    pub count: u32,
+    pub anchored_at: u64,
 }
 
 #[contracttype]
@@ -114,6 +156,7 @@ pub struct SellerScore {
 pub enum DataKey {
     Delivery(BytesN<32>),
     SellerScore(Address),
+    Batch(BytesN<32>),
 }
 
 /// Emitted on every successful anchor. `payment_hash` and `seller` are topics
@@ -129,6 +172,18 @@ pub struct DeliveryAnchored {
     pub commitment_hash: BytesN<32>,
     pub content_hash: BytesN<32>,
     pub verdict: Verdict,
+}
+
+/// Emitted on every successful batch anchor.
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BatchAnchored {
+    #[topic]
+    pub root: BytesN<32>,
+    #[topic]
+    pub seller: Address,
+    pub buyer: Address,
+    pub count: u32,
 }
 
 fn is_zero(env: &Env, value: &BytesN<32>) -> bool {
@@ -210,6 +265,77 @@ impl AegisProof {
         .publish(&env);
 
         Ok(())
+    }
+
+    /// Anchor a Merkle root over OK deliveries from one buyer to one seller.
+    ///
+    /// Proves only that this buyer committed to this root; inclusion of any
+    /// given receipt is checked off-chain against the root. The contract does
+    /// not enforce payment-hash uniqueness inside a batch — it never sees the
+    /// leaves.
+    pub fn anchor_batch(env: Env, input: BatchInput) -> Result<(), Error> {
+        input.buyer.require_auth();
+
+        if input.buyer == input.seller {
+            return Err(Error::SelfDealing);
+        }
+        if is_zero(&env, &input.root) {
+            return Err(Error::ZeroHash);
+        }
+        if input.count == 0 {
+            return Err(Error::EmptyBatch);
+        }
+        if input.count > MAX_BATCH_COUNT {
+            return Err(Error::BatchTooLarge);
+        }
+
+        let batch_key = DataKey::Batch(input.root.clone());
+        if env.storage().persistent().has(&batch_key) {
+            return Err(Error::DuplicateBatch);
+        }
+
+        let score_key = DataKey::SellerScore(input.seller.clone());
+        let mut score: SellerScore = env
+            .storage()
+            .persistent()
+            .get(&score_key)
+            .unwrap_or_default();
+        score.batched_ok = score
+            .batched_ok
+            .checked_add(input.count)
+            .ok_or(Error::CounterOverflow)?;
+
+        let record = BatchRecord {
+            buyer: input.buyer.clone(),
+            seller: input.seller.clone(),
+            root: input.root.clone(),
+            count: input.count,
+            anchored_at: env.ledger().timestamp(),
+        };
+
+        env.storage().persistent().set(&batch_key, &record);
+        env.storage().persistent().set(&score_key, &score);
+        bump(&env, &batch_key);
+        bump(&env, &score_key);
+
+        BatchAnchored {
+            root: record.root.clone(),
+            seller: record.seller.clone(),
+            buyer: record.buyer.clone(),
+            count: record.count,
+        }
+        .publish(&env);
+
+        Ok(())
+    }
+
+    pub fn get_batch(env: Env, root: BytesN<32>) -> Option<BatchRecord> {
+        let key = DataKey::Batch(root);
+        let record: Option<BatchRecord> = env.storage().persistent().get(&key);
+        if record.is_some() {
+            bump(&env, &key);
+        }
+        record
     }
 
     pub fn get_delivery(env: Env, payment_hash: BytesN<32>) -> Option<DeliveryRecord> {

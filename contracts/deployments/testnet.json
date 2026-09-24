@@ -5,6 +5,29 @@
   "rpcUrl": "https://soroban-testnet.stellar.org",
   "contracts": {
     "aegis-proof": {
+      "contractId": "CD4BMCIKKOCVM66NYSC4LGWUWS4Z5ZMBU3KCVCSGZYI726ZVL7NZ2ZOF",
+      "version": 2,
+      "wasmHash": "1b99534ee1a560e135d49663932350f7a6e590b82b23a6a8e7655d4f912ed1b5",
+      "wasmBytes": 9460,
+      "deployedAt": "2026-09-24",
+      "deployTx": "fe0d85cc23f5cadf893e4ceefd0b089ac6860bb1aba9255dcb1262079c4f666c",
+      "deployer": "GDVDUXJL7S2QPIASC5AMEKMW3T5VRZNLFMMQAKLLZZDXK645FDYTYUSZ",
+      "exportedFunctions": [
+        "anchor_delivery",
+        "anchor_batch",
+        "get_delivery",
+        "get_batch",
+        "seller_score"
+      ],
+      "maxBatchCount": 1024,
+      "toolchain": {
+        "stellarCli": "27.0.0",
+        "sorobanSdk": "27.0.6",
+        "rustc": "1.92.0",
+        "target": "wasm32v1-none"
+      }
+    },
+    "aegis-proof-v1": {
       "contractId": "CBG2DFZBHC3MEBN4UIVIVVNZX4YGI6TMRVRIK3TD4CVFKHMIKDXIJXZV",
       "wasmHash": "3f5f841c3e04c2df6e49ad87c4599ea5301b306e148b01f06f98b5dd5306c7af",
       "wasmBytes": 6393,
@@ -23,7 +46,10 @@
         "rustc": "1.92.0",
         "target": "wasm32v1-none"
       },
-      "firstAnchorTx": "9746e98537a97e7f19d74d304eb7b3e626e78b9565c6874f23880e8fc5c9070b"
+      "firstAnchorTx": "9746e98537a97e7f19d74d304eb7b3e626e78b9565c6874f23880e8fc5c9070b",
+      "status": "superseded",
+      "supersededBy": "CD4BMCIKKOCVM66NYSC4LGWUWS4Z5ZMBU3KCVCSGZYI726ZVL7NZ2ZOF",
+      "note": "Individual anchors only. Receipts anchored before 2026-09-24 remain verifiable here."
     }
   },
   "note": "Testnet only. This contract anchors buyer attestations about deliveries; it does not verify x402 settlement, seller receipt, or content authenticity. See contracts/aegis-proof/src/lib.rs for the full list of what it does and does not prove.",

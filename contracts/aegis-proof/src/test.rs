@@ -214,6 +214,7 @@ fn score_counter_overflow_is_checked() {
             not_delivered: 0,
             disputed: 0,
             total: u32::MAX,
+            batched_ok: 0,
         };
         f.env.storage().persistent().set(&key, &maxed);
     });
@@ -244,4 +245,131 @@ fn events_contain_payment_hash_and_seller() {
         f.env.events().all(),
         [expected.to_xdr(&f.env, &f.contract_id)]
     );
+}
+
+// ------------------------------------------------------------------ batches
+
+fn batch(f: &Fixture, root: u8, count: u32) -> BatchInput {
+    BatchInput {
+        buyer: f.buyer.clone(),
+        seller: f.seller.clone(),
+        root: hash(&f.env, root),
+        count,
+    }
+}
+
+#[test]
+fn batch_counts_apart_from_individual_ok() {
+    let f = setup();
+    f.env.mock_all_auths();
+    f.client.anchor_delivery(&input(&f, 20, Verdict::Ok));
+    f.client.anchor_batch(&batch(&f, 0xB1, 100));
+
+    let score = f.client.seller_score(&f.seller);
+    assert_eq!(score.ok, 1);
+    assert_eq!(score.total, 1);
+    assert_eq!(score.batched_ok, 100);
+}
+
+#[test]
+fn batch_record_is_stamped_by_the_ledger() {
+    let f = setup();
+    f.env.mock_all_auths();
+    f.client.anchor_batch(&batch(&f, 0xB2, 7));
+
+    let record = f.client.get_batch(&hash(&f.env, 0xB2)).unwrap();
+    assert_eq!(record.buyer, f.buyer);
+    assert_eq!(record.seller, f.seller);
+    assert_eq!(record.count, 7);
+    assert_eq!(record.anchored_at, NOW);
+    assert_eq!(f.client.get_batch(&hash(&f.env, 0xEE)), None);
+}
+
+#[test]
+fn a_root_cannot_be_anchored_twice() {
+    let f = setup();
+    f.env.mock_all_auths();
+    f.client.anchor_batch(&batch(&f, 0xB3, 5));
+
+    assert_eq!(
+        f.client.try_anchor_batch(&batch(&f, 0xB3, 500)),
+        Err(Ok(Error::DuplicateBatch))
+    );
+    assert_eq!(f.client.seller_score(&f.seller).batched_ok, 5);
+}
+
+#[test]
+fn empty_oversized_zero_root_and_self_dealing_batches_are_rejected() {
+    let f = setup();
+    f.env.mock_all_auths();
+
+    assert_eq!(f.client.try_anchor_batch(&batch(&f, 0xB4, 0)), Err(Ok(Error::EmptyBatch)));
+    assert_eq!(
+        f.client.try_anchor_batch(&batch(&f, 0xB4, MAX_BATCH_COUNT + 1)),
+        Err(Ok(Error::BatchTooLarge))
+    );
+    assert_eq!(f.client.try_anchor_batch(&batch(&f, 0, 1)), Err(Ok(Error::ZeroHash)));
+
+    let mut own = batch(&f, 0xB5, 1);
+    own.seller = f.buyer.clone();
+    assert_eq!(f.client.try_anchor_batch(&own), Err(Ok(Error::SelfDealing)));
+
+    // The cap is inclusive.
+    f.client.anchor_batch(&batch(&f, 0xB6, MAX_BATCH_COUNT));
+    assert_eq!(f.client.seller_score(&f.seller).batched_ok, MAX_BATCH_COUNT);
+}
+
+#[test]
+#[should_panic(expected = "Auth, InvalidAction")]
+fn only_batch_buyer_can_anchor_it() {
+    let f = setup();
+    let mallory = Address::generate(&f.env);
+    let record = batch(&f, 0xB7, 3);
+
+    f.env.mock_auths(&[MockAuth {
+        address: &mallory,
+        invoke: &MockAuthInvoke {
+            contract: &f.contract_id,
+            fn_name: "anchor_batch",
+            args: (record.clone(),).into_val(&f.env),
+            sub_invokes: &[],
+        },
+    }]);
+
+    f.client.anchor_batch(&record);
+}
+
+#[test]
+fn batched_counter_overflow_is_checked() {
+    let f = setup();
+    f.env.mock_all_auths();
+    f.env.as_contract(&f.contract_id, || {
+        let key = DataKey::SellerScore(f.seller.clone());
+        let maxed = SellerScore {
+            batched_ok: u32::MAX,
+            ..SellerScore::default()
+        };
+        f.env.storage().persistent().set(&key, &maxed);
+    });
+
+    assert_eq!(
+        f.client.try_anchor_batch(&batch(&f, 0xB8, 1)),
+        Err(Ok(Error::CounterOverflow))
+    );
+}
+
+#[test]
+fn batch_event_carries_root_and_seller() {
+    let f = setup();
+    f.env.mock_all_auths();
+    let record = batch(&f, 0xB9, 42);
+    f.client.anchor_batch(&record);
+
+    let expected = BatchAnchored {
+        root: record.root.clone(),
+        seller: record.seller.clone(),
+        buyer: record.buyer.clone(),
+        count: 42,
+    };
+    assert_eq!(f.env.events().all(), [expected.to_xdr(&f.env, &f.contract_id)]);
 }
