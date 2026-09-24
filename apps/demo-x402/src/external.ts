@@ -32,7 +32,7 @@ import {
 } from "../../../packages/x402/src/index.js";
 import { DemoAgent, type PurchaseOutcome } from "./agent.js";
 import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
-import { saveReceipt } from "./receipt-check.js";
+import { reportFlushedBatches, saveIndividualReceipt } from "./anchor-report.js";
 import { describeErrorChain } from "./error-chain.js";
 
 const USDC_SAC = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA";
@@ -209,7 +209,8 @@ async function main(): Promise<void> {
       console.log(`  veredicto  : ${a.verdict}  (taint ${String(a.taintScore)}, umbral 60)`);
       console.log(`  contentHash: ${a.contentHash}`);
       console.log(`  admisión   : ${bought.admission.admission}`);
-      console.log(`  receipt    : ${saveReceipt(bought.admission.receipt)}  (npm run verify:receipt -- <ruta>)`);
+      const savedNow = saveIndividualReceipt(bought, contractId);
+      if (savedNow !== undefined) console.log(`  receipt    : ${savedNow}  (npm run verify:receipt -- <ruta>)`);
       if (bought.anchorTx !== undefined) console.log(`  anclado    : ${tx(bought.anchorTx)}`);
       if (bought.anchorError !== undefined) console.log(`  anclaje    : falló — ${bought.anchorError}`);
       const settled = bought.settlementTx !== undefined;
@@ -221,6 +222,21 @@ async function main(): Promise<void> {
         ok
           ? `settled and admitted as OK; settlement read from PAYMENT-RESPONSE`
           : `verdict ${a.verdict}, settlement ${settled ? "read" : "MISSING"}`,
+      );
+    }
+
+    if (agent.pendingAnchors > 0) {
+      line();
+      console.log("   anclaje en lote — las compras OK comparten una transacción");
+      line();
+      const batches = await agent.flushBatches();
+      const saved = reportFlushedBatches(batches, contractId);
+      const anchored = batches.every((b) => b.anchorTx !== undefined);
+      record(
+        "batch",
+        "OK receipts anchored as one Merkle root",
+        anchored ? "PASS" : "FAIL",
+        anchored ? `${String(saved.length)} receipt(s) saved with inclusion proofs` : "batch anchor failed",
       );
     }
 

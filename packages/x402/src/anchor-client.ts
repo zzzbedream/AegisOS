@@ -22,6 +22,7 @@ const BASE_FEE = "1000000";
 const TX_TIMEOUT_SECONDS = 60;
 const POLL_INTERVAL_MS = 1000;
 const POLL_ATTEMPTS = 30;
+const READ_RETRY_DELAY_MS = 1000;
 
 /** Contract-side `Verdict` arm names, which differ in case from ours. */
 const VERDICT_ARM: Readonly<Record<DeliveryVerdict, string>> = {
@@ -137,6 +138,39 @@ export function decodeDeliveryRecord(native: unknown): AnchoredDeliveryV1 | unde
   });
 }
 
+/** Mirrors the contract's MAX_BATCH_COUNT. */
+export const MAX_BATCH_COUNT = 1_024;
+
+export interface AnchoredBatchV1 {
+  readonly buyer: string;
+  readonly seller: string;
+  readonly root: string;
+  readonly count: number;
+  readonly anchoredAt: number;
+}
+
+export function decodeBatchRecord(native: unknown): AnchoredBatchV1 | undefined {
+  if (native === null || native === undefined) return undefined;
+  if (typeof native !== "object") {
+    throw new AnchorClientError("BAD_RECORD", "get_batch returned a non-struct value.");
+  }
+  const raw = native as Record<string, unknown>;
+  if (typeof raw["buyer"] !== "string" || typeof raw["seller"] !== "string") {
+    throw new AnchorClientError("BAD_RECORD", "buyer and seller must be addresses.");
+  }
+  const count = Number(raw["count"]);
+  if (!Number.isInteger(count) || count < 1) {
+    throw new AnchorClientError("BAD_RECORD", "count must be a positive integer.");
+  }
+  return Object.freeze({
+    buyer: raw["buyer"],
+    seller: raw["seller"],
+    root: bytesToHex(raw["root"], "root"),
+    count,
+    anchoredAt: Number(raw["anchored_at"] ?? 0),
+  });
+}
+
 export interface AnchorClientOptions {
   readonly contractId: string;
   readonly rpcUrl?: string;
@@ -192,41 +226,7 @@ export class AegisAnchorClient {
       verdict: receipt.verdict,
     });
 
-    const source = await this.#server.getAccount(buyer.publicKey());
-    const built = new TransactionBuilder(source, {
-      fee: BASE_FEE,
-      networkPassphrase: this.#passphrase,
-    })
-      .addOperation(this.#contract.call("anchor_delivery", arg))
-      .setTimeout(TX_TIMEOUT_SECONDS)
-      .build();
-
-    const prepared = await this.#server.prepareTransaction(built);
-    prepared.sign(buyer);
-
-    const sent = await this.#server.sendTransaction(prepared);
-    if (sent.status === "ERROR") {
-      throw new AnchorClientError(
-        "SUBMIT_FAILED",
-        `Anchor submission rejected: ${JSON.stringify(sent.errorResult ?? sent.status)}`,
-      );
-    }
-
-    const hash = sent.hash;
-    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt += 1) {
-      const result = await this.#server.getTransaction(hash);
-      if (result.status === "SUCCESS") {
-        return {
-          transactionHash: hash,
-          explorerUrl: `https://stellar.expert/explorer/testnet/tx/${hash}`,
-        };
-      }
-      if (result.status === "FAILED") {
-        throw new AnchorClientError("ANCHOR_FAILED", `Anchor failed on-chain (tx ${hash}).`);
-      }
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-    }
-    throw new AnchorClientError("ANCHOR_TIMEOUT", `Anchor not confirmed within timeout (tx ${hash}).`);
+    return this.#submit(this.#contract.call("anchor_delivery", arg), buyer);
   }
 
   /**
@@ -259,6 +259,7 @@ export class AegisAnchorClient {
       notDelivered: count("not_delivered"),
       disputed: count("disputed"),
       total: count("total"),
+      batchedOk: count("batched_ok"),
       asOf: new Date().toISOString(),
     });
   }
@@ -282,7 +283,94 @@ export class AegisAnchorClient {
     return retval === undefined ? undefined : decodeDeliveryRecord(scValToNative(retval));
   }
 
+  /**
+   * Anchor a Merkle root over OK receipts from `buyer` to one seller. One
+   * transaction for up to MAX_BATCH_LEAVES deliveries, instead of one each.
+   */
+  public async anchorBatch(
+    input: { readonly sellerId: SellerId; readonly root: string; readonly count: number },
+    buyer: Keypair,
+  ): Promise<AnchorResult> {
+    const seller = accountFromSellerId(input.sellerId);
+    if (seller === buyer.publicKey()) {
+      throw new AnchorClientError("SELF_DEALING", "Buyer and seller are the same account; the contract rejects it.");
+    }
+    if (!Number.isInteger(input.count) || input.count < 1 || input.count > MAX_BATCH_COUNT) {
+      throw new AnchorClientError("BAD_BATCH_COUNT", `Batch count must be 1..${String(MAX_BATCH_COUNT)}.`);
+    }
+    const field = (key: string, val: xdr.ScVal): xdr.ScMapEntry =>
+      new xdr.ScMapEntry({ key: xdr.ScVal.scvSymbol(key), val });
+    // Keys in sorted order, as the host requires for contracttype structs.
+    const arg = xdr.ScVal.scvMap([
+      field("buyer", new Address(buyer.publicKey()).toScVal()),
+      field("count", xdr.ScVal.scvU32(input.count)),
+      field("root", hashToBytes(input.root, "root")),
+      field("seller", new Address(seller).toScVal()),
+    ]);
+    return this.#submit(this.#contract.call("anchor_batch", arg), buyer);
+  }
+
+  /** Read an anchored batch by root, or `undefined`. Needs no secret. */
+  public async getBatch(root: string, readerAccount: string): Promise<AnchoredBatchV1 | undefined> {
+    const retval = await this.#simulateRead("get_batch", [hashToBytes(root, "root")], readerAccount);
+    return retval === undefined ? undefined : decodeBatchRecord(scValToNative(retval));
+  }
+
+  async #submit(operation: xdr.Operation, buyer: Keypair): Promise<AnchorResult> {
+    const source = await this.#server.getAccount(buyer.publicKey());
+    const built = new TransactionBuilder(source, {
+      fee: BASE_FEE,
+      networkPassphrase: this.#passphrase,
+    })
+      .addOperation(operation)
+      .setTimeout(TX_TIMEOUT_SECONDS)
+      .build();
+
+    const prepared = await this.#server.prepareTransaction(built);
+    prepared.sign(buyer);
+
+    const sent = await this.#server.sendTransaction(prepared);
+    if (sent.status === "ERROR") {
+      throw new AnchorClientError(
+        "SUBMIT_FAILED",
+        `Anchor submission rejected: ${JSON.stringify(sent.errorResult ?? sent.status)}`,
+      );
+    }
+
+    const hash = sent.hash;
+    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt += 1) {
+      const result = await this.#server.getTransaction(hash);
+      if (result.status === "SUCCESS") {
+        return {
+          transactionHash: hash,
+          explorerUrl: `https://stellar.expert/explorer/testnet/tx/${hash}`,
+        };
+      }
+      if (result.status === "FAILED") {
+        throw new AnchorClientError("ANCHOR_FAILED", `Anchor failed on-chain (tx ${hash}).`);
+      }
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    }
+    throw new AnchorClientError("ANCHOR_TIMEOUT", `Anchor not confirmed within timeout (tx ${hash}).`);
+  }
+
   async #simulateRead(
+    method: string,
+    args: readonly xdr.ScVal[],
+    readerAccount: string,
+  ): Promise<xdr.ScVal | undefined> {
+    // Reads change nothing, so one retry is safe. Testnet RPC occasionally
+    // answers "Account not found" for an account that exists.
+    try {
+      return await this.#simulateReadOnce(method, args, readerAccount);
+    } catch (error: unknown) {
+      if (error instanceof AnchorClientError) throw error;
+      await new Promise((resolve) => setTimeout(resolve, READ_RETRY_DELAY_MS));
+      return this.#simulateReadOnce(method, args, readerAccount);
+    }
+  }
+
+  async #simulateReadOnce(
     method: string,
     args: readonly xdr.ScVal[],
     readerAccount: string,

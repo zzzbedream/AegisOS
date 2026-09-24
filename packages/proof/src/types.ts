@@ -132,6 +132,11 @@ export interface SellerScoreV1 {
   readonly notDelivered: number;
   readonly disputed: number;
   readonly total: number;
+  /**
+   * OK deliveries asserted through anchored batches. Kept apart from `ok`: a
+   * batch count is the buyer's word, not one record per delivery.
+   */
+  readonly batchedOk?: number;
   readonly asOf?: string;
 }
 

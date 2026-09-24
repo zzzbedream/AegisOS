@@ -31,7 +31,7 @@ import {
 import { AegisAnchorClient, forkSigner } from "../../../packages/x402/src/index.js";
 import { DemoAgent, type PurchaseOutcome } from "./agent.js";
 import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
-import { saveReceipt } from "./receipt-check.js";
+import { reportFlushedBatches, saveIndividualReceipt } from "./anchor-report.js";
 import { honestMarketData, poisonedMarketData } from "./catalog.js";
 import { startSeller, type PaymentRequirements, type SellerHandle } from "./resource-server.js";
 
@@ -94,7 +94,7 @@ function requirements(payTo: string, extra: Record<string, unknown>): PaymentReq
   };
 }
 
-function reportPurchase(outcome: PurchaseOutcome): void {
+function reportPurchase(outcome: PurchaseOutcome, contractId: string): void {
   const a = outcome.admission;
   console.log(`  pago liquidado   : ${outcome.settlementTx === undefined ? "NO" : tx(outcome.settlementTx)}`);
   console.log(`  veredicto        : ${a.assessment.verdict}${a.assessment.reasons.length > 0 ? ` (${a.assessment.reasons.join(", ")})` : ""}`);
@@ -103,12 +103,14 @@ function reportPurchase(outcome: PurchaseOutcome): void {
   console.log(`  taintScore       : ${String(a.assessment.taintScore)} (umbral 60; base 35 por ser contenido externo)`);
   console.log(`  contentHash      : ${a.assessment.contentHash.slice(0, 24)}…`);
   console.log(`  admisión         : ${a.admission}`);
-  console.log(`  receipt          : ${saveReceipt(a.receipt)}`);
+  const saved = saveIndividualReceipt(outcome, contractId);
+  if (saved !== undefined) console.log(`  receipt          : ${saved}`);
   if (a.assessment.riskSignals.length > 0) {
     console.log(`  señal            : ${a.assessment.riskSignals[0]?.evidence ?? ""}`);
   }
   if (outcome.anchorTx !== undefined) console.log(`  anclado on-chain : ${tx(outcome.anchorTx)}`);
   if (outcome.anchorError !== undefined) console.log(`  anclaje falló    : ${outcome.anchorError}`);
+  if (outcome.anchorPending === true) console.log("  anclaje          : OK → en lote (se ancla junto con otras compras)");
 }
 
 async function main(): Promise<void> {
@@ -176,7 +178,7 @@ async function main(): Promise<void> {
     const clean = await agent.buy({
       resourceUrl: good.url, requirements: requirements(sellerAccount, extra), memoryId: "mem:clean",
     });
-    reportPurchase(clean);
+    reportPurchase(clean, contractId);
     console.log(`  en contexto      : ${String(agent.gateway.retrieve().length)} ítem(s)`);
 
     // ---------------------------------------------------------------- paso 2
@@ -184,7 +186,7 @@ async function main(): Promise<void> {
     const poisoned = await agent.buy({
       resourceUrl: evil.url, requirements: requirements(sellerAccount, extra), memoryId: "mem:poisoned",
     });
-    reportPurchase(poisoned);
+    reportPurchase(poisoned, contractId);
     console.log("");
     console.log("  x402 hizo su trabajo: el dinero se movió y el recibo es válido.");
     console.log("  Lo que falló fue el contenido — y eso ningún riel de pago lo mide.");
@@ -194,6 +196,13 @@ async function main(): Promise<void> {
     console.log(`  almacenado       : ${String(stored.length)} ítem(s) · utilizable en contexto: ${String(usable.length)} (solo el del paso 1)`);
     console.log(`  la compra envenenada está guardada para revisión, pero redactada`);
     console.log(`  dirección del atacante visible en contexto: ${leaked ? "SÍ (fallo)" : "NO"}`);
+
+    if (agent.pendingAnchors > 0) {
+      console.log("");
+      console.log("  Las excepciones se anclan al instante, una por una. Las compras OK");
+      console.log("  se agrupan: una raíz Merkle por vendedor, una sola transacción.");
+      reportFlushedBatches(await agent.flushBatches(), contractId);
+    }
 
     // ---------------------------------------------------------------- paso 3
     step(3, "corte de cascada — el gasto siguiente no llega a existir");
@@ -257,7 +266,7 @@ async function main(): Promise<void> {
       console.log("  (omitido: AEGIS_SKIP_ANCHOR=1)");
     } else {
       const score = await anchorClient.sellerScore(sellerId, buyer);
-      console.log(`  seller_score     : ok=${String(score.ok)} tainted=${String(score.tainted)} mismatch=${String(score.mismatch)} total=${String(score.total)}`);
+      console.log(`  seller_score     : ok=${String(score.ok)} tainted=${String(score.tainted)} mismatch=${String(score.mismatch)} total=${String(score.total)} · ok en lotes=${String(score.batchedOk ?? 0)}`);
       const abstention = shouldAbstainFromPurchase(score, { maxTainted: 0 });
       console.log(`  política local   : ${abstention.abstain ? "ABSTENERSE" : "comprar"}  [${abstention.reasons.join(", ")}]`);
       console.log("");

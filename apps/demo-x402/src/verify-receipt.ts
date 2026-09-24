@@ -3,18 +3,25 @@
  *
  *   npm run verify:receipt -- .aegis/receipts/<paymentHash>.json
  *
- * Checks the signature against the attester key published next to the contract
- * ID, then compares the receipt with the record anchored on Soroban. Needs no
- * secret; set AEGIS_SKIP_CHAIN=1 to check the signature offline.
+ * Checks the signature against the attester key published next to the
+ * contract IDs, then checks the chain: an individually anchored receipt
+ * against its `get_delivery` record, a batched one by recomputing its Merkle
+ * path up to the root `get_batch` returns. Needs no secret; set
+ * AEGIS_SKIP_CHAIN=1 to check the signature offline.
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import type { DeliveryReceiptV1 } from "../../../packages/proof/src/index.js";
-import { AegisAnchorClient, type AnchoredDeliveryV1 } from "../../../packages/x402/src/index.js";
+import { AegisAnchorClient } from "../../../packages/x402/src/index.js";
 import { readPublishedAttester } from "./attester.js";
 import { describeErrorChain } from "./error-chain.js";
-import { checkReceipt } from "./receipt-check.js";
+import {
+  batchChecks,
+  individualChecks,
+  readReceiptFile,
+  signatureChecks,
+  type ReceiptCheck,
+} from "./receipt-check.js";
 
 const DEPLOYMENTS = fileURLToPath(
   new URL("../../../contracts/deployments/testnet.json", import.meta.url),
@@ -31,28 +38,62 @@ async function main(): Promise<void> {
   if (file === undefined || file.length === 0) {
     throw new Error("Usage: npm run verify:receipt -- <receipt.json>");
   }
-  const receipt = JSON.parse(readFileSync(file, "utf8")) as DeliveryReceiptV1;
+  const { receipt, anchor } = readReceiptFile(JSON.parse(readFileSync(file, "utf8")) as unknown);
   const deploymentsRaw = JSON.parse(readFileSync(DEPLOYMENTS, "utf8")) as unknown;
   const published = readPublishedAttester(deploymentsRaw);
   if (published === undefined) {
     throw new Error("No attester published in contracts/deployments/testnet.json. Run: npm run attester:init");
   }
   const deployments = deploymentsRaw as Deployments;
-  const contract = deployments.contracts["aegis-proof"];
-
-  let anchored: AnchoredDeliveryV1 | undefined;
-  let chainNote = "omitido (AEGIS_SKIP_CHAIN=1)";
-  if (!SKIP_CHAIN && contract !== undefined && contract.deployer !== undefined) {
-    const client = new AegisAnchorClient({
-      contractId: contract.contractId,
+  const contracts = Object.values(deployments.contracts);
+  // Any published account can be the simulation source; the deployer is public.
+  const reader = contracts.find((c) => c.deployer !== undefined)?.deployer ?? "";
+  const clientFor = (contractId: string): AegisAnchorClient =>
+    new AegisAnchorClient({
+      contractId,
       ...(deployments.rpcUrl === undefined ? {} : { rpcUrl: deployments.rpcUrl }),
     });
-    // Any existing account can be the simulation source; the deployer is public.
-    anchored = await client.getDelivery(receipt.paymentHash, contract.deployer);
-    chainNote = anchored === undefined ? "NO hay registro anclado para este pago" : `anclado en ledger time ${String(anchored.anchoredAt)}`;
+
+  const checks: ReceiptCheck[] = [...signatureChecks(receipt, published)];
+  let chainNote = "omitido (AEGIS_SKIP_CHAIN=1)";
+
+  if (!SKIP_CHAIN) {
+    const known = anchor === undefined || contracts.some((c) => c.contractId === anchor.contractId);
+    checks.push({
+      name: "anchored in a published AegisOS contract",
+      pass: known,
+      detail: anchor === undefined ? "legacy receipt: searching every published contract" : anchor.contractId,
+    });
+
+    if (known && anchor?.mode === "batch") {
+      const batch = await clientFor(anchor.contractId).getBatch(anchor.root, reader);
+      if (batch === undefined) {
+        checks.push({ name: "batch root anchored on-chain", pass: false, detail: `no batch ${anchor.root}` });
+        chainNote = "la raíz del lote NO está anclada";
+      } else {
+        checks.push(...batchChecks(receipt, anchor.proof, batch));
+        chainNote = `lote de ${String(batch.count)} compra(s), anclado en ledger time ${String(batch.anchoredAt)}`;
+      }
+    } else if (known) {
+      const candidates =
+        anchor === undefined ? contracts.map((c) => c.contractId) : [anchor.contractId];
+      let found = false;
+      for (const contractId of candidates) {
+        const record = await clientFor(contractId).getDelivery(receipt.paymentHash, reader);
+        if (record !== undefined) {
+          checks.push(...individualChecks(receipt, record));
+          chainNote = `anclaje individual en ${contractId.slice(0, 8)}…, ledger time ${String(record.anchoredAt)}`;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        checks.push({ name: "record anchored on-chain", pass: false, detail: "no record for this payment" });
+        chainNote = "NO hay registro anclado para este pago";
+      }
+    }
   }
 
-  const checks = checkReceipt(receipt, published, anchored);
   console.log("AegisOS · verificación de receipt con datos públicos");
   console.log(`  receipt  : ${file}`);
   console.log(`  veredicto: ${receipt.verdict} (atestación del comprador, no prueba contra el vendedor)`);
@@ -60,8 +101,7 @@ async function main(): Promise<void> {
   for (const check of checks) {
     console.log(`  ${check.pass ? "PASS" : "FAIL"}  ${check.name} — ${check.detail}`);
   }
-  const anchoredMissing = !SKIP_CHAIN && anchored === undefined;
-  const ok = checks.every((check) => check.pass) && !anchoredMissing;
+  const ok = checks.every((check) => check.pass);
   console.log(ok ? "Receipt verificado." : "El receipt NO verifica.");
   process.exitCode = ok ? 0 : 1;
 }

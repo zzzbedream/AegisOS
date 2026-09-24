@@ -7,8 +7,15 @@ import test from "node:test";
 import { Keypair } from "@stellar/stellar-sdk";
 
 import { generateEd25519KeyPair } from "../../../packages/core/src/index.js";
-import { createDeliveryReceipt, sellerIdFromAccount } from "../../../packages/proof/src/index.js";
-import type { AnchoredDeliveryV1 } from "../../../packages/x402/src/index.js";
+import {
+  batchLeafForReceipt,
+  createDeliveryReceipt,
+  merkleProof,
+  merkleRoot,
+  sellerIdFromAccount,
+  type DeliveryVerdict,
+} from "../../../packages/proof/src/index.js";
+import type { AnchoredBatchV1, AnchoredDeliveryV1 } from "../../../packages/x402/src/index.js";
 import {
   AttesterError,
   attesterPath,
@@ -17,7 +24,13 @@ import {
   publishedFrom,
   readPublishedAttester,
 } from "../src/attester.js";
-import { checkReceipt, saveReceipt } from "../src/receipt-check.js";
+import {
+  batchChecks,
+  individualChecks,
+  readReceiptFile,
+  saveReceipt,
+  signatureChecks,
+} from "../src/receipt-check.js";
 
 function scratch(t: { after: (fn: () => void) => void }): string {
   const dir = mkdtempSync(join(tmpdir(), "aegis-attester-"));
@@ -88,20 +101,20 @@ const buyer = Keypair.random();
 const attester = generateEd25519KeyPair();
 const published = publishedFrom(attester);
 
-function receipt() {
+function receipt(payment = "b", verdict: DeliveryVerdict = "TAINTED") {
   return createDeliveryReceipt(
     {
       version: "1",
       commitmentHash: "a".repeat(64),
-      paymentHash: "b".repeat(64),
+      paymentHash: payment.repeat(64),
       sellerId: sellerIdFromAccount(seller.publicKey()),
       contentHash: "c".repeat(64),
       contentBytes: 64,
       contentCanonicalization: "json-canonical-v1",
       receivedAt: "2027-05-10T12:00:00.000Z",
-      verdict: "TAINTED",
+      verdict,
       riskSignals: [],
-      taintScore: 92,
+      taintScore: verdict === "OK" ? 35 : 92,
       reasons: ["RISK_THRESHOLD_EXCEEDED"],
       assuranceTier: "T2",
       attesterId: `buyer:${buyer.publicKey()}`,
@@ -124,34 +137,85 @@ function anchored(overrides: Partial<AnchoredDeliveryV1> = {}): AnchoredDelivery
   };
 }
 
+const allPass = (checks: readonly { pass: boolean }[]): boolean => checks.every((c) => c.pass);
+
 test("a receipt verifies against the published key and the anchored record", () => {
-  const checks = checkReceipt(receipt(), published, anchored());
-  assert.ok(checks.every((c) => c.pass), JSON.stringify(checks.filter((c) => !c.pass)));
-  assert.equal(checks.length, 7);
+  const r = receipt();
+  assert.ok(allPass(signatureChecks(r, published)));
+  assert.ok(allPass(individualChecks(r, anchored())));
 });
 
 test("a receipt signed by an unpublished key fails even though its signature is valid", () => {
   const other = publishedFrom(generateEd25519KeyPair());
-  const checks = checkReceipt(receipt(), other);
-  assert.ok(checks.every((c) => !c.pass));
+  assert.ok(signatureChecks(receipt(), other).every((c) => !c.pass));
 });
 
 test("a receipt edited after signing fails the signature check", () => {
   const edited = { ...receipt(), verdict: "OK" as const };
-  const signature = checkReceipt(edited, published).find((c) => c.name === "signature verifies");
+  const signature = signatureChecks(edited, published).find((c) => c.name === "signature verifies");
   assert.equal(signature?.pass, false);
 });
 
 test("a receipt whose content hash differs from the chain is caught", () => {
-  const checks = checkReceipt(receipt(), published, anchored({ contentHash: "d".repeat(64) }));
-  const content = checks.find((c) => c.name === "on-chain content hash matches");
+  const content = individualChecks(receipt(), anchored({ contentHash: "d".repeat(64) })).find(
+    (c) => c.name === "on-chain content hash matches",
+  );
   assert.equal(content?.pass, false);
 });
 
-test("receipts are saved under their payment hash, as public data", (t) => {
+// ------------------------------------------------------------- batches
+
+function batchOf(receipts: ReturnType<typeof receipt>[]) {
+  const leaves = receipts.map(batchLeafForReceipt);
+  const root = merkleRoot(leaves);
+  const record: AnchoredBatchV1 = {
+    buyer: buyer.publicKey(),
+    seller: seller.publicKey(),
+    root,
+    count: receipts.length,
+    anchoredAt: 1_790_000_000,
+  };
+  return { leaves, root, record };
+}
+
+test("a batched receipt proves its inclusion under the anchored root", () => {
+  const receipts = ["1", "2", "3"].map((p) => receipt(p, "OK"));
+  const { leaves, record } = batchOf(receipts);
+  const checks = batchChecks(receipts[2] as ReturnType<typeof receipt>, merkleProof(leaves, 2), record);
+  assert.ok(allPass(checks), JSON.stringify(checks.filter((c) => !c.pass)));
+});
+
+test("a batched receipt fails against a root that is not the anchored one", () => {
+  const receipts = ["1", "2"].map((p) => receipt(p, "OK"));
+  const { leaves, record } = batchOf(receipts);
+  const other = { ...record, root: "e".repeat(64) };
+  const inclusion = batchChecks(receipts[0] as ReturnType<typeof receipt>, merkleProof(leaves, 0), other).find(
+    (c) => c.name === "inclusion proof reaches the on-chain root",
+  );
+  assert.equal(inclusion?.pass, false);
+});
+
+test("a receipt from another buyer cannot borrow someone else's batch", () => {
+  const receipts = ["1", "2"].map((p) => receipt(p, "OK"));
+  const { leaves, record } = batchOf(receipts);
+  const foreign = { ...record, buyer: Keypair.random().publicKey() };
+  const buyerCheck = batchChecks(receipts[0] as ReturnType<typeof receipt>, merkleProof(leaves, 0), foreign).find(
+    (c) => c.name === "on-chain batch buyer matches the attester",
+  );
+  assert.equal(buyerCheck?.pass, false);
+});
+
+test("receipts are saved with their anchor and read back; bare legacy files still load", (t) => {
   const dir = scratch(t);
   const saved = receipt();
-  const path = saveReceipt(saved, dir);
+  const path = saveReceipt(saved, { mode: "individual", contractId: "CTEST", tx: "f".repeat(64) }, dir);
   assert.ok(path.endsWith(`${"b".repeat(64)}.json`));
-  assert.deepEqual(JSON.parse(readFileSync(path, "utf8")), JSON.parse(JSON.stringify(saved)));
+
+  const file = readReceiptFile(JSON.parse(readFileSync(path, "utf8")) as unknown);
+  assert.deepEqual(JSON.parse(JSON.stringify(file.receipt)), JSON.parse(JSON.stringify(saved)));
+  assert.equal(file.anchor?.mode, "individual");
+
+  const legacy = readReceiptFile(JSON.parse(JSON.stringify(saved)) as unknown);
+  assert.equal(legacy.anchor, undefined);
+  assert.equal(legacy.receipt.paymentHash, saved.paymentHash);
 });

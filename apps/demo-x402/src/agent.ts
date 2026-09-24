@@ -17,11 +17,13 @@ import {
 } from "../../../packages/proof/src/index.js";
 import {
   AegisAnchorClient,
+  ReceiptBatcher,
   createRemoteSigner,
   decodePaymentResponse,
   encodePaymentSignature,
   parsePaymentRequired,
   selectAccepts,
+  type FlushedBatch,
   type ForkedSigner,
   type PaymentRequiredV2,
   type PaymentRequirements,
@@ -94,6 +96,8 @@ export interface PurchaseOutcome {
   readonly admission: AdmitDeliveryResult<ReturnType<AegisMemoryGateway["ingest"]>>;
   readonly anchorTx?: string;
   readonly anchorError?: string;
+  /** OK receipt waiting in a batch; anchored by `flushBatches()`. */
+  readonly anchorPending?: boolean;
 }
 
 export interface AgentOptions {
@@ -106,6 +110,11 @@ export interface AgentOptions {
   readonly attester: SigningIdentityV1;
   readonly rpcUrl: string;
   readonly anchorClient?: AegisAnchorClient;
+  /**
+   * Anchor every receipt on its own instead of batching OK ones. One anchor
+   * costs more than a micropayment, so batching is the default.
+   */
+  readonly anchorEachReceipt?: boolean;
 }
 
 /**
@@ -118,6 +127,7 @@ export interface AgentOptions {
 export class DemoAgent {
   readonly gateway: AegisMemoryGateway;
   readonly #options: AgentOptions;
+  readonly #batcher = new ReceiptBatcher();
   #sequence = 0;
 
   public constructor(options: AgentOptions) {
@@ -239,7 +249,11 @@ export class DemoAgent {
 
     let anchorTx: string | undefined;
     let anchorError: string | undefined;
-    if (this.#options.anchorClient !== undefined) {
+    const batchable =
+      admission.receipt.verdict === "OK" && this.#options.anchorEachReceipt !== true;
+    if (this.#options.anchorClient !== undefined && batchable) {
+      this.#batcher.add(admission.receipt);
+    } else if (this.#options.anchorClient !== undefined) {
       try {
         const anchored = await this.#options.anchorClient.anchorDelivery(
           admission.receipt,
@@ -263,6 +277,17 @@ export class DemoAgent {
       admission,
       ...(anchorTx === undefined ? {} : { anchorTx }),
       ...(anchorError === undefined ? {} : { anchorError }),
+      ...(this.#options.anchorClient !== undefined && batchable ? { anchorPending: true } : {}),
     };
+  }
+
+  public get pendingAnchors(): number {
+    return this.#batcher.pendingCount;
+  }
+
+  /** Anchor every pending OK receipt as one Merkle root per seller. */
+  public async flushBatches(): Promise<readonly FlushedBatch[]> {
+    if (this.#options.anchorClient === undefined) return [];
+    return this.#batcher.flush(this.#options.anchorClient, this.#options.buyer);
   }
 }

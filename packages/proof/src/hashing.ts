@@ -11,6 +11,7 @@ export const PROOF_DOMAINS = {
   deliveryReceipt: "aegisproof:delivery-receipt:v1",
   payment: "aegisproof:payment:v1",
   paymentBinding: "aegisproof:payment-binding:v1",
+  batchLeaf: "aegisproof:batch-leaf:v1",
 } as const;
 
 export type ProofDomain = (typeof PROOF_DOMAINS)[keyof typeof PROOF_DOMAINS];

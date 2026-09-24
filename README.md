@@ -46,7 +46,8 @@ decidir su próximo pago.
    │  4. hash del contenido + evaluación de riesgo         │                    │
    │     → veredicto OK / TAINTED / MISMATCH / NOT_DELIVERED                   │
    │  5. receipt firmado ── cuarentena si no es OK                              │
-   │── 6. anclar {pago, commitment, contenido, veredicto} ────────────────────▶│
+   │── 6. excepciones: se anclan una a una, al instante ─────────────────────▶│
+   │      OK: se agrupan en una raíz Merkle por vendedor ─────────────────────▶│
    │  7. el siguiente gasto que cite contenido en cuarentena → DENY            │
 ```
 
@@ -60,17 +61,34 @@ decidir su próximo pago.
   caracteres de ancho cero.
 - **Corte de cascada.** El contenido `TAINTED` queda en cuarentena: `retrieve()` no lo
   devuelve, y un draft que lo cite se rechaza con `TAINTED_PROVENANCE_REQUIRES_OWNER`.
-- **Anclaje público.** El contrato Soroban guarda el binding pago–commitment–contenido–veredicto.
-  Cualquiera puede verificar un receipt contra la clave publicada y contra la cadena.
+- **Anclaje público y barato.** Las excepciones (`TAINTED`, `MISMATCH`, `NOT_DELIVERED`) se
+  anclan una a una, al instante. Las compras `OK` se agrupan en una raíz Merkle por vendedor,
+  con hasta 1.024 compras en una transacción. Cualquiera puede verificar un receipt contra la
+  clave publicada y contra la cadena, incluida su prueba de inclusión en el lote.
+
+### Por qué agrupar
+
+Medido en testnet el 24-sep-2026:
+
+| Operación | Fee de red | Por compra |
+|---|---|---|
+| Liquidación x402 (la patrocina el facilitator) | 0,0023 XLM | 0,0023 XLM |
+| Anclar un receipt suelto | 0,0714–0,1144 XLM | 0,0714–0,1144 XLM |
+| **Anclar un lote de 1.024 receipts** | **0,0505 XLM** | **0,0000493 XLM** |
+
+Anclar cada micropago cuesta más que el pago. En lote, anclar cuesta unas 47 veces menos que
+liquidar.
 
 ## Evidencia en testnet
 
 | Qué | Dónde |
 |---|---|
-| Contrato | [`CBG2DFZB…XJXZV`](https://stellar.expert/explorer/testnet/contract/CBG2DFZBHC3MEBN4UIVIVVNZX4YGI6TMRVRIK3TD4CVFKHMIKDXIJXZV) · [contracts/deployments/testnet.json](contracts/deployments/testnet.json) |
+| Contrato v2 (lotes) | [`CD4BMCIK…ZZOF`](https://stellar.expert/explorer/testnet/contract/CD4BMCIKKOCVM66NYSC4LGWUWS4Z5ZMBU3KCVCSGZYI726ZVL7NZ2ZOF) · [contracts/deployments/testnet.json](contracts/deployments/testnet.json) |
+| Lote de 1.024 receipts en 1 transacción | [`238f3737…`](https://stellar.expert/explorer/testnet/tx/238f3737b91b765835f0d8a535312c40c1a82a169e8de91f8f7198cdde0cc48d) |
+| Contrato v1 (histórico) | [`CBG2DFZB…XJXZV`](https://stellar.expert/explorer/testnet/contract/CBG2DFZBHC3MEBN4UIVIVVNZX4YGI6TMRVRIK3TD4CVFKHMIKDXIJXZV); los receipts anclados ahí siguen verificando |
 | Clave pública del attester | `ed25519:6848dcb2068c11bd1771b88e`, publicada en el mismo archivo |
-| Compra honesta · pago / anclaje | [`715cdfed…`](https://stellar.expert/explorer/testnet/tx/715cdfed6d32b9c136e6ea619ec520b30786b1bdaea335ada62a7a3390afa17a) · [`ac682bc0…`](https://stellar.expert/explorer/testnet/tx/ac682bc03c942612dd43ebe58b4b3201a577163ac4c0d61f844c0b1832f8eddd) |
-| Compra envenenada · pago / anclaje `TAINTED` | [`a8386b9c…`](https://stellar.expert/explorer/testnet/tx/a8386b9c6f49cc2d4d48b77b97f4e804c5fa844d679ea8e9720d7b61a7695af4) · [`c8f787c7…`](https://stellar.expert/explorer/testnet/tx/c8f787c78e16ba183299a060cbab212ee4ce5286a79ec338129bfab23c2d5397) |
+| Compra honesta · pago / anclaje (v1) | [`715cdfed…`](https://stellar.expert/explorer/testnet/tx/715cdfed6d32b9c136e6ea619ec520b30786b1bdaea335ada62a7a3390afa17a) · [`ac682bc0…`](https://stellar.expert/explorer/testnet/tx/ac682bc03c942612dd43ebe58b4b3201a577163ac4c0d61f844c0b1832f8eddd) |
+| Compra envenenada · pago / anclaje `TAINTED` (v1) | [`a8386b9c…`](https://stellar.expert/explorer/testnet/tx/a8386b9c6f49cc2d4d48b77b97f4e804c5fa844d679ea8e9720d7b61a7695af4) · [`c8f787c7…`](https://stellar.expert/explorer/testnet/tx/c8f787c78e16ba183299a060cbab212ee4ce5286a79ec338129bfab23c2d5397) |
 | Vendedor que **no controlamos** | Stellar Bazaar x402 (`bazaar.browns.studio`), con `npm run demo:external` |
 
 En la compra envenenada **el pago fue perfecto**: x402 hizo su trabajo. Lo que falló fue el
@@ -84,7 +102,7 @@ el [Stellar CLI](https://developers.stellar.org/docs/tools/cli).
 ```bash
 npm install
 npm run typecheck
-npm test                 # 144 tests TS, sin red
+npm test                 # 162 tests TS, sin red
 npm run benchmark        # corpus de ataques + métrica, sin red
 ```
 
@@ -100,6 +118,7 @@ npm run demo:attack      # 4 pasos: compra honesta, vendedor hostil, corte de ca
 npm run demo:external -- "https://bazaar.browns.studio/api/x402/swap-risk?pair=XLM/USDC&amount=2500&side=buy"
 
 npm run verify:receipt -- .aegis/receipts/<paymentHash>.json   # verificación como tercero, sin secretos
+npm run verify:deployment  # contrato de punta a punta, incluido un lote de 1.024
 ```
 
 `AEGIS_SKIP_ANCHOR=1` omite el anclaje on-chain (ensayos rápidos), y `AEGIS_SKIP_PURCHASE=1`
@@ -136,7 +155,10 @@ veredicto quedó anclado en Soroban y cualquiera puede verificarlo.
 - El contrato **no** verifica el contenido ni que el pago haya liquidado: ancla una
   *atestación del comprador*.
 - `seller_score` **no** es reputación objetiva. Es un agregado de atestaciones, y se puede
-  inflar o atacar (colusión, griefing).
+  inflar o atacar (colusión, griefing). Los OK de lotes se cuentan aparte (`batched_ok`):
+  el contrato no ve las hojas, así que ese conteo es la palabra del comprador, con un tope de
+  1.024 por lote.
+- El contrato **no** impide que un mismo pago aparezca en dos lotes: nunca ve las hojas.
 - La firma del receipt es del comprador, **no** prueba que el vendedor haya incumplido.
 - Datos plausibles pero sutilmente falsos (un precio manipulado) **no** son detectables por
   esta capa; eso requiere oráculos o arbitraje.
@@ -179,11 +201,11 @@ autorización; AegisOS es complementario.
 
 ```
 packages/core          codificación canónica, criptografía, intents, ledger, política
-packages/proof         commitments, receipts, veredicto de entrega, admisión a memoria
+packages/proof         commitments, receipts, veredicto de entrega, admisión, árbol Merkle
 packages/plugin-eliza  gateway de memoria, detección de riesgo (en/es), drafts
-packages/x402          signer aislado + guard, cliente x402, cliente del contrato
+packages/x402          signer aislado + guard, cliente x402, cliente del contrato, lotes
 packages/signer        signer de operaciones tipadas + simulador
-contracts/aegis-proof  contrato Soroban de anclaje (14 tests, 6,4 KB de wasm)
+contracts/aegis-proof  contrato Soroban de anclaje individual y por lotes (21 tests, 9,5 KB de wasm)
 apps/demo-x402         demo:attack, demo:external, verify:receipt, attester:init
 apps/benchmark         corpus de ataques y métrica
 ```

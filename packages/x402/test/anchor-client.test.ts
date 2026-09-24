@@ -9,7 +9,12 @@ import {
   type DeliveryReceiptV1,
   type DeliveryVerdict,
 } from "../../proof/src/index.js";
-import { AegisAnchorClient, AnchorClientError, decodeDeliveryRecord } from "../src/index.js";
+import {
+  AegisAnchorClient,
+  AnchorClientError,
+  decodeBatchRecord,
+  decodeDeliveryRecord,
+} from "../src/index.js";
 
 // A real deployed id, so construction is realistic; no test here reaches the
 // network — every assertion is about validation that happens BEFORE submit.
@@ -121,5 +126,41 @@ test("a record with an unknown verdict or a short hash is refused, not guessed",
   assert.throws(
     () => decodeDeliveryRecord(nativeRecord({ content_hash: Buffer.alloc(31) })),
     AnchorClientError,
+  );
+});
+
+// ------------------------------------------------------------- batches
+
+test("a batch record decodes into our own formats", () => {
+  assert.deepEqual(
+    decodeBatchRecord({
+      buyer: buyer.publicKey(),
+      seller: seller.publicKey(),
+      root: Buffer.from("d".repeat(64), "hex"),
+      count: 12,
+      anchored_at: 1_790_000_000n,
+    }),
+    { buyer: buyer.publicKey(), seller: seller.publicKey(), root: "d".repeat(64), count: 12, anchoredAt: 1_790_000_000 },
+  );
+  assert.equal(decodeBatchRecord(undefined), undefined);
+  assert.throws(
+    () => decodeBatchRecord({ buyer: buyer.publicKey(), seller: seller.publicKey(), root: Buffer.alloc(32, 1), count: 0 }),
+    AnchorClientError,
+  );
+});
+
+test("a batch that is empty, oversized or self-dealing is refused before any network call", async () => {
+  const client = new AegisAnchorClient({ contractId: CONTRACT_ID });
+  const sellerId = sellerIdFromAccount(seller.publicKey());
+  const root = "d".repeat(64);
+  for (const count of [0, 1_025, 1.5]) {
+    await assert.rejects(
+      () => client.anchorBatch({ sellerId, root, count }, buyer),
+      (e: unknown) => e instanceof AnchorClientError && e.code === "BAD_BATCH_COUNT",
+    );
+  }
+  await assert.rejects(
+    () => client.anchorBatch({ sellerId: sellerIdFromAccount(buyer.publicKey()), root, count: 1 }, buyer),
+    (e: unknown) => e instanceof AnchorClientError && e.code === "SELF_DEALING",
   );
 });

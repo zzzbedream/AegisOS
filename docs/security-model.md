@@ -79,6 +79,23 @@ All hashes are domain-separated (`aegisproof:purchase-commitment:v1`,
 `aegisproof:delivery-receipt:v1`, …). These identifiers are part of what is signed and
 anchored, and do not change with product naming.
 
+### Batched anchoring
+
+Anchoring one receipt costs 0.07–0.11 XLM, more than a micropayment, so OK receipts are
+committed as one Merkle root per (buyer, seller), up to 1,024 per transaction
+(`anchor_batch`). Exceptions (`TAINTED`, `MISMATCH`, `NOT_DELIVERED`) are never batched: they
+are anchored individually and at once, so they are visible per payment.
+
+- Leaves hash a domain-separated digest of the whole signed receipt plus its anchored fields,
+  under a `0x00` prefix; inner nodes use `0x01`, so an inner node cannot pass as a leaf.
+- An odd node is promoted unchanged instead of paired with itself (Bitcoin CVE-2012-2459), so
+  two different leaf lists cannot share a root.
+- A verifier recomputes the leaf from the receipt and the root from the path, then compares it
+  with `get_batch`. The root written in a receipt file is never trusted, only compared, and the
+  file's contract ID must be one published in `deployments/testnet.json`.
+- Batched OK counts go to `batched_ok`, not `ok`: the contract never sees the leaves, so the
+  count is the buyer's word and must be weighted lower.
+
 ### What this does not prove
 
 - The contract anchors a **buyer attestation**. It does not verify that the payment settled,
@@ -86,6 +103,8 @@ anchored, and do not change with product naming.
 - `seller_score` is an aggregate of anchored attestations, open to griefing and collusion.
   It must feed policy, never be presented as proof of seller misconduct.
 - A receipt signature is the buyer's, not the seller's.
+- For a batch: that the root has `count` leaves, that every leaf is OK, or that a payment
+  appears in only one batch.
 - Plausible but false data (a manipulated price) is not detectable at this layer.
 - Detection is pattern-based. Declared residuals: base64/hex-encoded payloads, Cyrillic
   homoglyphs, multi-turn attacks.
