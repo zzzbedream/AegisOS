@@ -13,7 +13,7 @@
           "function": {
             "contract_fn": {
               "contract_address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
-              "function_name": "anchor_delivery",
+              "function_name": "anchor_batch",
               "args": [
                 {
                   "map": [
@@ -27,26 +27,18 @@
                     },
                     {
                       "key": {
-                        "symbol": "commitment_hash"
+                        "symbol": "count"
                       },
                       "val": {
-                        "bytes": "c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0"
+                        "u32": 42
                       }
                     },
                     {
                       "key": {
-                        "symbol": "content_hash"
+                        "symbol": "root"
                       },
                       "val": {
-                        "bytes": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1"
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "payment_hash"
-                      },
-                      "val": {
-                        "bytes": "0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e"
+                        "bytes": "b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9"
                       }
                     },
                     {
@@ -55,18 +47,6 @@
                       },
                       "val": {
                         "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M"
-                      }
-                    },
-                    {
-                      "key": {
-                        "symbol": "verdict"
-                      },
-                      "val": {
-                        "vec": [
-                          {
-                            "symbol": "Tainted"
-                          }
-                        ]
                       }
                     }
                   ]
@@ -99,10 +79,10 @@
               "key": {
                 "vec": [
                   {
-                    "symbol": "Delivery"
+                    "symbol": "Batch"
                   },
                   {
-                    "bytes": "0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e"
+                    "bytes": "b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9"
                   }
                 ]
               },
@@ -127,26 +107,18 @@
                   },
                   {
                     "key": {
-                      "symbol": "commitment_hash"
+                      "symbol": "count"
                     },
                     "val": {
-                      "bytes": "c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0"
+                      "u32": 42
                     }
                   },
                   {
                     "key": {
-                      "symbol": "content_hash"
+                      "symbol": "root"
                     },
                     "val": {
-                      "bytes": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1"
-                    }
-                  },
-                  {
-                    "key": {
-                      "symbol": "payment_hash"
-                    },
-                    "val": {
-                      "bytes": "0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e"
+                      "bytes": "b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9"
                     }
                   },
                   {
@@ -155,18 +127,6 @@
                     },
                     "val": {
                       "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M"
-                    }
-                  },
-                  {
-                    "key": {
-                      "symbol": "verdict"
-                    },
-                    "val": {
-                      "vec": [
-                        {
-                          "symbol": "Tainted"
-                        }
-                      ]
                     }
                   }
                 ]
@@ -202,7 +162,7 @@
                       "symbol": "batched_ok"
                     },
                     "val": {
-                      "u32": 0
+                      "u32": 42
                     }
                   },
                   {
@@ -242,7 +202,7 @@
                       "symbol": "tainted"
                     },
                     "val": {
-                      "u32": 1
+                      "u32": 0
                     }
                   },
                   {
@@ -250,7 +210,7 @@
                       "symbol": "total"
                     },
                     "val": {
-                      "u32": 1
+                      "u32": 0
                     }
                   }
                 ]
@@ -330,10 +290,10 @@
           "v0": {
             "topics": [
               {
-                "symbol": "delivery_anchored"
+                "symbol": "batch_anchored"
               },
               {
-                "bytes": "0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e"
+                "bytes": "b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9"
               },
               {
                 "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M"
@@ -351,30 +311,10 @@
                 },
                 {
                   "key": {
-                    "symbol": "commitment_hash"
+                    "symbol": "count"
                   },
                   "val": {
-                    "bytes": "c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0"
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "content_hash"
-                  },
-                  "val": {
-                    "bytes": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1"
-                  }
-                },
-                {
-                  "key": {
-                    "symbol": "verdict"
-                  },
-                  "val": {
-                    "vec": [
-                      {
-                        "symbol": "Tainted"
-                      }
-                    ]
+                    "u32": 42
                   }
                 }
               ]

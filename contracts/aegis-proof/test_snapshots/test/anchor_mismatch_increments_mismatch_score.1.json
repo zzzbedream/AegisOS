@@ -200,6 +200,14 @@
                 "map": [
                   {
                     "key": {
+                      "symbol": "batched_ok"
+                    },
+                    "val": {
+                      "u32": 0
+                    }
+                  },
+                  {
+                    "key": {
                       "symbol": "disputed"
                     },
                     "val": {
