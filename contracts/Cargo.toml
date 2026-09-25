@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["aegis-proof"]
+members = ["aegis-proof", "aegis-account"]
 
 [workspace.dependencies]
 # Pinned to the 27.x line to match the installed stellar-cli 27.0.0.

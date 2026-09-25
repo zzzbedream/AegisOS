@@ -3,6 +3,15 @@
 version = 4
 
 [[package]]
+name = "aegis-account"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "rand",
+ "soroban-sdk",
+]
+
+[[package]]
 name = "aegis-proof"
 version = "0.1.0"
 dependencies = [

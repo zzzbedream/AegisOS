@@ -7,3 +7,4 @@ export * from "./fork-transport.js";
 export * from "./anchor-client.js";
 export * from "./x402-http.js";
 export * from "./batcher.js";
+export * from "./smart-account.js";
