@@ -1,5 +1,6 @@
 import type { FlushedBatch } from "../../../packages/x402/src/index.js";
-import type { PurchaseOutcome } from "./agent.js";
+import type { PaymentNotarization, PurchaseOutcome } from "./agent.js";
+import { appendPaymentLog } from "./notarization.js";
 import { saveReceipt } from "./receipt-check.js";
 
 const EXPLORER = "https://stellar.expert/explorer/testnet/tx/";
@@ -10,11 +11,24 @@ const EXPLORER = "https://stellar.expert/explorer/testnet/tx/";
  * Merkle proof to carry.
  */
 export function saveIndividualReceipt(outcome: PurchaseOutcome, contractId: string): string | undefined {
-  if (outcome.anchorPending === true) return undefined;
+  if (outcome.notarization !== undefined) appendPaymentLog(outcome.notarization);
+  if (outcome.anchorPending === true) {
+    if (outcome.notarization !== undefined) pendingNotarizations.set(outcome.admission.receipt.paymentHash, outcome.notarization);
+    return undefined;
+  }
   const receipt = outcome.admission.receipt;
-  return outcome.anchorTx === undefined
-    ? saveReceipt(receipt)
-    : saveReceipt(receipt, { mode: "individual", contractId, tx: outcome.anchorTx });
+  return saveReceipt(receipt, {
+    ...(outcome.anchorTx === undefined ? {} : { anchor: { mode: "individual" as const, contractId, tx: outcome.anchorTx } }),
+    ...(outcome.notarization === undefined ? {} : { notarization: outcome.notarization }),
+  });
+}
+
+/** Notarizations of receipts waiting in a batch, saved with them on flush. */
+const pendingNotarizations = new Map<string, PaymentNotarization>();
+
+/** One line for the console. */
+export function describeNotarization(n: PaymentNotarization): string {
+  return `seq ${n.seq} en la cuenta ${n.account.slice(0, 8)}… · cadena ${n.consistent ? "consistente" : "NO consistente"}`;
 }
 
 /** Print each flushed batch and save its receipts with their inclusion proofs. */
@@ -29,8 +43,13 @@ export function reportFlushedBatches(
     if (batch.anchorTx !== undefined) {
       console.log(`  anclado on-chain : ${EXPLORER}${batch.anchorTx}`);
       for (const { receipt, proof } of batch.entries) {
+        const notarization = pendingNotarizations.get(receipt.paymentHash);
+        pendingNotarizations.delete(receipt.paymentHash);
         saved.push(
-          saveReceipt(receipt, { mode: "batch", contractId, root: batch.root, proof, tx: batch.anchorTx }),
+          saveReceipt(receipt, {
+            anchor: { mode: "batch", contractId, root: batch.root, proof, tx: batch.anchorTx },
+            ...(notarization === undefined ? {} : { notarization }),
+          }),
         );
       }
     } else {

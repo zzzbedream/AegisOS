@@ -208,7 +208,7 @@ test("a receipt from another buyer cannot borrow someone else's batch", () => {
 test("receipts are saved with their anchor and read back; bare legacy files still load", (t) => {
   const dir = scratch(t);
   const saved = receipt();
-  const path = saveReceipt(saved, { mode: "individual", contractId: "CTEST", tx: "f".repeat(64) }, dir);
+  const path = saveReceipt(saved, { anchor: { mode: "individual", contractId: "CTEST", tx: "f".repeat(64) } }, dir);
   assert.ok(path.endsWith(`${"b".repeat(64)}.json`));
 
   const file = readReceiptFile(JSON.parse(readFileSync(path, "utf8")) as unknown);

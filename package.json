@@ -19,7 +19,8 @@
     "demo:external": "tsx apps/demo-x402/src/external.ts",
     "attester:init": "tsx apps/demo-x402/src/attester-init.ts",
     "verify:receipt": "tsx apps/demo-x402/src/verify-receipt.ts",
-    "verify:deployment": "tsx packages/x402/scripts/verify-deployment.ts"
+    "verify:deployment": "tsx packages/x402/scripts/verify-deployment.ts",
+    "account:init": "tsx apps/demo-x402/src/account-init.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

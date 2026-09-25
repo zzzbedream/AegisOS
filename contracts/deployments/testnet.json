@@ -60,5 +60,21 @@
     "encoding": "spki-der-base64url",
     "role": "buyer",
     "createdAt": "2026-09-24T22:07:03.649Z"
+  },
+  "accountWasm": {
+    "wasmHash": "f0518a77631562ba3624515a9c8feb54522f7ea08bfc359972f94febf2c68e62",
+    "wasmBytes": 11063,
+    "deployedAt": "2026-09-25"
+  },
+  "account": {
+    "address": "CD4BYLBB4YYX24YLNIDDUAPLKQC3RHJNXP4BRTWQ3UHCQYPXHP3WLA72",
+    "wasmHash": "f0518a77631562ba3624515a9c8feb54522f7ea08bfc359972f94febf2c68e62",
+    "registry": "CD4BMCIKKOCVM66NYSC4LGWUWS4Z5ZMBU3KCVCSGZYI726ZVL7NZ2ZOF",
+    "session": "GD5D7WRG6SIXIZHNAUOXCTR3MSV5QIM2AM52WRNYX7VBRO76D6V3SVPG",
+    "authority": {
+      "keyId": "ed25519:368d997062f8e6c068017465",
+      "publicKey": "MCowBQYDK2VwAyEAAC0YUVgtLD6mCYaYA-s4xAbyxVnjx2a-AoO5VABDpig"
+    },
+    "deployTx": "70a024fd2b81b40e3fedc60e6ae73da13ad1fd275e7600cf17de1953271cbe9e"
   }
 }

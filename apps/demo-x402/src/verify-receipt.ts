@@ -12,9 +12,17 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { AegisAnchorClient } from "../../../packages/x402/src/index.js";
+import { rpc } from "@stellar/stellar-sdk";
+import {
+  AegisAnchorClient,
+  TESTNET_PASSPHRASE,
+  TESTNET_RPC_URL,
+  deployedWasmHash,
+  readAccountHead,
+} from "../../../packages/x402/src/index.js";
 import { readPublishedAttester } from "./attester.js";
 import { describeErrorChain } from "./error-chain.js";
+import { notarizationChecks, readPaymentLog } from "./notarization.js";
 import {
   batchChecks,
   individualChecks,
@@ -31,6 +39,7 @@ const SKIP_CHAIN = process.env["AEGIS_SKIP_CHAIN"] === "1";
 interface Deployments {
   readonly rpcUrl?: string;
   readonly contracts: Record<string, { readonly contractId: string; readonly deployer?: string }>;
+  readonly accountWasm?: { readonly wasmHash: string };
 }
 
 async function main(): Promise<void> {
@@ -38,7 +47,7 @@ async function main(): Promise<void> {
   if (file === undefined || file.length === 0) {
     throw new Error("Usage: npm run verify:receipt -- <receipt.json>");
   }
-  const { receipt, anchor } = readReceiptFile(JSON.parse(readFileSync(file, "utf8")) as unknown);
+  const { receipt, anchor, notarization } = readReceiptFile(JSON.parse(readFileSync(file, "utf8")) as unknown);
   const deploymentsRaw = JSON.parse(readFileSync(DEPLOYMENTS, "utf8")) as unknown;
   const published = readPublishedAttester(deploymentsRaw);
   if (published === undefined) {
@@ -94,10 +103,28 @@ async function main(): Promise<void> {
     }
   }
 
+  let notarizationNote: string | undefined;
+  if (!SKIP_CHAIN && notarization !== undefined) {
+    const publishedWasm = deployments.accountWasm?.wasmHash;
+    if (publishedWasm === undefined) {
+      checks.push({ name: "AegisOS account wasm published", pass: false, detail: "no accountWasm in deployments" });
+    } else {
+      const server = new rpc.Server(deployments.rpcUrl ?? TESTNET_RPC_URL);
+      const [deployedWasm, onChainHead] = await Promise.all([
+        deployedWasmHash(server, notarization.account),
+        readAccountHead(server, TESTNET_PASSPHRASE, notarization.account, reader),
+      ]);
+      const log = readPaymentLog(notarization.account);
+      checks.push(...notarizationChecks(receipt, notarization, { deployedWasm, publishedWasm, log, onChainHead }));
+      notarizationNote = `pago seq ${notarization.seq} de la cuenta ${notarization.account} (cabeza on-chain seq ${onChainHead.seq.toString()})`;
+    }
+  }
+
   console.log("AegisOS · verificación de receipt con datos públicos");
   console.log(`  receipt  : ${file}`);
   console.log(`  veredicto: ${receipt.verdict} (atestación del comprador, no prueba contra el vendedor)`);
   console.log(`  cadena   : ${chainNote}`);
+  if (notarizationNote !== undefined) console.log(`  billetera: ${notarizationNote}`);
   for (const check of checks) {
     console.log(`  ${check.pass ? "PASS" : "FAIL"}  ${check.name} — ${check.detail}`);
   }

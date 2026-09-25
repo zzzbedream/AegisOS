@@ -54,7 +54,11 @@ export class ReceiptBatcher {
    * Build and anchor every pending batch. Receipts whose anchor fails stay
    * pending so a later flush can retry them.
    */
-  public async flush(client: AegisAnchorClient, buyer: Keypair): Promise<readonly FlushedBatch[]> {
+  public async flush(
+    client: AegisAnchorClient,
+    buyer: Keypair,
+    onBehalfOf?: string,
+  ): Promise<readonly FlushedBatch[]> {
     const pending = this.#pending;
     this.#pending = new Map();
 
@@ -68,7 +72,7 @@ export class ReceiptBatcher {
         const root = merkleRoot(leaves);
         const entries = chunk.map((receipt, index) => ({ receipt, proof: merkleProof(leaves, index) }));
         try {
-          const anchored = await client.anchorBatch({ sellerId, root, count: chunk.length }, buyer);
+          const anchored = await client.anchorBatch({ sellerId, root, count: chunk.length }, buyer, onBehalfOf);
           flushed.push({ sellerId, root, count: chunk.length, entries, anchorTx: anchored.transactionHash });
         } catch (error: unknown) {
           const anchorError = error instanceof Error ? error.message : String(error);

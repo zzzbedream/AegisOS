@@ -14,14 +14,18 @@ import {
   type SellerId,
   type SellerScoreV1,
 } from "../../proof/src/index.js";
+import {
+  SorobanSubmitError,
+  registryAuthScVal,
+  submitSorobanOperation,
+  type ContractAccountAuth,
+} from "./soroban-submit.js";
 
 export const TESTNET_RPC_URL = "https://soroban-testnet.stellar.org";
 export const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
 
 const BASE_FEE = "1000000";
 const TX_TIMEOUT_SECONDS = 60;
-const POLL_INTERVAL_MS = 1000;
-const POLL_ATTEMPTS = 30;
 const READ_RETRY_DELAY_MS = 1000;
 
 /** Contract-side `Verdict` arm names, which differ in case from ours. */
@@ -208,9 +212,11 @@ export class AegisAnchorClient {
   public async anchorDelivery(
     receipt: DeliveryReceiptV1,
     buyer: Keypair,
+    onBehalfOf?: string,
   ): Promise<AnchorResult> {
     const seller = accountFromSellerId(receipt.sellerId);
-    if (seller === buyer.publicKey()) {
+    const attestor = onBehalfOf ?? buyer.publicKey();
+    if (seller === attestor) {
       throw new AnchorClientError(
         "SELF_DEALING",
         "Buyer and seller are the same account; the contract rejects it.",
@@ -218,7 +224,7 @@ export class AegisAnchorClient {
     }
 
     const arg = deliveryInputScVal({
-      buyer: buyer.publicKey(),
+      buyer: attestor,
       seller,
       paymentHash: receipt.paymentHash,
       commitmentHash: receipt.commitmentHash,
@@ -226,7 +232,7 @@ export class AegisAnchorClient {
       verdict: receipt.verdict,
     });
 
-    return this.#submit(this.#contract.call("anchor_delivery", arg), buyer);
+    return this.#submit(this.#contract.call("anchor_delivery", arg), buyer, onBehalfOf);
   }
 
   /**
@@ -290,9 +296,11 @@ export class AegisAnchorClient {
   public async anchorBatch(
     input: { readonly sellerId: SellerId; readonly root: string; readonly count: number },
     buyer: Keypair,
+    onBehalfOf?: string,
   ): Promise<AnchorResult> {
     const seller = accountFromSellerId(input.sellerId);
-    if (seller === buyer.publicKey()) {
+    const attestor = onBehalfOf ?? buyer.publicKey();
+    if (seller === attestor) {
       throw new AnchorClientError("SELF_DEALING", "Buyer and seller are the same account; the contract rejects it.");
     }
     if (!Number.isInteger(input.count) || input.count < 1 || input.count > MAX_BATCH_COUNT) {
@@ -302,12 +310,12 @@ export class AegisAnchorClient {
       new xdr.ScMapEntry({ key: xdr.ScVal.scvSymbol(key), val });
     // Keys in sorted order, as the host requires for contracttype structs.
     const arg = xdr.ScVal.scvMap([
-      field("buyer", new Address(buyer.publicKey()).toScVal()),
+      field("buyer", new Address(attestor).toScVal()),
       field("count", xdr.ScVal.scvU32(input.count)),
       field("root", hashToBytes(input.root, "root")),
       field("seller", new Address(seller).toScVal()),
     ]);
-    return this.#submit(this.#contract.call("anchor_batch", arg), buyer);
+    return this.#submit(this.#contract.call("anchor_batch", arg), buyer, onBehalfOf);
   }
 
   /** Read an anchored batch by root, or `undefined`. Needs no secret. */
@@ -316,42 +324,31 @@ export class AegisAnchorClient {
     return retval === undefined ? undefined : decodeBatchRecord(scValToNative(retval));
   }
 
-  async #submit(operation: xdr.Operation, buyer: Keypair): Promise<AnchorResult> {
-    const source = await this.#server.getAccount(buyer.publicKey());
-    const built = new TransactionBuilder(source, {
-      fee: BASE_FEE,
-      networkPassphrase: this.#passphrase,
-    })
-      .addOperation(operation)
-      .setTimeout(TX_TIMEOUT_SECONDS)
-      .build();
-
-    const prepared = await this.#server.prepareTransaction(built);
-    prepared.sign(buyer);
-
-    const sent = await this.#server.sendTransaction(prepared);
-    if (sent.status === "ERROR") {
-      throw new AnchorClientError(
-        "SUBMIT_FAILED",
-        `Anchor submission rejected: ${JSON.stringify(sent.errorResult ?? sent.status)}`,
-      );
+  /**
+   * Submit, paid by `buyer`. With `onBehalfOf` (an AegisOS smart account),
+   * `buyer` is its session key and signs the account's `Registry` auth, which
+   * the account accepts only for calls into its registry: the session key can
+   * anchor, never move funds.
+   */
+  async #submit(operation: xdr.Operation, buyer: Keypair, onBehalfOf?: string): Promise<AnchorResult> {
+    const accountAuth: ContractAccountAuth | undefined =
+      onBehalfOf === undefined
+        ? undefined
+        : { account: onBehalfOf, signatureFor: async (preimage) => registryAuthScVal(buyer, preimage) };
+    try {
+      const result = await submitSorobanOperation({
+        server: this.#server,
+        passphrase: this.#passphrase,
+        source: buyer,
+        operation,
+        ...(accountAuth === undefined ? {} : { accountAuth }),
+      });
+      return { transactionHash: result.transactionHash, explorerUrl: result.explorerUrl };
+    } catch (error: unknown) {
+      if (!(error instanceof SorobanSubmitError)) throw error;
+      const code = { TX_FAILED: "ANCHOR_FAILED", TX_TIMEOUT: "ANCHOR_TIMEOUT" }[error.code] ?? error.code;
+      throw new AnchorClientError(code, error.message);
     }
-
-    const hash = sent.hash;
-    for (let attempt = 0; attempt < POLL_ATTEMPTS; attempt += 1) {
-      const result = await this.#server.getTransaction(hash);
-      if (result.status === "SUCCESS") {
-        return {
-          transactionHash: hash,
-          explorerUrl: `https://stellar.expert/explorer/testnet/tx/${hash}`,
-        };
-      }
-      if (result.status === "FAILED") {
-        throw new AnchorClientError("ANCHOR_FAILED", `Anchor failed on-chain (tx ${hash}).`);
-      }
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-    }
-    throw new AnchorClientError("ANCHOR_TIMEOUT", `Anchor not confirmed within timeout (tx ${hash}).`);
   }
 
   async #simulateRead(

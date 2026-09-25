@@ -10,6 +10,7 @@ import {
   type MerkleProofV1,
 } from "../../../packages/proof/src/index.js";
 import type { AnchoredBatchV1, AnchoredDeliveryV1 } from "../../../packages/x402/src/index.js";
+import type { PaymentNotarization } from "./agent.js";
 import type { PublishedAttesterV1 } from "./attester.js";
 
 export const RECEIPTS_DIR = ".aegis/receipts";
@@ -29,6 +30,8 @@ export interface ReceiptFileV1 {
   readonly version: "1";
   readonly receipt: DeliveryReceiptV1;
   readonly anchor?: AnchorRefV1;
+  /** Smart-account mode: the account's own record of this payment. */
+  readonly notarization?: PaymentNotarization;
 }
 
 export interface ReceiptCheck {
@@ -133,12 +136,17 @@ export function batchChecks(
 /** Keep the receipt where a verifier can be pointed at it. Public data only. */
 export function saveReceipt(
   receipt: DeliveryReceiptV1,
-  anchor?: AnchorRefV1,
+  extras: { readonly anchor?: AnchorRefV1; readonly notarization?: PaymentNotarization } = {},
   dir: string = RECEIPTS_DIR,
 ): string {
   mkdirSync(dir, { recursive: true });
   const path = join(dir, `${receipt.paymentHash}.json`);
-  const file: ReceiptFileV1 = { version: "1", receipt, ...(anchor === undefined ? {} : { anchor }) };
+  const file: ReceiptFileV1 = {
+    version: "1",
+    receipt,
+    ...(extras.anchor === undefined ? {} : { anchor: extras.anchor }),
+    ...(extras.notarization === undefined ? {} : { notarization: extras.notarization }),
+  };
   writeFileSync(path, `${JSON.stringify(file, null, 2)}\n`, "utf8");
   return path;
 }

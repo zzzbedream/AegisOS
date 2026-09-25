@@ -1,4 +1,4 @@
-import type { Keypair } from "@stellar/stellar-sdk";
+import { rpc, type Keypair } from "@stellar/stellar-sdk";
 import { ExactStellarScheme } from "@x402/stellar/exact/client";
 
 import {
@@ -11,6 +11,7 @@ import {
   admitDelivery,
   computePaymentHash,
   createPurchaseCommitment,
+  hashPurchaseCommitment,
   sellerIdFromAccount,
   type AdmitDeliveryResult,
   type PurchaseCommitmentV1,
@@ -18,12 +19,18 @@ import {
 import {
   AegisAnchorClient,
   ReceiptBatcher,
+  buildSmartAccountPayment,
   createRemoteSigner,
+  paymentChainLink,
+  readAccountHead,
+  requestCommitmentAuthority,
   decodePaymentResponse,
   encodePaymentSignature,
   parsePaymentRequired,
   selectAccepts,
+  type AccountHead,
   type FlushedBatch,
+  type OnChainCommitmentV1,
   type ForkedSigner,
   type PaymentRequiredV2,
   type PaymentRequirements,
@@ -98,6 +105,24 @@ export interface PurchaseOutcome {
   readonly anchorError?: string;
   /** OK receipt waiting in a batch; anchored by `flushBatches()`. */
   readonly anchorPending?: boolean;
+  /** Smart-account mode: what the account recorded, atomically with the payment. */
+  readonly notarization?: PaymentNotarization;
+}
+
+/**
+ * The account's own record of a payment. `consistent` says the head moved by
+ * exactly this payment: the chain link recomputed from (previousHead, seq,
+ * commitment, seller, amount) equals the head read after settlement.
+ */
+export interface PaymentNotarization {
+  readonly account: string;
+  readonly seq: string;
+  readonly previousHead: string;
+  readonly chainHead: string;
+  readonly commitmentHash: string;
+  readonly seller: string;
+  readonly amount: string;
+  readonly consistent: boolean;
 }
 
 export interface AgentOptions {
@@ -115,7 +140,18 @@ export interface AgentOptions {
    * costs more than a micropayment, so batching is the default.
    */
   readonly anchorEachReceipt?: boolean;
+  /**
+   * Pay from an AegisOS smart account instead of the buyer key. The buyer key
+   * becomes its session key; the commitment authority lives in the signer
+   * process, so this process cannot authorize a payment on its own.
+   */
+  readonly smartAccount?: { readonly address: string };
+  readonly networkPassphrase?: string;
 }
+
+const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
+const HEAD_POLL_ATTEMPTS = 10;
+const HEAD_POLL_MS = 1000;
 
 /**
  * The buying agent.
@@ -195,13 +231,50 @@ export class DemoAgent {
       commitment,
     });
 
-    const scheme = new ExactStellarScheme(remote, { url: this.#options.rpcUrl });
-    const created = await scheme.createPaymentPayload(2, input.requirements as never);
-    const paymentPayload = {
-      x402Version: created.x402Version,
-      accepted: input.requirements,
-      payload: created.payload,
-    };
+    const smart = this.#options.smartAccount;
+    const onChain: OnChainCommitmentV1 | undefined =
+      smart === undefined
+        ? undefined
+        : {
+            commitmentHash: hashPurchaseCommitment(commitment),
+            seller: input.requirements.payTo,
+            asset: input.requirements.asset,
+            maxAmount: BigInt(commitment.maxAmountAtomic),
+            expiresAt: BigInt(Math.floor(Date.parse(commitment.expiresAt) / 1000)),
+          };
+    let before: AccountHead | undefined;
+    let paymentPayload: { x402Version: number; accepted: PaymentRequirements; payload: unknown };
+    if (smart !== undefined && onChain !== undefined) {
+      // The authority signs in the signer process, under its own policy. A
+      // compromised agent can ask; it cannot sign.
+      const authoritySignature = await requestCommitmentAuthority(this.#options.signer, onChain);
+      before = await this.#head(smart.address);
+      const payload = await buildSmartAccountPayment({
+        account: smart.address,
+        payTo: input.requirements.payTo,
+        asset: input.requirements.asset,
+        amount: BigInt(input.requirements.amount),
+        maxTimeoutSeconds: input.requirements.maxTimeoutSeconds,
+        commitment: onChain,
+        authoritySignature,
+        signAuthPreimage: async (preimage) =>
+          Buffer.from(
+            (await remote.signAuthEntry(preimage, { networkPassphrase: this.#passphrase })).signedAuthEntry,
+            "base64",
+          ),
+        rpcUrl: this.#options.rpcUrl,
+        networkPassphrase: this.#passphrase,
+      });
+      paymentPayload = { x402Version: 2, accepted: input.requirements, payload };
+    } else {
+      const scheme = new ExactStellarScheme(remote, { url: this.#options.rpcUrl });
+      const created = await scheme.createPaymentPayload(2, input.requirements as never);
+      paymentPayload = {
+        x402Version: created.x402Version,
+        accepted: input.requirements,
+        payload: created.payload,
+      };
+    }
 
     const started = Date.now();
     const response = await fetch(input.resourceUrl, {
@@ -217,7 +290,7 @@ export class DemoAgent {
     const paymentHash = computePaymentHash({
       scheme: input.requirements.scheme,
       network: input.requirements.network,
-      payer: this.#options.buyer.publicKey(),
+      payer: this.#payer,
       payee: input.requirements.payTo,
       transactionRef: settlement?.transaction ?? `unsettled:${commitment.id}`,
       // The offer itself, verbatim. A seller that binds its inputs into `extra`
@@ -241,7 +314,7 @@ export class DemoAgent {
         assessRisk: (content) => assessMemoryRisk(content, "tool"),
         gateway: this.gateway,
         paymentHash,
-        attesterId: `buyer:${this.#options.buyer.publicKey()}`,
+        attesterId: `buyer:${this.#payer}`,
         signer: this.#options.attester,
         memoryId: input.memoryId,
       },
@@ -258,6 +331,7 @@ export class DemoAgent {
         const anchored = await this.#options.anchorClient.anchorDelivery(
           admission.receipt,
           this.#options.buyer,
+          smart?.address,
         );
         anchorTx = anchored.transactionHash;
       } catch (error: unknown) {
@@ -266,6 +340,11 @@ export class DemoAgent {
         anchorError = error instanceof Error ? error.message : String(error);
       }
     }
+
+    const notarization =
+      smart !== undefined && onChain !== undefined && before !== undefined && settlement?.transaction !== undefined
+        ? await this.#notarization(smart.address, before, onChain, BigInt(input.requirements.amount))
+        : undefined;
 
     const deliveredContentType = response.headers.get("content-type");
     return {
@@ -278,6 +357,53 @@ export class DemoAgent {
       ...(anchorTx === undefined ? {} : { anchorTx }),
       ...(anchorError === undefined ? {} : { anchorError }),
       ...(this.#options.anchorClient !== undefined && batchable ? { anchorPending: true } : {}),
+      ...(notarization === undefined ? {} : { notarization }),
+    };
+  }
+
+  get #payer(): string {
+    return this.#options.smartAccount?.address ?? this.#options.buyer.publicKey();
+  }
+
+  get #passphrase(): string {
+    return this.#options.networkPassphrase ?? TESTNET_PASSPHRASE;
+  }
+
+  async #head(account: string): Promise<AccountHead> {
+    return readAccountHead(new rpc.Server(this.#options.rpcUrl), this.#passphrase, account, this.#options.buyer.publicKey());
+  }
+
+  /**
+   * Read the account after settlement and check it moved by exactly this
+   * payment. The RPC can lag the facilitator by a ledger, so poll briefly.
+   */
+  async #notarization(
+    account: string,
+    before: AccountHead,
+    onChain: OnChainCommitmentV1,
+    amount: bigint,
+  ): Promise<PaymentNotarization> {
+    let after = before;
+    for (let attempt = 0; attempt < HEAD_POLL_ATTEMPTS && after.seq === before.seq; attempt += 1) {
+      await new Promise((resolve) => setTimeout(resolve, HEAD_POLL_MS));
+      after = await this.#head(account);
+    }
+    const expected = paymentChainLink({
+      previous: before.chainHead,
+      seq: before.seq + 1n,
+      commitmentHash: onChain.commitmentHash,
+      seller: onChain.seller,
+      amount,
+    });
+    return {
+      account,
+      seq: after.seq.toString(),
+      previousHead: before.chainHead,
+      chainHead: after.chainHead,
+      commitmentHash: onChain.commitmentHash,
+      seller: onChain.seller,
+      amount: amount.toString(),
+      consistent: after.seq === before.seq + 1n && after.chainHead === expected,
     };
   }
 
@@ -288,6 +414,6 @@ export class DemoAgent {
   /** Anchor every pending OK receipt as one Merkle root per seller. */
   public async flushBatches(): Promise<readonly FlushedBatch[]> {
     if (this.#options.anchorClient === undefined) return [];
-    return this.#batcher.flush(this.#options.anchorClient, this.#options.buyer);
+    return this.#batcher.flush(this.#options.anchorClient, this.#options.buyer, this.#options.smartAccount?.address);
   }
 }

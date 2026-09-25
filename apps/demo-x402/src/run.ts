@@ -5,6 +5,7 @@
  *
  * Set AEGIS_SKIP_ANCHOR=1 to skip the on-chain anchor (faster rehearsals).
  */
+import { createHash, createPrivateKey, randomBytes, sign } from "node:crypto";
 import { readFileSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -28,10 +29,18 @@ import {
   shouldAbstainFromPurchase,
   toTrustVerdict,
 } from "../../../packages/proof/src/index.js";
-import { AegisAnchorClient, forkSigner } from "../../../packages/x402/src/index.js";
+import {
+  AegisAnchorClient,
+  SignerDeniedError,
+  buildSmartAccountPayment,
+  forkSigner,
+  onChainCommitmentDigest,
+  requestCommitmentAuthority,
+} from "../../../packages/x402/src/index.js";
 import { DemoAgent, type PurchaseOutcome } from "./agent.js";
 import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
-import { reportFlushedBatches, saveIndividualReceipt } from "./anchor-report.js";
+import { describeNotarization, reportFlushedBatches, saveIndividualReceipt } from "./anchor-report.js";
+import { loadSmartAccount, type SmartAccountSetup } from "./smart-account-config.js";
 import { honestMarketData, poisonedMarketData } from "./catalog.js";
 import { startSeller, type PaymentRequirements, type SellerHandle } from "./resource-server.js";
 
@@ -111,6 +120,60 @@ function reportPurchase(outcome: PurchaseOutcome, contractId: string): void {
   if (outcome.anchorTx !== undefined) console.log(`  anclado on-chain : ${tx(outcome.anchorTx)}`);
   if (outcome.anchorError !== undefined) console.log(`  anclaje falló    : ${outcome.anchorError}`);
   if (outcome.anchorPending === true) console.log("  anclaje          : OK → en lote (se ancla junto con otras compras)");
+  if (outcome.notarization !== undefined) console.log(`  notarizado       : ${describeNotarization(outcome.notarization)}`);
+}
+
+/**
+ * The compromised agent tries to pay the attacker from the smart account.
+ * Both attempts are free: the first is refused by the authority's policy in
+ * the signer process, the second by the account itself, on-chain, in
+ * simulation — before anything reaches a facilitator.
+ */
+async function compromisedAgentBeat(
+  smart: SmartAccountSetup,
+  signer: Parameters<typeof requestCommitmentAuthority>[0],
+  session: Keypair,
+): Promise<void> {
+  const attacker = Keypair.random().publicKey();
+  const commitment = {
+    commitmentHash: createHash("sha256").update(randomBytes(32)).digest("hex"),
+    seller: attacker,
+    asset: USDC_SAC,
+    maxAmount: BigInt(AMOUNT_ATOMIC),
+    expiresAt: BigInt(Math.floor(Date.now() / 1000) + 600),
+  };
+
+  try {
+    await requestCommitmentAuthority(signer, commitment);
+    console.log("  a) FALLO: la autoridad firmó un commitment hacia el atacante");
+  } catch (error: unknown) {
+    const code = error instanceof SignerDeniedError ? error.code : String(error);
+    console.log(`  a) pide a la autoridad un commitment hacia el atacante → DENEGADO [${code}]`);
+  }
+
+  const rogue = generateEd25519KeyPair();
+  const forged = sign(
+    null,
+    onChainCommitmentDigest(smart.address, commitment),
+    createPrivateKey({ key: Buffer.from(rogue.privateKey, "base64url"), format: "der", type: "pkcs8" }),
+  );
+  try {
+    await buildSmartAccountPayment({
+      account: smart.address, payTo: attacker, asset: USDC_SAC, amount: BigInt(AMOUNT_ATOMIC),
+      maxTimeoutSeconds: 60, commitment, authoritySignature: forged,
+      // The agent holds the session key and signs directly, skipping the signer.
+      signAuthPreimage: async (preimage) =>
+        Buffer.from(session.sign(createHash("sha256").update(Buffer.from(preimage, "base64")).digest())),
+      rpcUrl: RPC_URL, networkPassphrase: TESTNET_PASSPHRASE,
+    });
+    console.log("  b) FALLO: la cuenta aceptó un commitment firmado por el agente");
+  } catch {
+    console.log("  b) se salta el signer, firma con la clave de sesión y un commitment propio");
+    console.log("     → la CUENTA lo rechaza on-chain (Error(Auth, InvalidAction)), sin gastar nada");
+  }
+  console.log("");
+  console.log("  El agente tiene la clave de sesión, pero no la autoridad: sin un commitment");
+  console.log("  firmado por ella, la billetera no paga. Lo impide Stellar, no un proceso nuestro.");
 }
 
 async function main(): Promise<void> {
@@ -118,6 +181,7 @@ async function main(): Promise<void> {
   const sellerAccount = requireEnv("AEGIS_SELLER_ACCOUNT");
   const sellerId = sellerIdFromAccount(sellerAccount);
   const attester = loadAttester(attesterPath());
+  const smart = loadSmartAccount();
 
   const deployments = JSON.parse(
     readFileSync(new URL("../../../contracts/deployments/testnet.json", import.meta.url), "utf8"),
@@ -146,6 +210,16 @@ async function main(): Promise<void> {
     allowedAssets: { "stellar:USDC": USDC_SAC },
     allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
     trustedCommitmentKeys: { [attester.keyId]: attester.publicKey },
+    ...(smart === undefined
+      ? {}
+      : {
+          payerAddress: smart.address,
+          // The owner's policy: this seller only, this ceiling. Fixed at launch.
+          authority: {
+            secretFile: smart.authoritySecretFile,
+            policy: { allowedSellers: [sellerAccount], maxAmountAtomic: AMOUNT_ATOMIC },
+          },
+        }),
     execArgv: ["--import", "tsx"],
   });
 
@@ -154,6 +228,11 @@ async function main(): Promise<void> {
     console.log(`  agente (pid ${String(process.pid)})  ·  signer aislado (pid ${String(signer.pid)})`);
     console.log(`  la clave vive en el signer; el agente solo tiene un canal`);
     console.log(`  contrato: ${contractId}`);
+    console.log(
+      smart === undefined
+        ? "  billetera: cuenta clásica G… (npm run account:init para la smart account)"
+        : `  billetera: smart account ${smart.address} · la autoridad vive en el signer`,
+    );
     console.log(`  attester: ${attester.keyId} · ${attesterPublished ? "clave publicada en deployments/testnet.json" : "NO coincide con la clave publicada: los receipts no serán verificables por terceros"}`);
 
     good = await startSeller({
@@ -171,6 +250,7 @@ async function main(): Promise<void> {
     const agent = new DemoAgent({
       signer, buyer, attester,
       rpcUrl: RPC_URL, ...(anchorClient === undefined ? {} : { anchorClient }),
+      ...(smart === undefined ? {} : { smartAccount: { address: smart.address } }),
     });
 
     // ---------------------------------------------------------------- paso 1
@@ -261,7 +341,15 @@ async function main(): Promise<void> {
     console.log(`  TrustVerdictV1   : tainted=${String(verdict.tainted)}  (lo que lee un riel de gasto)`);
 
     // ---------------------------------------------------------------- paso 4
-    step(4, "el siguiente agente consulta la cadena antes de comprar");
+    step(4, "el agente comprometido intenta pagarle al atacante");
+    if (smart === undefined) {
+      console.log("  (requiere la smart account: npm run account:init)");
+    } else {
+      await compromisedAgentBeat(smart, signer, buyer);
+    }
+
+    // ---------------------------------------------------------------- paso 5
+    step(5, "el siguiente agente consulta la cadena antes de comprar");
     if (anchorClient === undefined) {
       console.log("  (omitido: AEGIS_SKIP_ANCHOR=1)");
     } else {

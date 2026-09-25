@@ -9,3 +9,5 @@ export * from "./x402-http.js";
 export * from "./batcher.js";
 export * from "./smart-account.js";
 export * from "./authority.js";
+export * from "./soroban-submit.js";
+export * from "./account-deploy.js";
