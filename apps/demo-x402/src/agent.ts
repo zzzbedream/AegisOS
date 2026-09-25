@@ -9,6 +9,7 @@ import {
 import { AegisMemoryGateway, assessMemoryRisk } from "../../../packages/plugin-eliza/src/index.js";
 import {
   admitDelivery,
+  accountFromSellerId,
   computePaymentHash,
   createPurchaseCommitment,
   hashPurchaseCommitment,
@@ -154,6 +155,29 @@ const HEAD_POLL_ATTEMPTS = 10;
 const HEAD_POLL_MS = 1000;
 
 /**
+ * Ask a seller what it wants, without paying.
+ *
+ * The seller dictates the offer; we only choose whether to accept it. For a
+ * seller we did not write, this is the only honest source of requirements.
+ * Standalone so a launcher can discover before starting the signer, and put
+ * the discovered seller into the authority's approved list.
+ */
+export async function discoverOffer(url: string): Promise<DiscoveredOffer> {
+  const response = await fetchWithRetry(url);
+  if (response.status !== 402) {
+    throw new Error(`Expected 402 from ${url}, got ${String(response.status)}.`);
+  }
+  let body: unknown;
+  try {
+    body = (await response.json()) as unknown;
+  } catch {
+    body = undefined;
+  }
+  const required = parsePaymentRequired((name) => response.headers.get(name), body);
+  return { url, required, requirements: selectAccepts(required, PAYABLE) };
+}
+
+/**
  * The buying agent.
  *
  * It holds no key: signing goes through a transport to a separate process. Its
@@ -178,18 +202,7 @@ export class DemoAgent {
    * seller we did not write, this is the only honest source of requirements.
    */
   public async discover(url: string): Promise<DiscoveredOffer> {
-    const response = await fetchWithRetry(url);
-    if (response.status !== 402) {
-      throw new Error(`Expected 402 from ${url}, got ${String(response.status)}.`);
-    }
-    let body: unknown;
-    try {
-      body = (await response.json()) as unknown;
-    } catch {
-      body = undefined;
-    }
-    const required = parsePaymentRequired((name) => response.headers.get(name), body);
-    return { url, required, requirements: selectAccepts(required, PAYABLE) };
+    return discoverOffer(url);
   }
 
   /**
@@ -236,8 +249,10 @@ export class DemoAgent {
       smart === undefined
         ? undefined
         : {
+            // Mirrors the buyer's commitment, not the offer: the authority
+            // approves the seller the buyer committed to.
             commitmentHash: hashPurchaseCommitment(commitment),
-            seller: input.requirements.payTo,
+            seller: accountFromSellerId(commitment.sellerId),
             asset: input.requirements.asset,
             maxAmount: BigInt(commitment.maxAmountAtomic),
             expiresAt: BigInt(Math.floor(Date.parse(commitment.expiresAt) / 1000)),

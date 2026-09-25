@@ -30,7 +30,8 @@ import {
   forkSigner,
   type ForkedSigner,
 } from "../../../packages/x402/src/index.js";
-import { DemoAgent, type PurchaseOutcome } from "./agent.js";
+import { DemoAgent, discoverOffer, type PurchaseOutcome } from "./agent.js";
+import { loadSmartAccount } from "./smart-account-config.js";
 import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
 import { reportFlushedBatches, saveIndividualReceipt } from "./anchor-report.js";
 import { describeErrorChain } from "./error-chain.js";
@@ -77,16 +78,16 @@ async function expectRefusal(
   offer: Awaited<ReturnType<DemoAgent["discover"]>>,
   memoryId: string,
   overrides: Parameters<DemoAgent["buy"]>[0]["overrides"],
-  expectedCode: string,
+  expectedCodes: readonly string[],
 ): Promise<{ readonly refused: boolean; readonly detail: string }> {
   try {
     await agent.buy({ resourceUrl: offer.url, requirements: offer.requirements, memoryId, ...(overrides === undefined ? {} : { overrides }) });
     return { refused: false, detail: "the signer signed — the guard did not hold" };
   } catch (error: unknown) {
     if (error instanceof SignerDeniedError) {
-      return error.code === expectedCode
+      return expectedCodes.includes(error.code)
         ? { refused: true, detail: `signer refused with ${error.code} before signing; seller never paid` }
-        : { refused: false, detail: `refused, but with ${error.code} instead of ${expectedCode}` };
+        : { refused: false, detail: `refused, but with ${error.code} instead of ${expectedCodes.join(" or ")}` };
     }
     const message = error instanceof Error ? error.message : String(error);
     return { refused: false, detail: `unexpected error: ${message}` };
@@ -126,6 +127,11 @@ async function main(): Promise<void> {
   const secretFile = join(dir, "buyer.secret");
   writeFileSync(secretFile, buyer.secret(), "utf8");
 
+  const smart = loadSmartAccount();
+  // Discover first: in smart mode the owner approves THIS seller, and the
+  // authority's policy is fixed when the signer starts.
+  const offer = await discoverOffer(url);
+
   let signer: ForkedSigner | undefined;
   try {
     signer = await forkSigner({
@@ -135,6 +141,15 @@ async function main(): Promise<void> {
       allowedAssets: { "stellar:USDC": USDC_SAC },
       allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
       trustedCommitmentKeys: { [attester.keyId]: attester.publicKey },
+      ...(smart === undefined
+        ? {}
+        : {
+            payerAddress: smart.address,
+            authority: {
+              secretFile: smart.authoritySecretFile,
+              policy: { allowedSellers: [offer.requirements.payTo], maxAmountAtomic: offer.requirements.amount },
+            },
+          }),
       execArgv: ["--import", "tsx"],
     });
 
@@ -142,11 +157,17 @@ async function main(): Promise<void> {
     const agent = new DemoAgent({
       signer, buyer, attester, rpcUrl: RPC_URL,
       ...(anchorClient === undefined ? {} : { anchorClient }),
+      ...(smart === undefined ? {} : { smartAccount: { address: smart.address } }),
     });
 
     console.log("AegisOS · interoperabilidad con un vendedor x402 que no controlamos");
     console.log(`  endpoint : ${url}`);
     console.log(`  agente pid ${String(process.pid)} · signer aislado pid ${String(signer.pid)}`);
+    console.log(
+      smart === undefined
+        ? "  billetera: cuenta clásica G…"
+        : `  billetera: smart account ${smart.address} · vendedor aprobado por el dueño: ${offer.requirements.payTo}`,
+    );
 
     const attesterPublished = published?.publicKey === attester.publicKey;
     console.log(`  attester ${attester.keyId} · ${attesterPublished ? "publicado" : "NO publicado"} en deployments/testnet.json`);
@@ -161,7 +182,6 @@ async function main(): Promise<void> {
     line();
     console.log("0  descubrimiento — el vendedor dicta la oferta, sin pagar");
     line();
-    const offer = await agent.discover(url);
     const r = offer.requirements;
     console.log(`  payTo    : ${r.payTo}`);
     console.log(`  monto    : ${r.amount} atómicos · activo ${r.asset.slice(0, 12)}…`);
@@ -174,20 +194,20 @@ async function main(): Promise<void> {
     console.log("2  techo por debajo de su precio — el guard debe negarse (gratis)");
     line();
     const ceiling = String(BigInt(r.amount) / 2n);
-    const low = await expectRefusal(agent, offer, "mem:ext-low", { maxAmountAtomic: ceiling }, "AMOUNT_EXCEEDS_COMMITMENT");
+    const low = await expectRefusal(agent, offer, "mem:ext-low", { maxAmountAtomic: ceiling }, ["AMOUNT_EXCEEDS_COMMITMENT"]);
     record("ceiling", `commitment ceiling ${ceiling} < price ${r.amount}`, low.refused ? "PASS" : "FAIL", low.detail);
 
     line();
     console.log("3  commitment con otro vendedor — el guard debe negarse (gratis)");
     line();
-    const wrong = await expectRefusal(agent, offer, "mem:ext-wrong", { sellerAccount: DECOY_SELLER }, "SELLER_NOT_ALLOWED");
+    const wrong = await expectRefusal(agent, offer, "mem:ext-wrong", { sellerAccount: DECOY_SELLER }, ["SELLER_NOT_ALLOWED", "COMMITMENT_POLICY_DENIED"]);
     record("seller", "commitment names a different seller", wrong.refused ? "PASS" : "FAIL", wrong.detail);
 
     line();
     console.log("5  agente comprometido forja su propio commitment — el guard debe negarse (gratis)");
     line();
     const rogue = generateEd25519KeyPair("key:rogue-agent");
-    const forgedCommitment = await expectRefusal(agent, offer, "mem:ext-forged", { commitmentSigner: rogue }, "COMMITMENT_KEY_UNTRUSTED");
+    const forgedCommitment = await expectRefusal(agent, offer, "mem:ext-forged", { commitmentSigner: rogue }, ["COMMITMENT_KEY_UNTRUSTED"]);
     record(
       "forged",
       "agent-signed commitment, destination and amount matching it",
