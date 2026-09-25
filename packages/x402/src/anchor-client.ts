@@ -480,6 +480,12 @@ export class AegisAnchorClient {
     return retval === undefined ? undefined : decodeRangeRecord(scValToNative(retval));
   }
 
+  /** Whether the registry's own factory created `account`. */
+  public async isAccount(account: string, readerAccount: string): Promise<boolean> {
+    const retval = await this.#simulateRead("is_account", [new Address(account).toScVal()], readerAccount);
+    return retval !== undefined && scValToNative(retval) === true;
+  }
+
   public async getCheckpoint(account: string, readerAccount: string): Promise<CheckpointV1> {
     const retval = await this.#simulateRead("checkpoint", [new Address(account).toScVal()], readerAccount);
     if (retval === undefined) throw new AnchorClientError("NO_RESULT", "checkpoint returned nothing.");

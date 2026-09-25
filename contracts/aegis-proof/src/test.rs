@@ -674,3 +674,179 @@ mod ranges {
         w.f.client.anchor_range(&input);
     }
 }
+
+// ------------------------------------------------------- the largest range
+
+/// The largest range the registry accepts, run on the deployed wasm under the
+/// network's own limits: MAX_RANGE_LEAVES payments to as many distinct sellers
+/// (one score write each) plus a full tail of MAX_RANGE_TAIL, all notarized by
+/// the account. Native test contracts are not metered for their own
+/// instructions, so this loads the release wasm and is ignored until it exists:
+///
+///   stellar contract build
+///   cargo test -p aegis-proof largest_range -- --ignored --nocapture
+mod largest_range {
+    extern crate std;
+
+    use super::*;
+    use aegis_account::{
+        commitment_digest, AccError, AegisAccountClient, AegisAuth, OnChainCommitment, PaymentAuth,
+    };
+    use ed25519_dalek::{Signer, SigningKey};
+    use rand::rngs::OsRng;
+    use soroban_sdk::{
+        auth::{Context, ContractContext},
+        vec,
+        xdr::ToXdr,
+        testutils::EnvTestConfig,
+        Bytes, Symbol, Val, Vec,
+    };
+
+    const PRICE: i128 = 10_000;
+    // Per-transaction limits read from Stellar testnet on 2026-09-25.
+    const MAX_INSTRUCTIONS: i64 = 400_000_000;
+    const MAX_MEMORY_BYTES: i64 = 41_943_040;
+    const MAX_WRITE_ENTRIES: u32 = 200;
+    const MAX_FOOTPRINT_ENTRIES: u32 = 400;
+    const MAX_WRITE_BYTES: u32 = 132_096;
+    const MAX_TX_BYTES: u32 = 132_096;
+
+    fn release_wasm(name: &str) -> std::vec::Vec<u8> {
+        let path = std::format!(
+            "{}/../target/wasm32v1-none/release/{name}.wasm",
+            env!("CARGO_MANIFEST_DIR")
+        );
+        std::fs::read(&path)
+            .unwrap_or_else(|_| panic!("{path} not found: run `stellar contract build` in contracts/"))
+    }
+
+    fn public(env: &Env, key: &SigningKey) -> BytesN<32> {
+        BytesN::from_array(env, &key.verifying_key().to_bytes())
+    }
+
+    fn sign(env: &Env, key: &SigningKey, msg: &[u8]) -> BytesN<64> {
+        BytesN::from_array(env, &key.sign(msg).to_bytes())
+    }
+
+    fn hash(env: &Env, tag: &str, i: u32) -> BytesN<32> {
+        let mut data = Bytes::from_slice(env, tag.as_bytes());
+        data.append(&Bytes::from_array(env, &i.to_be_bytes()));
+        env.crypto().sha256(&data).to_bytes()
+    }
+
+    #[test]
+    #[ignore = "needs the release wasm: stellar contract build"]
+    fn the_largest_range_fits_one_transaction() {
+        let env = Env::new_with_config(EnvTestConfig { capture_snapshot_at_drop: false });
+        env.ledger().set_timestamp(NOW);
+        let account_wasm = env.deployer().upload_contract_wasm(release_wasm("aegis_account").as_slice());
+        let registry = env.register(release_wasm("aegis_proof").as_slice(), (account_wasm,));
+        let client = AegisProofClient::new(&env, &registry);
+
+        let owner = SigningKey::generate(&mut OsRng);
+        let authority = SigningKey::generate(&mut OsRng);
+        let session = SigningKey::generate(&mut OsRng);
+        let asset = Address::generate(&env);
+        let account = client.create_account(
+            &public(&env, &owner),
+            &public(&env, &authority),
+            &public(&env, &session),
+            &vec![&env, asset.clone()],
+            &hash(&env, "salt", 0),
+        );
+
+        // Every leaf pays a different seller: the worst case for score writes.
+        let sellers: std::vec::Vec<Address> =
+            (0..MAX_RANGE_LEAVES).map(|_| Address::generate(&env)).collect();
+        let total = MAX_RANGE_LEAVES + MAX_RANGE_TAIL;
+        let mut leaves = Vec::new(&env);
+        let mut tail = Vec::new(&env);
+        for i in 0..total {
+            let seller = sellers[(i % MAX_RANGE_LEAVES) as usize].clone();
+            let commitment = OnChainCommitment {
+                commitment_hash: hash(&env, "commitment", i),
+                seller: seller.clone(),
+                asset: asset.clone(),
+                max_amount: PRICE,
+                expires_at: NOW + 600,
+            };
+            let payload = hash(&env, "payload", i);
+            let auth = AegisAuth::Payment(PaymentAuth {
+                authority_sig: sign(&env, &authority, &commitment_digest(&env, &account, &commitment).to_array()),
+                session_sig: sign(&env, &session, &payload.to_array()),
+                commitment: commitment.clone(),
+            });
+            let transfer = Context::Contract(ContractContext {
+                contract: asset.clone(),
+                fn_name: Symbol::new(&env, "transfer"),
+                args: (account.clone(), seller.clone(), PRICE).into_val(&env),
+            });
+            let signature: Val = auth.into_val(&env);
+            env.try_invoke_contract_check_auth::<AccError>(&account, &payload, signature, &vec![&env, transfer])
+                .unwrap();
+
+            if i < MAX_RANGE_LEAVES {
+                leaves.push_back(RangeLeaf {
+                    seq: u64::from(i) + 1,
+                    commitment_hash: commitment.commitment_hash,
+                    seller,
+                    amount: PRICE,
+                    content_hash: hash(&env, "content", i),
+                    verdict: Verdict::Ok,
+                });
+            } else {
+                tail.push_back(ChainStep { commitment_hash: commitment.commitment_hash, seller, amount: PRICE });
+            }
+        }
+        assert_eq!(AegisAccountClient::new(&env, &account).head().seq, u64::from(total));
+
+        let input = RangeInput { account: account.clone(), from_seq: 1, leaves, tail };
+        env.mock_all_auths();
+        client.anchor_range(&input);
+        let anchor = env.cost_estimate().resources();
+        let fee = env.cost_estimate().fee();
+
+        // mock_all_auths skips the account's own check, so meter it separately.
+        let payload = hash(&env, "anchor", 0);
+        let registry_auth: Val = AegisAuth::Registry(sign(&env, &session, &payload.to_array())).into_val(&env);
+        let call = Context::Contract(ContractContext {
+            contract: registry.clone(),
+            fn_name: Symbol::new(&env, "anchor_range"),
+            args: (input.clone(),).into_val(&env),
+        });
+        env.try_invoke_contract_check_auth::<AccError>(&account, &payload, registry_auth, &vec![&env, call])
+            .unwrap();
+        let check = env.cost_estimate().resources();
+
+        let instructions = anchor.instructions + check.instructions;
+        let footprint = anchor.disk_read_entries + anchor.memory_read_entries + anchor.write_entries;
+        let args_bytes = input.clone().to_xdr(&env).len();
+        std::println!(
+            "LARGEST_RANGE leaves={} tail={} sellers={} instructions={} (anchor {} + account check {}) \
+             mem={} writes={} footprint={} write_bytes={} args_bytes={} fee_stroops={}",
+            MAX_RANGE_LEAVES, MAX_RANGE_TAIL, sellers.len(), instructions, anchor.instructions,
+            check.instructions, anchor.mem_bytes, anchor.write_entries, footprint, anchor.write_bytes,
+            args_bytes, fee.total
+        );
+        std::println!(
+            "LARGEST_RANGE_FEE instructions={} writes={} write_bytes={} persistent_rent={} temporary_rent={} disk_reads={}",
+            fee.instructions, fee.write_entries, fee.write_bytes, fee.persistent_entry_rent,
+            fee.temporary_entry_rent, fee.disk_read_entries + fee.disk_read_bytes
+        );
+
+        assert!(instructions < MAX_INSTRUCTIONS, "instructions {instructions}");
+        assert!(anchor.mem_bytes < MAX_MEMORY_BYTES, "memory {}", anchor.mem_bytes);
+        assert!(anchor.write_entries <= MAX_WRITE_ENTRIES, "writes {}", anchor.write_entries);
+        assert!(footprint <= MAX_FOOTPRINT_ENTRIES, "footprint {footprint}");
+        assert!(anchor.write_bytes <= MAX_WRITE_BYTES, "write bytes {}", anchor.write_bytes);
+        // The account's auth entry repeats these arguments, and the envelope
+        // also carries the footprint keys: two copies must fit with room left.
+        assert!(args_bytes < MAX_TX_BYTES / 2, "arguments {args_bytes} bytes");
+
+        // And it counted: one verified OK per leaf seller, nothing for the tail.
+        assert_eq!(client.checkpoint(&account).seq, u64::from(MAX_RANGE_LEAVES));
+        for seller in &sellers {
+            assert_eq!(client.seller_score(seller).verified_ok, 1);
+        }
+    }
+}
