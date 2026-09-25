@@ -26,8 +26,8 @@ async function main(): Promise<void> {
   const key = createPrivateKey({ key: Buffer.from(attester.privateKey, "base64url"), format: "der", type: "pkcs8" });
   const { transaction } = await buildSmartAccountPayment({
     account, payTo: seller, asset: USDC_SAC, amount: 10_000n, maxTimeoutSeconds: 120, commitment,
-    authoritySignature: sign(null, onChainCommitmentDigest(commitment), key),
-    signPayload: async (p) => Buffer.from(session.sign(p)),
+    authoritySignature: sign(null, onChainCommitmentDigest(account, commitment), key),
+    signAuthPreimage: async (preimage) => Buffer.from(session.sign(createHash("sha256").update(Buffer.from(preimage, "base64")).digest())),
     rpcUrl: RPC_URL, networkPassphrase: PASSPHRASE,
   });
 

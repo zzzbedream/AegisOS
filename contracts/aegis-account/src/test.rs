@@ -68,7 +68,7 @@ fn commitment(f: &Fixture, id: u8) -> OnChainCommitment {
 }
 
 fn payment_auth(f: &Fixture, c: OnChainCommitment, authority: &SigningKey, payload: &BytesN<32>) -> AegisAuth {
-    let digest = commitment_digest(&f.env, &c).to_array();
+    let digest = commitment_digest(&f.env, &f.account, &c).to_array();
     AegisAuth::Payment(PaymentAuth {
         authority_sig: sign(&f.env, authority, &digest),
         session_sig: sign(&f.env, &f.session, &payload.to_array()),
@@ -287,6 +287,22 @@ fn the_owner_key_authorizes_anything_and_nothing_else_does() {
     assert!(check(&f, &p, AegisAuth::Owner(session_as_owner), vec![&f.env, transfer(&f, &f.asset, &f.seller, PRICE)]).is_err());
 }
 
+#[test]
+fn a_commitment_for_another_account_cannot_be_replayed() {
+    // Same authority, same seller: signed for account X, presented to this one.
+    let f = setup();
+    let p = payload(&f.env, 16);
+    let c = commitment(&f, 16);
+    let other = Address::generate(&f.env);
+    let digest = commitment_digest(&f.env, &other, &c).to_array();
+    let auth = AegisAuth::Payment(PaymentAuth {
+        authority_sig: sign(&f.env, &f.authority, &digest),
+        session_sig: sign(&f.env, &f.session, &p.to_array()),
+        commitment: c,
+    });
+    assert!(check(&f, &p, auth, vec![&f.env, transfer(&f, &f.asset, &f.seller, PRICE)]).is_err());
+}
+
 // ------------------------------------------------------------ vectors
 
 #[test]
@@ -300,7 +316,8 @@ fn commitment_digest_matches_the_published_vector() {
         max_amount: 10_000,
         expires_at: 1_900_000_900,
     };
-    let digest = commitment_digest(&env, &c);
+    let account = Address::from_str(&env, "CDZ2HUKOYV5GR4NOZWFZN673V36KYWIXGFWFSUFHI2X6UVYAPBZWHCPQ");
+    let digest = commitment_digest(&env, &account, &c);
     let link = chain_link(&env, &BytesN::from_array(&env, &[0; 32]), 1, &c.commitment_hash, &c.seller, 10_000);
     std::println!("VECTOR commitment_digest={}", hex(&digest.to_array()));
     std::println!("VECTOR chain_link_1={}", hex(&link.to_array()));

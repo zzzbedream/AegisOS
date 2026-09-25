@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import type { AuthorityPolicy } from "./authority.js";
 import { IsolatedSignerService, type Caip2Network } from "./signer-service.js";
 import { SIGNER_PROTOCOL_VERSION } from "./protocol.js";
 
@@ -34,6 +35,23 @@ export interface SignerProcessConfig {
   readonly allowedAssets: Readonly<Record<string, string>>;
   readonly allowedNetworkPassphrases: readonly string[];
   readonly trustedCommitmentKeys: Readonly<Record<string, string>>;
+  readonly payerAddress?: string;
+  readonly authorityPolicy?: AuthorityPolicy;
+}
+
+/**
+ * The commitment authority key, if this signer is one: a PATH in
+ * AEGIS_AUTHORITY_SECRET_FILE to an ed25519 key-pair JSON. Like the payment
+ * key, the agent passes where it is, never what it is.
+ */
+export function readAuthoritySecret(env: NodeJS.ProcessEnv = process.env): string | undefined {
+  const file = env["AEGIS_AUTHORITY_SECRET_FILE"];
+  if (file === undefined || file.length === 0) return undefined;
+  const parsed = JSON.parse(readFileSync(file, "utf8")) as { privateKey?: unknown };
+  if (typeof parsed.privateKey !== "string" || parsed.privateKey.length === 0) {
+    throw new Error("AEGIS_AUTHORITY_SECRET_FILE holds no privateKey.");
+  }
+  return parsed.privateKey;
 }
 
 export function readSignerConfig(env: NodeJS.ProcessEnv = process.env): SignerProcessConfig {
@@ -60,11 +78,25 @@ export function readSignerConfig(env: NodeJS.ProcessEnv = process.env): SignerPr
   ) {
     throw new Error("AEGIS_SIGNER_CONFIG is incomplete.");
   }
+  const policy = config.authorityPolicy;
+  if (
+    policy !== undefined &&
+    (!Array.isArray(policy.allowedSellers) ||
+      typeof policy.maxAmountAtomic !== "string" ||
+      !/^[1-9][0-9]*$/.test(policy.maxAmountAtomic))
+  ) {
+    throw new Error("AEGIS_SIGNER_CONFIG.authorityPolicy is malformed.");
+  }
+  if (config.payerAddress !== undefined && !/^C[A-Z2-7]{55}$/.test(config.payerAddress)) {
+    throw new Error("AEGIS_SIGNER_CONFIG.payerAddress must be a contract address.");
+  }
   return {
     network: config.network as Caip2Network,
     allowedAssets: config.allowedAssets,
     allowedNetworkPassphrases: config.allowedNetworkPassphrases,
     trustedCommitmentKeys: config.trustedCommitmentKeys,
+    ...(config.payerAddress === undefined ? {} : { payerAddress: config.payerAddress }),
+    ...(policy === undefined ? {} : { authorityPolicy: policy }),
   };
 }
 
@@ -73,9 +105,17 @@ export function startSignerProcess(): void {
     throw new Error("Signer process must be started with fork().");
   }
 
+  const { authorityPolicy, ...config } = readSignerConfig();
+  const authorityKey = readAuthoritySecret();
+  if ((authorityKey === undefined) !== (authorityPolicy === undefined)) {
+    throw new Error("A commitment authority needs both its key file and its policy.");
+  }
   const service = new IsolatedSignerService({
     privateKey: readSignerSecret(),
-    ...readSignerConfig(),
+    ...config,
+    ...(authorityKey === undefined || authorityPolicy === undefined
+      ? {}
+      : { authority: { privateKey: authorityKey, policy: authorityPolicy } }),
     // Decisions go to stderr so the parent can show them without them ever
     // being part of the reply payload.
     onDecision: (entry) => {

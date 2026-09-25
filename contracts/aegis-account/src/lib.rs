@@ -126,10 +126,15 @@ pub enum DataKey {
 }
 
 /// Digest the authority signs. Fixed byte layout so TypeScript can rebuild it:
-/// domain || commitment_hash || seller(ScVal XDR) || asset(ScVal XDR)
-///        || max_amount (i128 BE) || expires_at (u64 BE)
-pub fn commitment_digest(env: &Env, c: &OnChainCommitment) -> BytesN<32> {
+/// domain || account(ScVal XDR) || commitment_hash || seller(ScVal XDR)
+///        || asset(ScVal XDR) || max_amount (i128 BE) || expires_at (u64 BE)
+///
+/// The paying account is part of it: a commitment authorizes one payment from
+/// one account, and cannot be replayed from another account that happens to
+/// trust the same authority.
+pub fn commitment_digest(env: &Env, account: &Address, c: &OnChainCommitment) -> BytesN<32> {
     let mut data = Bytes::from_slice(env, COMMITMENT_DOMAIN);
+    data.append(&account.clone().to_xdr(env));
     data.append(&c.commitment_hash.clone().into());
     data.append(&c.seller.clone().to_xdr(env));
     data.append(&c.asset.clone().to_xdr(env));
@@ -216,7 +221,7 @@ fn check_payment(
         return Err(AccError::CommitmentWindowTooLong);
     }
 
-    let digest: Bytes = commitment_digest(env, &c).into();
+    let digest: Bytes = commitment_digest(env, &env.current_contract_address(), &c).into();
     verify(env, &config.authority, &digest, &auth.authority_sig);
     verify(env, &config.session, payload, &auth.session_sig);
 

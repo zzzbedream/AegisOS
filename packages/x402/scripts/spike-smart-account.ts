@@ -62,10 +62,10 @@ async function main(): Promise<void> {
     maxAmount: AMOUNT,
     expiresAt: BigInt(Math.floor(Date.now() / 1000) + 600),
   };
-  const digest = onChainCommitmentDigest(commitment);
+  const digest = onChainCommitmentDigest(account, commitment);
   const base = {
     account, payTo: seller, asset: USDC_SAC, amount: AMOUNT, maxTimeoutSeconds: 120, commitment,
-    signPayload: async (payload: Buffer) => Buffer.from(session.sign(payload)),
+    signAuthPreimage: async (preimage: string) => Buffer.from(session.sign(createHash("sha256").update(Buffer.from(preimage, "base64")).digest())),
     rpcUrl: RPC_URL, networkPassphrase: PASSPHRASE,
   };
 

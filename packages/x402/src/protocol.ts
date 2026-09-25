@@ -38,7 +38,26 @@ export interface SignAuthEntryRequest extends SignerRequestBase {
   readonly commitment: PurchaseCommitmentV1;
 }
 
-export type SignerRequest = GetAddressRequest | SignAuthEntryRequest;
+/**
+ * Ask the commitment authority to sign an on-chain commitment. The authority
+ * signs only what its launch-time policy allows (approved sellers, ceiling,
+ * window); the paying account is taken from the signer config, never from
+ * the request.
+ */
+export interface SignOnChainCommitmentRequest extends SignerRequestBase {
+  readonly kind: "sign_onchain_commitment";
+  readonly commitment: {
+    readonly commitmentHash: string;
+    readonly seller: string;
+    readonly asset: string;
+    /** Decimal string, atomic units. */
+    readonly maxAmount: string;
+    /** Decimal string, unix seconds. */
+    readonly expiresAt: string;
+  };
+}
+
+export type SignerRequest = GetAddressRequest | SignAuthEntryRequest | SignOnChainCommitmentRequest;
 
 export interface SignerOkResponse {
   readonly protocol: typeof SIGNER_PROTOCOL_VERSION;
@@ -70,6 +89,8 @@ export type SignerDenialCode =
   | "AUTH_ENTRY_UNDECODABLE"
   | "AUTH_ENTRY_MISMATCH"
   | "KEY_MATERIAL_IN_REQUEST"
+  | "AUTHORITY_NOT_CONFIGURED"
+  | "COMMITMENT_POLICY_DENIED"
   | "SIGNING_FAILED";
 
 export class SignerDeniedError extends Error {
@@ -136,6 +157,31 @@ export function parseSignerRequest(value: unknown): SignerRequest {
         : {}),
       ...(typeof value["address"] === "string" ? { address: value["address"] } : {}),
       commitment: value["commitment"] as unknown as PurchaseCommitmentV1,
+    };
+  }
+  if (kind === "sign_onchain_commitment") {
+    const c = value["commitment"];
+    if (!isRecord(c)) {
+      throw new SignerDeniedError("MALFORMED_REQUEST", "An on-chain commitment is required.");
+    }
+    const text = (field: string, pattern: RegExp): string => {
+      const v = c[field];
+      if (typeof v !== "string" || !pattern.test(v)) {
+        throw new SignerDeniedError("MALFORMED_REQUEST", `commitment.${field} is malformed.`);
+      }
+      return v;
+    };
+    return {
+      protocol: SIGNER_PROTOCOL_VERSION,
+      id: value["id"],
+      kind: "sign_onchain_commitment",
+      commitment: {
+        commitmentHash: text("commitmentHash", /^[a-f0-9]{64}$/),
+        seller: text("seller", /^[GC][A-Z2-7]{55}$/),
+        asset: text("asset", /^C[A-Z2-7]{55}$/),
+        maxAmount: text("maxAmount", /^[1-9][0-9]{0,37}$/),
+        expiresAt: text("expiresAt", /^[1-9][0-9]{0,19}$/),
+      },
     };
   }
   throw new SignerDeniedError("UNKNOWN_OPERATION", `Unsupported signer operation: ${String(kind)}`);

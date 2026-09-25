@@ -13,12 +13,13 @@ const VECTOR = {
     maxAmount: 10_000n,
     expiresAt: 1_900_000_900n,
   },
-  digest: "da961c2d72269eea690775c234c6b1e5a5054a9cad427517490f7e21d2f0f578",
+  account: "CDZ2HUKOYV5GR4NOZWFZN673V36KYWIXGFWFSUFHI2X6UVYAPBZWHCPQ",
+  digest: "5113d17413cc9bb16edfc653f503c0fe9dd232dad2ffb08a3d3db8033e16070d",
   chainLink1: "8d59d4113fa07fadb6bcc0feeb18d6634441a256657ce31abc4911fe51856137",
 };
 
 test("the commitment digest matches the contract byte for byte", () => {
-  assert.equal(onChainCommitmentDigest(VECTOR.commitment).toString("hex"), VECTOR.digest);
+  assert.equal(onChainCommitmentDigest(VECTOR.account, VECTOR.commitment).toString("hex"), VECTOR.digest);
 });
 
 test("the payment chain link matches the contract byte for byte", () => {
@@ -35,7 +36,7 @@ test("the payment chain link matches the contract byte for byte", () => {
 });
 
 test("changing any committed field changes the digest", () => {
-  const base = onChainCommitmentDigest(VECTOR.commitment).toString("hex");
+  const base = onChainCommitmentDigest(VECTOR.account, VECTOR.commitment).toString("hex");
   const variants = [
     { ...VECTOR.commitment, maxAmount: 10_001n },
     { ...VECTOR.commitment, expiresAt: 1_900_000_901n },
@@ -43,8 +44,10 @@ test("changing any committed field changes the digest", () => {
     { ...VECTOR.commitment, commitmentHash: "ac".repeat(32) },
   ];
   for (const variant of variants) {
-    assert.notEqual(onChainCommitmentDigest(variant).toString("hex"), base);
+    assert.notEqual(onChainCommitmentDigest(VECTOR.account, variant).toString("hex"), base);
   }
+  const otherAccount = "CCMFGMPV2ZMEWE4EKF5KPR6RJM7K65ZJ5NLU25CBQBFE6IYML72VRPZS";
+  assert.notEqual(onChainCommitmentDigest(otherAccount, VECTOR.commitment).toString("hex"), base);
 });
 
 test("the payment signature is the contract's AegisAuth::Payment shape", () => {

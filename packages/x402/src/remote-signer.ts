@@ -1,4 +1,5 @@
 import type { PurchaseCommitmentV1 } from "../../proof/src/index.js";
+import type { OnChainCommitmentV1 } from "./smart-account.js";
 import {
   SIGNER_PROTOCOL_VERSION,
   SignerDeniedError,
@@ -84,6 +85,31 @@ export async function createRemoteSigner(
       return { signedAuthEntry, signerAddress: address };
     },
   });
+}
+
+/**
+ * Ask the signer commitment authority to sign an on-chain commitment.
+ * Returns the raw 64-byte ed25519 signature the smart account checks.
+ */
+export async function requestCommitmentAuthority(
+  transport: SignerTransport,
+  commitment: OnChainCommitmentV1,
+  idFactory: () => string = defaultIdFactory,
+): Promise<Buffer> {
+  const response = await transport.request({
+    protocol: SIGNER_PROTOCOL_VERSION,
+    id: idFactory(),
+    kind: "sign_onchain_commitment",
+    commitment: {
+      commitmentHash: commitment.commitmentHash,
+      seller: commitment.seller,
+      asset: commitment.asset,
+      maxAmount: commitment.maxAmount.toString(),
+      expiresAt: commitment.expiresAt.toString(),
+    },
+  });
+  if (response.kind === "denied") throw new SignerDeniedError(response.code, response.message);
+  return Buffer.from(response.value, "base64");
 }
 
 /** In-process transport. For tests and for exercising policy without a fork. */

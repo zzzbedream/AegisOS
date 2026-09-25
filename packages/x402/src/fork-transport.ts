@@ -1,5 +1,6 @@
 import { fork, type ChildProcess } from "node:child_process";
 import { SIGNER_PROTOCOL_VERSION, type SignerRequest, type SignerResponse } from "./protocol.js";
+import type { AuthorityPolicy } from "./authority.js";
 import type { SignerTransport } from "./remote-signer.js";
 
 export interface ForkSignerOptions {
@@ -10,6 +11,10 @@ export interface ForkSignerOptions {
   readonly allowedNetworkPassphrases: readonly string[];
   /** keyId → public key. Pinned here, at launch; requests cannot add to it. */
   readonly trustedCommitmentKeys: Readonly<Record<string, string>>;
+  /** Smart account this key is the session signer of. */
+  readonly payerAddress?: string;
+  /** Commitment authority: key file PATH plus the policy it enforces. */
+  readonly authority?: { readonly secretFile: string; readonly policy: AuthorityPolicy };
   /**
    * Path to a file containing the secret. Preferred: the parent passes the
    * path, so the agent process never holds the key bytes.
@@ -57,7 +62,12 @@ export async function forkSigner(options: ForkSignerOptions): Promise<ForkedSign
         allowedAssets: options.allowedAssets,
         allowedNetworkPassphrases: options.allowedNetworkPassphrases,
         trustedCommitmentKeys: options.trustedCommitmentKeys,
+        ...(options.payerAddress === undefined ? {} : { payerAddress: options.payerAddress }),
+        ...(options.authority === undefined ? {} : { authorityPolicy: options.authority.policy }),
       }),
+      ...(options.authority === undefined
+        ? {}
+        : { AEGIS_AUTHORITY_SECRET_FILE: options.authority.secretFile }),
       ...(options.secretFile === undefined ? {} : { AEGIS_SIGNER_SECRET_FILE: options.secretFile }),
       ...(options.secret === undefined ? {} : { AEGIS_SIGNER_SECRET: options.secret }),
     },

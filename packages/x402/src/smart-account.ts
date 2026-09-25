@@ -60,11 +60,13 @@ function hashBytes(hex: string, label: string): Buffer {
 /**
  * What the commitment authority signs. Same byte layout as the contract's
  * `commitment_digest`; `packages/x402/test/smart-account.test.ts` pins both to
- * the vector the Rust test prints.
+ * the vector the Rust test prints. The paying account is part of it, so a
+ * commitment cannot be replayed from another account.
  */
-export function onChainCommitmentDigest(c: OnChainCommitmentV1): Buffer {
+export function onChainCommitmentDigest(account: string, c: OnChainCommitmentV1): Buffer {
   return createHash("sha256")
     .update(Buffer.from(ONCHAIN_COMMITMENT_DOMAIN, "ascii"))
+    .update(addressXdr(account))
     .update(hashBytes(c.commitmentHash, "commitmentHash"))
     .update(addressXdr(c.seller))
     .update(addressXdr(c.asset))
@@ -128,10 +130,11 @@ export interface SmartAccountPaymentInput {
   /** Commitment authority's ed25519 signature over `onChainCommitmentDigest`. */
   readonly authoritySignature: Buffer;
   /**
-   * Session signer: signs the 32-byte Soroban signature payload. In AegisOS
-   * this is the isolated signer; it never sees the account's owner key.
+   * Session signer. Receives the whole `HashIdPreimage` (base64 XDR), not an
+   * opaque hash, so the isolated signer can decode the transfer and check it
+   * against the commitment before signing sha256(preimage).
    */
-  readonly signPayload: (payload: Buffer) => Promise<Buffer>;
+  readonly signAuthPreimage: (preimageXdr: string) => Promise<Buffer>;
   readonly rpcUrl: string;
   readonly networkPassphrase: string;
 }
@@ -168,8 +171,7 @@ export async function buildSmartAccountPayment(
       authorizeEntry(
         entry,
         async (preimage: xdr.HashIdPreimage) => {
-          const payload = createHash("sha256").update(preimage.toXDR()).digest();
-          const sessionSignature = await input.signPayload(payload);
+          const sessionSignature = await input.signAuthPreimage(preimage.toXDR("base64"));
           return {
             signatureScVal: paymentAuthScVal({
               commitment: input.commitment,

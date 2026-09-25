@@ -1,11 +1,10 @@
 {
   "generators": {
-    "address": 4,
+    "address": 5,
     "nonce": 0,
     "mux_id": 0
   },
   "auth": [
-    [],
     [],
     []
   ],
@@ -61,7 +60,7 @@
                               "symbol": "authority"
                             },
                             "val": {
-                              "bytes": "a96eb42b473e108bb23fdcf7458b5aca0c12e24fbd4dbf246d9c3b5fd4814167"
+                              "bytes": "16e9f049620c52e02fb6049d1050752c6d804ddebe0d6fbc096aac6a6a3e612b"
                             }
                           },
                           {
@@ -69,7 +68,7 @@
                               "symbol": "owner"
                             },
                             "val": {
-                              "bytes": "c04a5a168cd3a72f4cbca08c1417476954e35c06b9dd66b8c2f3bf5b791b7bdb"
+                              "bytes": "8dab2f89a7576f51f049250196235f2f63c2c21695c3233615614864a45153d4"
                             }
                           },
                           {
@@ -85,7 +84,7 @@
                               "symbol": "session"
                             },
                             "val": {
-                              "bytes": "46d60cf5bfab624208ff283c9fcd974d17dbbd0cdb9644f7299adc86a538805e"
+                              "bytes": "e0a130c5f07fdd0780883dda7a042ad16b3ebf6b6cd9b47e6e3221fc0b188a59"
                             }
                           }
                         ]
