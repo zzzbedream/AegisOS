@@ -93,6 +93,38 @@ export function paymentChainLink(input: {
     .digest("hex");
 }
 
+export const RANGE_LEAF_DOMAIN = "aegisos:range-leaf:v1";
+
+/** Contract verdict codes inside a range leaf. */
+export const RANGE_VERDICT_CODE = { OK: 0, TAINTED: 1, MISMATCH: 2, NOT_DELIVERED: 3 } as const;
+
+/**
+ * The registry's `range_leaf`: one notarized payment and what it delivered,
+ * already 0x00-prefixed, so `merkleRoot`/`merkleProof` from packages/proof
+ * build the same root the contract stores.
+ */
+export function rangeLeafHash(input: {
+  readonly seq: bigint;
+  readonly commitmentHash: string;
+  readonly seller: string;
+  readonly amount: bigint;
+  readonly contentHash: string;
+  readonly verdict: keyof typeof RANGE_VERDICT_CODE;
+}): string {
+  const code = Buffer.alloc(4);
+  code.writeUInt32BE(RANGE_VERDICT_CODE[input.verdict], 0);
+  const body = createHash("sha256")
+    .update(Buffer.from(RANGE_LEAF_DOMAIN, "ascii"))
+    .update(u64Be(input.seq))
+    .update(hashBytes(input.commitmentHash, "commitmentHash"))
+    .update(addressXdr(input.seller))
+    .update(i128Be(input.amount))
+    .update(hashBytes(input.contentHash, "contentHash"))
+    .update(code)
+    .digest();
+  return createHash("sha256").update(Buffer.from([0x00])).update(body).digest("hex");
+}
+
 function field(key: string, val: xdr.ScVal): xdr.ScMapEntry {
   return new xdr.ScMapEntry({ key: xdr.ScVal.scvSymbol(key), val });
 }

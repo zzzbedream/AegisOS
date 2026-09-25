@@ -137,6 +137,16 @@ export interface SellerScoreV1 {
    * batch count is the buyer's word, not one record per delivery.
    */
   readonly batchedOk?: number;
+  /**
+   * Verdicts anchored through ranges: each bound to a payment the buyer's
+   * AegisOS account notarized, counted once, none omitted.
+   */
+  readonly verified?: {
+    readonly ok: number;
+    readonly tainted: number;
+    readonly mismatch: number;
+    readonly notDelivered: number;
+  };
   readonly asOf?: string;
 }
 

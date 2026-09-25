@@ -47,8 +47,10 @@
 //! *authorship* — this attestation is signed by the identity it is stored
 //! under — which is precisely the property the off-chain layer needs.
 
+use aegis_chain::{chain_link, merkle_root, range_leaf};
 use soroban_sdk::{
-    contract, contracterror, contractevent, contractimpl, contracttype, Address, BytesN, Env,
+    contract, contractclient, contracterror, contractevent, contractimpl, contracttype, Address,
+    BytesN, Env, Map, Vec,
 };
 
 const DAY_IN_LEDGERS: u32 = 17_280;
@@ -59,6 +61,15 @@ const RECORD_LIFETIME_THRESHOLD: u32 = RECORD_BUMP_AMOUNT - 5 * DAY_IN_LEDGERS;
 /// the leaves behind a root, so `count` is the buyer's word; the cap bounds how
 /// much OK history a single cheap transaction can assert.
 pub const MAX_BATCH_COUNT: u32 = 1_024;
+
+/// Payments one range may cover. Bounded by the transaction's CPU and size
+/// budget: every leaf is hashed twice on-chain (chain link and range leaf).
+pub const MAX_RANGE_LEAVES: u32 = 64;
+
+/// Later payments a range may carry only to reach the account's head. They are
+/// verified, not counted; they become leaves of the next range. Without this an
+/// account more than MAX_RANGE_LEAVES payments behind could never anchor again.
+pub const MAX_RANGE_TAIL: u32 = 192;
 
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
@@ -71,6 +82,12 @@ pub enum Error {
     EmptyBatch = 5,
     BatchTooLarge = 6,
     DuplicateBatch = 7,
+    UnknownAccount = 8,
+    EmptyRange = 9,
+    RangeTooLarge = 10,
+    RangeOutOfOrder = 11,
+    RangeNotAtHead = 12,
+    ChainMismatch = 13,
 }
 
 #[contracttype]
@@ -124,6 +141,92 @@ pub struct SellerScore {
     /// batch count is not backed by one record per delivery, so consumers must
     /// be able to weight it lower.
     pub batched_ok: u32,
+    /// Verdicts from ranges: each one is bound to a payment the buyer's
+    /// AegisOS account notarized, counted once, with no payment omitted. These
+    /// are the counters that do not rest on the buyer's word about *which*
+    /// payments happened — only about what each one delivered.
+    pub verified_ok: u32,
+    pub verified_tainted: u32,
+    pub verified_mismatch: u32,
+    pub verified_not_delivered: u32,
+}
+
+/// Mirrors the account's `Config`. Map field names are the ABI.
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AccountConfig {
+    pub owner: BytesN<32>,
+    pub authority: BytesN<32>,
+    pub session: BytesN<32>,
+    pub allowed_assets: Vec<Address>,
+    pub registry: Option<Address>,
+}
+
+/// Mirrors the account's `Head`.
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AccountHead {
+    pub seq: u64,
+    pub chain_head: BytesN<32>,
+}
+
+/// The one account function the registry relies on.
+#[contractclient(name = "AccountClient")]
+pub trait AccountInterface {
+    fn head(env: Env) -> AccountHead;
+}
+
+/// One notarized payment and what it delivered.
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RangeLeaf {
+    pub seq: u64,
+    pub commitment_hash: BytesN<32>,
+    pub seller: Address,
+    pub amount: i128,
+    pub content_hash: BytesN<32>,
+    pub verdict: Verdict,
+}
+
+/// A later payment, supplied only so the chain can be followed to the head.
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ChainStep {
+    pub commitment_hash: BytesN<32>,
+    pub seller: Address,
+    pub amount: i128,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RangeInput {
+    pub account: Address,
+    pub from_seq: u64,
+    pub leaves: Vec<RangeLeaf>,
+    /// Payments after the last leaf, up to the account's head. Not counted.
+    pub tail: Vec<ChainStep>,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RangeRecord {
+    pub account: Address,
+    pub from_seq: u64,
+    pub to_seq: u64,
+    pub root: BytesN<32>,
+    pub ok: u32,
+    pub tainted: u32,
+    pub mismatch: u32,
+    pub not_delivered: u32,
+    pub anchored_at: u64,
+}
+
+/// How far an account's payments have been anchored.
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Checkpoint {
+    pub seq: u64,
+    pub chain_head: BytesN<32>,
 }
 
 /// A Merkle root over OK delivery receipts to one seller.
@@ -157,6 +260,34 @@ pub enum DataKey {
     Delivery(BytesN<32>),
     SellerScore(Address),
     Batch(BytesN<32>),
+    AccountWasm,
+    Account(Address),
+    Checkpoint(Address),
+    Range(Address, u64),
+}
+
+/// Emitted when a range is accepted.
+#[contractevent]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct RangeAnchored {
+    #[topic]
+    pub account: Address,
+    pub from_seq: u64,
+    pub to_seq: u64,
+    pub root: BytesN<32>,
+}
+
+fn verdict_code(verdict: &Verdict) -> u32 {
+    match verdict {
+        Verdict::Ok => 0,
+        Verdict::Tainted => 1,
+        Verdict::Mismatch => 2,
+        Verdict::NotDelivered => 3,
+    }
+}
+
+fn zero_checkpoint(env: &Env) -> Checkpoint {
+    Checkpoint { seq: 0, chain_head: BytesN::from_array(env, &[0u8; 32]) }
 }
 
 /// Emitted on every successful anchor. `payment_hash` and `seller` are topics
@@ -201,6 +332,189 @@ pub struct AegisProof;
 
 #[contractimpl]
 impl AegisProof {
+    /// `account_wasm_hash` is the only account code this registry will
+    /// create, and therefore the only notarization it trusts. Fixed for the
+    /// life of the registry: a new account version means a new registry.
+    pub fn __constructor(env: Env, account_wasm_hash: BytesN<32>) {
+        env.storage().instance().set(&DataKey::AccountWasm, &account_wasm_hash);
+    }
+
+    pub fn account_wasm(env: Env) -> BytesN<32> {
+        env.storage().instance().get(&DataKey::AccountWasm).unwrap()
+    }
+
+    /// Deploy an AegisOS account that points back at this registry. Anyone may
+    /// create one; it is controlled only by the keys in its config.
+    pub fn create_account(
+        env: Env,
+        owner: BytesN<32>,
+        authority: BytesN<32>,
+        session: BytesN<32>,
+        allowed_assets: Vec<Address>,
+        salt: BytesN<32>,
+    ) -> Address {
+        let config = AccountConfig {
+            owner,
+            authority,
+            session,
+            allowed_assets,
+            registry: Some(env.current_contract_address()),
+        };
+        let wasm: BytesN<32> = env.storage().instance().get(&DataKey::AccountWasm).unwrap();
+        let account = env
+            .deployer()
+            .with_current_contract(salt)
+            .deploy_v2(wasm, (config,));
+        let key = DataKey::Account(account.clone());
+        env.storage().persistent().set(&key, &true);
+        bump(&env, &key);
+        account
+    }
+
+    pub fn is_account(env: Env, account: Address) -> bool {
+        env.storage().persistent().has(&DataKey::Account(account))
+    }
+
+    pub fn checkpoint(env: Env, account: Address) -> Checkpoint {
+        env.storage()
+            .persistent()
+            .get(&DataKey::Checkpoint(account))
+            .unwrap_or_else(|| zero_checkpoint(&env))
+    }
+
+    pub fn get_range(env: Env, account: Address, from_seq: u64) -> Option<RangeRecord> {
+        let key = DataKey::Range(account, from_seq);
+        let record: Option<RangeRecord> = env.storage().persistent().get(&key);
+        if record.is_some() {
+            bump(&env, &key);
+        }
+        record
+    }
+
+    /// Anchor the next contiguous run of an account's notarized payments.
+    ///
+    /// The registry recomputes the account's payment chain from its last
+    /// checkpoint over the given leaves, and accepts only if that lands exactly
+    /// on the head the account holds now. So every payment the account
+    /// notarized is anchored exactly once, in order, none invented, none left
+    /// out; and the verdict counts are computed here, from the leaves.
+    pub fn anchor_range(env: Env, input: RangeInput) -> Result<(), Error> {
+        let account_key = DataKey::Account(input.account.clone());
+        if !env.storage().persistent().has(&account_key) {
+            return Err(Error::UnknownAccount);
+        }
+        input.account.require_auth();
+
+        let count = input.leaves.len();
+        if count == 0 {
+            return Err(Error::EmptyRange);
+        }
+        if count > MAX_RANGE_LEAVES || input.tail.len() > MAX_RANGE_TAIL {
+            return Err(Error::RangeTooLarge);
+        }
+
+        let checkpoint_key = DataKey::Checkpoint(input.account.clone());
+        let checkpoint: Checkpoint = env
+            .storage()
+            .persistent()
+            .get(&checkpoint_key)
+            .unwrap_or_else(|| zero_checkpoint(&env));
+        if input.from_seq != checkpoint.seq + 1 {
+            return Err(Error::RangeOutOfOrder);
+        }
+
+        let mut head = checkpoint.chain_head.clone();
+        let mut leaves: Vec<BytesN<32>> = Vec::new(&env);
+        let mut scores: Map<Address, SellerScore> = Map::new(&env);
+        let (mut ok, mut tainted, mut mismatch, mut not_delivered) = (0u32, 0u32, 0u32, 0u32);
+
+        for (i, leaf) in input.leaves.iter().enumerate() {
+            if leaf.seq != input.from_seq + i as u64 {
+                return Err(Error::RangeOutOfOrder);
+            }
+            if is_zero(&env, &leaf.commitment_hash) || is_zero(&env, &leaf.content_hash) {
+                return Err(Error::ZeroHash);
+            }
+            if leaf.seller == input.account {
+                return Err(Error::SelfDealing);
+            }
+            head = chain_link(&env, &head, leaf.seq, &leaf.commitment_hash, &leaf.seller, leaf.amount);
+            leaves.push_back(range_leaf(
+                &env,
+                leaf.seq,
+                &leaf.commitment_hash,
+                &leaf.seller,
+                leaf.amount,
+                &leaf.content_hash,
+                verdict_code(&leaf.verdict),
+            ));
+
+            let mut score = match scores.get(leaf.seller.clone()) {
+                Some(score) => score,
+                None => env
+                    .storage()
+                    .persistent()
+                    .get(&DataKey::SellerScore(leaf.seller.clone()))
+                    .unwrap_or_default(),
+            };
+            let (range_counter, seller_counter) = match leaf.verdict {
+                Verdict::Ok => (&mut ok, &mut score.verified_ok),
+                Verdict::Tainted => (&mut tainted, &mut score.verified_tainted),
+                Verdict::Mismatch => (&mut mismatch, &mut score.verified_mismatch),
+                Verdict::NotDelivered => (&mut not_delivered, &mut score.verified_not_delivered),
+            };
+            *range_counter += 1;
+            *seller_counter = seller_counter.checked_add(1).ok_or(Error::CounterOverflow)?;
+            scores.set(leaf.seller.clone(), score);
+        }
+
+        let to_seq = input.from_seq + count as u64 - 1;
+
+        // Follow the chain past the range to the head, without counting.
+        let mut tail_head = head.clone();
+        let mut tail_seq = to_seq;
+        for step in input.tail.iter() {
+            tail_seq += 1;
+            tail_head = chain_link(&env, &tail_head, tail_seq, &step.commitment_hash, &step.seller, step.amount);
+        }
+        let account_head = AccountClient::new(&env, &input.account).head();
+        if account_head.seq != tail_seq {
+            return Err(Error::RangeNotAtHead);
+        }
+        if account_head.chain_head != tail_head {
+            return Err(Error::ChainMismatch);
+        }
+
+        let root = merkle_root(&env, &leaves);
+        let record = RangeRecord {
+            account: input.account.clone(),
+            from_seq: input.from_seq,
+            to_seq,
+            root: root.clone(),
+            ok,
+            tainted,
+            mismatch,
+            not_delivered,
+            anchored_at: env.ledger().timestamp(),
+        };
+        let range_key = DataKey::Range(input.account.clone(), input.from_seq);
+        env.storage().persistent().set(&range_key, &record);
+        env.storage()
+            .persistent()
+            .set(&checkpoint_key, &Checkpoint { seq: to_seq, chain_head: head });
+        bump(&env, &range_key);
+        bump(&env, &checkpoint_key);
+        bump(&env, &account_key);
+        for (seller, score) in scores.iter() {
+            let key = DataKey::SellerScore(seller);
+            env.storage().persistent().set(&key, &score);
+            bump(&env, &key);
+        }
+
+        RangeAnchored { account: input.account, from_seq: input.from_seq, to_seq, root }.publish(&env);
+        Ok(())
+    }
+
     /// Anchor a buyer attestation about one delivery.
     ///
     /// Authority is the buyer named *in the record*, so a third party cannot

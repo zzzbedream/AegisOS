@@ -1,6 +1,7 @@
 import type { FlushedBatch } from "../../../packages/x402/src/index.js";
 import type { PaymentNotarization, PurchaseOutcome } from "./agent.js";
 import { appendPaymentLog } from "./notarization.js";
+import type { AnchoredRange } from "./range.js";
 import { saveReceipt } from "./receipt-check.js";
 
 const EXPLORER = "https://stellar.expert/explorer/testnet/tx/";
@@ -25,6 +26,20 @@ export function saveIndividualReceipt(outcome: PurchaseOutcome, contractId: stri
 
 /** Notarizations of receipts waiting in a batch, saved with them on flush. */
 const pendingNotarizations = new Map<string, PaymentNotarization>();
+
+/** Print an anchored account range. */
+export function reportRange(range: AnchoredRange | undefined): void {
+  if (range === undefined) {
+    console.log("  rango            : nada pendiente (la cuenta ya está anclada hasta su cabeza)");
+    return;
+  }
+  console.log(`  rango            : pagos seq ${range.fromSeq.toString()}..${range.toSeq.toString()} de la cuenta → 1 transacción`);
+  console.log("                     el contrato recalculó la cadena de la cuenta y contó los veredictos");
+  if (range.tailLength > 0) console.log(`  cola             : ${String(range.tailLength)} pago(s) verificados, se cuentan en el próximo rango`);
+  console.log(`  raíz del rango   : ${range.root}`);
+  console.log(`  anclado on-chain : ${EXPLORER}${range.transactionHash}`);
+  for (const path of range.savedPaths) console.log(`  receipt          : ${path}`);
+}
 
 /** One line for the console. */
 export function describeNotarization(n: PaymentNotarization): string {

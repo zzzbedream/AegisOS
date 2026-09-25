@@ -17,7 +17,7 @@ struct Fixture {
 fn setup() -> Fixture {
     let env = Env::default();
     env.ledger().set_timestamp(NOW);
-    let contract_id = env.register(AegisProof, ());
+    let contract_id = env.register(AegisProof, (BytesN::from_array(&env, &[7u8; 32]),));
     let client = AegisProofClient::new(&env, &contract_id);
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
@@ -209,12 +209,8 @@ fn score_counter_overflow_is_checked() {
         let key = DataKey::SellerScore(f.seller.clone());
         let maxed = SellerScore {
             ok: u32::MAX,
-            tainted: 0,
-            mismatch: 0,
-            not_delivered: 0,
-            disputed: 0,
             total: u32::MAX,
-            batched_ok: 0,
+            ..SellerScore::default()
         };
         f.env.storage().persistent().set(&key, &maxed);
     });
@@ -372,4 +368,309 @@ fn batch_event_carries_root_and_seller() {
         count: 42,
     };
     assert_eq!(f.env.events().all(), [expected.to_xdr(&f.env, &f.contract_id)]);
+}
+
+// ------------------------------------------------------------------ ranges
+
+mod ranges {
+    extern crate std;
+
+    use super::*;
+    use aegis_account::{
+        commitment_digest, AegisAccount, AegisAccountClient, AegisAuth, Config as AccountConfigNative,
+        OnChainCommitment, PaymentAuth,
+    };
+    use aegis_chain::{merkle_root, range_leaf};
+    use ed25519_dalek::{Signer, SigningKey};
+    use rand::rngs::OsRng;
+    use soroban_sdk::{
+        auth::{Context, ContractContext},
+        vec, Bytes, Symbol, Val, Vec,
+    };
+
+    const PRICE: i128 = 10_000;
+
+    pub struct World {
+        pub f: Fixture,
+        pub account: Address,
+        pub asset: Address,
+        pub other_seller: Address,
+        authority: SigningKey,
+        session: SigningKey,
+        paid: std::vec::Vec<(u64, BytesN<32>, Address, i128)>,
+    }
+
+    fn sign(env: &Env, key: &SigningKey, msg: &[u8]) -> BytesN<64> {
+        BytesN::from_array(env, &key.sign(msg).to_bytes())
+    }
+
+    pub fn world() -> World {
+        let f = setup();
+        let owner = SigningKey::generate(&mut OsRng);
+        let authority = SigningKey::generate(&mut OsRng);
+        let session = SigningKey::generate(&mut OsRng);
+        let asset = Address::generate(&f.env);
+        let config = AccountConfigNative {
+            owner: BytesN::from_array(&f.env, &owner.verifying_key().to_bytes()),
+            authority: BytesN::from_array(&f.env, &authority.verifying_key().to_bytes()),
+            session: BytesN::from_array(&f.env, &session.verifying_key().to_bytes()),
+            allowed_assets: vec![&f.env, asset.clone()],
+            registry: Some(f.contract_id.clone()),
+        };
+        let account = f.env.register(AegisAccount, (config,));
+        // Stand-in for create_account, which needs the uploaded wasm.
+        f.env.as_contract(&f.contract_id, || {
+            f.env.storage().persistent().set(&DataKey::Account(account.clone()), &true);
+        });
+        let other_seller = Address::generate(&f.env);
+        World { f, account, asset, other_seller, authority, session, paid: std::vec::Vec::new() }
+    }
+
+    impl World {
+        /// A real notarized payment: runs the account's own __check_auth.
+        pub fn pay(&mut self, seller: &Address, amount: i128) {
+            let env = &self.f.env;
+            let n = self.paid.len() as u8 + 1;
+            let c = OnChainCommitment {
+                commitment_hash: BytesN::from_array(env, &[n; 32]),
+                seller: seller.clone(),
+                asset: self.asset.clone(),
+                max_amount: amount,
+                expires_at: NOW + 600,
+            };
+            let payload: BytesN<32> = env.crypto().sha256(&Bytes::from_array(env, &[n; 32])).to_bytes();
+            let digest = commitment_digest(env, &self.account, &c).to_array();
+            let auth = AegisAuth::Payment(PaymentAuth {
+                authority_sig: sign(env, &self.authority, &digest),
+                session_sig: sign(env, &self.session, &payload.to_array()),
+                commitment: c.clone(),
+            });
+            let ctx = Context::Contract(ContractContext {
+                contract: self.asset.clone(),
+                fn_name: Symbol::new(env, "transfer"),
+                args: (self.account.clone(), seller.clone(), amount).into_val(env),
+            });
+            let signature: Val = auth.into_val(env);
+            env.try_invoke_contract_check_auth::<aegis_account::AccError>(&self.account, &payload, signature, &vec![env, ctx])
+                .unwrap();
+            let seq = AegisAccountClient::new(env, &self.account).head().seq;
+            self.paid.push((seq, c.commitment_hash, seller.clone(), amount));
+        }
+
+        pub fn leaves(&self, from: u64, to: u64, verdicts: &[Verdict]) -> Vec<RangeLeaf> {
+            let env = &self.f.env;
+            let mut out = Vec::new(env);
+            for (i, (seq, commitment, seller, amount)) in self.paid.iter().enumerate() {
+                if *seq < from || *seq > to {
+                    continue;
+                }
+                out.push_back(RangeLeaf {
+                    seq: *seq,
+                    commitment_hash: commitment.clone(),
+                    seller: seller.clone(),
+                    amount: *amount,
+                    content_hash: BytesN::from_array(env, &[0xC0 + i as u8; 32]),
+                    verdict: verdicts[(*seq - from) as usize].clone(),
+                });
+            }
+            out
+        }
+
+        pub fn anchor(&self, from: u64, leaves: Vec<RangeLeaf>) -> Result<(), Error> {
+            self.f.env.mock_all_auths();
+            self.anchor_with_tail(from, leaves, Vec::new(&self.f.env))
+        }
+
+        pub fn tail(&self, from: u64, to: u64) -> Vec<ChainStep> {
+            let env = &self.f.env;
+            let mut out = Vec::new(env);
+            for (seq, commitment, seller, amount) in self.paid.iter() {
+                if *seq >= from && *seq <= to {
+                    out.push_back(ChainStep { commitment_hash: commitment.clone(), seller: seller.clone(), amount: *amount });
+                }
+            }
+            out
+        }
+
+        pub fn anchor_with_tail(&self, from: u64, leaves: Vec<RangeLeaf>, tail: Vec<ChainStep>) -> Result<(), Error> {
+            self.f.env.mock_all_auths();
+            match self.f.client.try_anchor_range(&RangeInput { account: self.account.clone(), from_seq: from, leaves, tail }) {
+                Ok(Ok(())) => Ok(()),
+                Err(Ok(e)) => Err(e),
+                other => panic!("unexpected: {:?}", other),
+            }
+        }
+    }
+
+    #[test]
+    fn a_range_of_notarized_payments_is_accepted_and_the_contract_counts() {
+        let mut w = world();
+        let s1 = w.f.seller.clone();
+        let s2 = w.other_seller.clone();
+        w.pay(&s1, PRICE);
+        w.pay(&s1, PRICE);
+        w.pay(&s2, PRICE / 2);
+        let leaves = w.leaves(1, 3, &[Verdict::Ok, Verdict::Tainted, Verdict::Ok]);
+
+        assert_eq!(w.anchor(1, leaves.clone()), Ok(()));
+
+        let record = w.f.client.get_range(&w.account, &1).unwrap();
+        assert_eq!((record.from_seq, record.to_seq), (1, 3));
+        assert_eq!((record.ok, record.tainted, record.mismatch, record.not_delivered), (2, 1, 0, 0));
+        let expected: Vec<BytesN<32>> = {
+            let env = &w.f.env;
+            let mut v = Vec::new(env);
+            for l in leaves.iter() {
+                let code = match l.verdict { Verdict::Ok => 0, Verdict::Tainted => 1, Verdict::Mismatch => 2, Verdict::NotDelivered => 3 };
+                v.push_back(range_leaf(env, l.seq, &l.commitment_hash, &l.seller, l.amount, &l.content_hash, code));
+            }
+            v
+        };
+        assert_eq!(record.root, merkle_root(&w.f.env, &expected));
+
+        let checkpoint = w.f.client.checkpoint(&w.account);
+        assert_eq!(checkpoint.seq, 3);
+        assert_eq!(checkpoint.chain_head, AegisAccountClient::new(&w.f.env, &w.account).head().chain_head);
+
+        let score1 = w.f.client.seller_score(&s1);
+        assert_eq!((score1.verified_ok, score1.verified_tainted), (1, 1));
+        assert_eq!(score1.ok, 0, "attested counters are untouched by ranges");
+        assert_eq!(w.f.client.seller_score(&s2).verified_ok, 1);
+    }
+
+    #[test]
+    fn the_next_range_continues_from_the_checkpoint() {
+        let mut w = world();
+        let s = w.f.seller.clone();
+        w.pay(&s, PRICE);
+        assert_eq!(w.anchor(1, w.leaves(1, 1, &[Verdict::Ok])), Ok(()));
+        w.pay(&s, PRICE);
+        w.pay(&s, PRICE);
+        // Re-anchoring the first payment is refused: it was already counted.
+        assert_eq!(w.anchor(1, w.leaves(1, 3, &[Verdict::Ok, Verdict::Ok, Verdict::Ok])), Err(Error::RangeOutOfOrder));
+        assert_eq!(w.anchor(2, w.leaves(2, 3, &[Verdict::Ok, Verdict::Mismatch])), Ok(()));
+        assert_eq!(w.f.client.checkpoint(&w.account).seq, 3);
+        assert_eq!(w.f.client.seller_score(&s).verified_ok, 2);
+    }
+
+    #[test]
+    fn a_range_that_leaves_out_a_payment_is_refused() {
+        let mut w = world();
+        let s = w.f.seller.clone();
+        w.pay(&s, PRICE);
+        w.pay(&s, PRICE);
+        w.pay(&s, PRICE);
+        // Stops short of the head: the third payment would go uncounted.
+        assert_eq!(w.anchor(1, w.leaves(1, 2, &[Verdict::Ok, Verdict::Ok])), Err(Error::RangeNotAtHead));
+    }
+
+    #[test]
+    fn an_account_far_behind_catches_up_through_the_tail() {
+        let mut w = world();
+        let s = w.f.seller.clone();
+        for _ in 0..3 {
+            w.pay(&s, PRICE);
+        }
+        // Anchor 1..2 now; 3 rides along only to prove the chain reaches the head.
+        assert_eq!(w.anchor_with_tail(1, w.leaves(1, 2, &[Verdict::Ok, Verdict::Ok]), w.tail(3, 3)), Ok(()));
+        assert_eq!(w.f.client.checkpoint(&w.account).seq, 2);
+        assert_eq!(w.f.client.seller_score(&s).verified_ok, 2, "the tail is not counted");
+        assert_eq!(w.anchor(3, w.leaves(3, 3, &[Verdict::Ok])), Ok(()));
+        assert_eq!(w.f.client.seller_score(&s).verified_ok, 3);
+    }
+
+    #[test]
+    fn a_tail_that_lies_about_later_payments_is_refused() {
+        let mut w = world();
+        let s = w.f.seller.clone();
+        w.pay(&s, PRICE);
+        w.pay(&s, PRICE);
+        let mut tail = w.tail(2, 2);
+        let mut step = tail.get(0).unwrap();
+        step.amount = 1;
+        tail.set(0, step);
+        assert_eq!(w.anchor_with_tail(1, w.leaves(1, 1, &[Verdict::Ok]), tail), Err(Error::ChainMismatch));
+    }
+
+    #[test]
+    fn a_skipped_or_reordered_seq_is_refused() {
+        let mut w = world();
+        let s = w.f.seller.clone();
+        w.pay(&s, PRICE);
+        w.pay(&s, PRICE);
+        let leaves = w.leaves(1, 2, &[Verdict::Ok, Verdict::Ok]);
+        let mut swapped = Vec::new(&w.f.env);
+        swapped.push_back(leaves.get(1).unwrap());
+        swapped.push_back(leaves.get(0).unwrap());
+        assert_eq!(w.anchor(1, swapped), Err(Error::RangeOutOfOrder));
+        assert_eq!(w.anchor(2, w.leaves(2, 2, &[Verdict::Ok])), Err(Error::RangeOutOfOrder));
+    }
+
+    #[test]
+    fn an_edited_or_invented_payment_breaks_the_chain() {
+        let mut w = world();
+        let s = w.f.seller.clone();
+        w.pay(&s, PRICE);
+        w.pay(&s, PRICE);
+        let leaves = w.leaves(1, 2, &[Verdict::Ok, Verdict::Ok]);
+
+        let mut cheaper = leaves.clone();
+        let mut leaf = cheaper.get(1).unwrap();
+        leaf.amount = PRICE - 1;
+        cheaper.set(1, leaf);
+        assert_eq!(w.anchor(1, cheaper), Err(Error::ChainMismatch));
+
+        let mut redirected = leaves.clone();
+        let mut leaf = redirected.get(0).unwrap();
+        leaf.seller = w.other_seller.clone();
+        redirected.set(0, leaf);
+        assert_eq!(w.anchor(1, redirected), Err(Error::ChainMismatch));
+
+        let mut invented = leaves;
+        let mut leaf = invented.get(1).unwrap();
+        leaf.commitment_hash = BytesN::from_array(&w.f.env, &[0xEE; 32]);
+        invented.set(1, leaf);
+        assert_eq!(w.anchor(1, invented), Err(Error::ChainMismatch));
+    }
+
+    #[test]
+    fn only_registered_accounts_and_bounded_ranges() {
+        let mut w = world();
+        let s = w.f.seller.clone();
+        w.pay(&s, PRICE);
+        w.f.env.mock_all_auths();
+        let stranger = Address::generate(&w.f.env);
+        assert_eq!(
+            w.f.client.try_anchor_range(&RangeInput { account: stranger, from_seq: 1, leaves: w.leaves(1, 1, &[Verdict::Ok]), tail: Vec::new(&w.f.env) }),
+            Err(Ok(Error::UnknownAccount))
+        );
+        assert_eq!(w.anchor(1, Vec::new(&w.f.env)), Err(Error::EmptyRange));
+
+        let mut many = Vec::new(&w.f.env);
+        let one = w.leaves(1, 1, &[Verdict::Ok]).get(0).unwrap();
+        for _ in 0..=MAX_RANGE_LEAVES {
+            many.push_back(one.clone());
+        }
+        assert_eq!(w.anchor(1, many), Err(Error::RangeTooLarge));
+    }
+
+    #[test]
+    #[should_panic(expected = "Auth, InvalidAction")]
+    fn only_the_account_can_anchor_its_range() {
+        let mut w = world();
+        let s = w.f.seller.clone();
+        w.pay(&s, PRICE);
+        let input = RangeInput { account: w.account.clone(), from_seq: 1, leaves: w.leaves(1, 1, &[Verdict::Ok]), tail: Vec::new(&w.f.env) };
+        let mallory = Address::generate(&w.f.env);
+        w.f.env.mock_auths(&[MockAuth {
+            address: &mallory,
+            invoke: &MockAuthInvoke {
+                contract: &w.f.contract_id,
+                fn_name: "anchor_range",
+                args: (input.clone(),).into_val(&w.f.env),
+                sub_invokes: &[],
+            },
+        }]);
+        w.f.client.anchor_range(&input);
+    }
 }

@@ -37,7 +37,7 @@ use soroban_sdk::{
 };
 
 pub const COMMITMENT_DOMAIN: &[u8] = b"aegisos:onchain-commitment:v1";
-pub const CHAIN_DOMAIN: &[u8] = b"aegisos:payment-chain:v1";
+pub use aegis_chain::CHAIN_DOMAIN;
 
 const DAY_IN_LEDGERS: u32 = 17_280;
 const INSTANCE_BUMP: u32 = 30 * DAY_IN_LEDGERS;
@@ -143,25 +143,8 @@ pub fn commitment_digest(env: &Env, account: &Address, c: &OnChainCommitment) ->
     env.crypto().sha256(&data).to_bytes()
 }
 
-/// Next link of the payment chain:
-/// sha256(domain || previous || seq (u64 BE) || commitment_hash
-///        || seller(ScVal XDR) || amount (i128 BE))
-pub fn chain_link(
-    env: &Env,
-    previous: &BytesN<32>,
-    seq: u64,
-    commitment_hash: &BytesN<32>,
-    seller: &Address,
-    amount: i128,
-) -> BytesN<32> {
-    let mut data = Bytes::from_slice(env, CHAIN_DOMAIN);
-    data.append(&previous.clone().into());
-    data.append(&Bytes::from_array(env, &seq.to_be_bytes()));
-    data.append(&commitment_hash.clone().into());
-    data.append(&seller.clone().to_xdr(env));
-    data.append(&Bytes::from_array(env, &amount.to_be_bytes()));
-    env.crypto().sha256(&data).to_bytes()
-}
+/// One link of the payment chain; shared with the registry, which recomputes it.
+pub use aegis_chain::chain_link;
 
 fn read_config(env: &Env) -> Config {
     env.storage().instance().get(&DataKey::Config).unwrap()

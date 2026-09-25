@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { onChainCommitmentDigest, paymentChainLink, paymentAuthScVal } from "../src/index.js";
+import { merkleRoot } from "../../proof/src/index.js";
+import { onChainCommitmentDigest, paymentChainLink, paymentAuthScVal, rangeLeafHash } from "../src/index.js";
 
 // Printed by `cargo test -p aegis-account commitment_digest -- --nocapture`.
 // If either side changes its byte layout, the account rejects every payment.
@@ -60,4 +61,19 @@ test("the payment signature is the contract's AegisAuth::Payment shape", () => {
   assert.equal(tag?.sym().toString(), "Payment");
   const keys = body?.map()?.map((entry) => entry.key().sym().toString());
   assert.deepEqual(keys, ["authority_sig", "commitment", "session_sig"]);
+});
+
+// Printed by `cargo test -p aegis-chain -- --nocapture`.
+test("range leaves and their root match the registry byte for byte", () => {
+  const base = {
+    commitmentHash: "ab".repeat(32),
+    seller: "GDVR2KDK5DSMNYZJKNISUIOBDC6FZK3XZOIQWSS7KL4BRMD5BMW6RMCQ",
+    amount: 10_000n,
+    contentHash: "cd".repeat(32),
+  };
+  const leaf1 = rangeLeafHash({ ...base, seq: 1n, verdict: "OK" });
+  const leaf2 = rangeLeafHash({ ...base, seq: 2n, verdict: "TAINTED" });
+  const leaf3 = rangeLeafHash({ ...base, seq: 3n, verdict: "MISMATCH" });
+  assert.equal(leaf1, "c78bbe0edb3dcdd704a0b609f6c38d81774f496c10b25a6979d1e44c5a461968");
+  assert.equal(merkleRoot([leaf1, leaf2, leaf3]), "8d63dc2bef265353c4b07b7047b89db875f5110d37a3d2fd9c2073e65411cf4c");
 });

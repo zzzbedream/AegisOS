@@ -1,8 +1,11 @@
+import { randomBytes } from "node:crypto";
+
 import {
   Address,
   Contract,
   Keypair,
   TransactionBuilder,
+  nativeToScVal,
   rpc,
   scValToNative,
   xdr,
@@ -142,6 +145,11 @@ export function decodeDeliveryRecord(native: unknown): AnchoredDeliveryV1 | unde
   });
 }
 
+/** Mirrors the contract's MAX_RANGE_LEAVES. */
+export const MAX_RANGE_LEAVES = 64;
+/** Mirrors the contract's MAX_RANGE_TAIL. */
+export const MAX_RANGE_TAIL = 192;
+
 /** Mirrors the contract's MAX_BATCH_COUNT. */
 export const MAX_BATCH_COUNT = 1_024;
 
@@ -171,6 +179,95 @@ export function decodeBatchRecord(native: unknown): AnchoredBatchV1 | undefined 
     seller: raw["seller"],
     root: bytesToHex(raw["root"], "root"),
     count,
+    anchoredAt: Number(raw["anchored_at"] ?? 0),
+  });
+}
+
+export interface RangeLeafInput {
+  readonly seq: bigint;
+  readonly commitmentHash: string;
+  readonly seller: string;
+  readonly amount: bigint;
+  readonly contentHash: string;
+  readonly verdict: DeliveryVerdict;
+}
+
+/** A later payment carried only to reach the account's head (not counted). */
+export interface ChainStepInput {
+  readonly commitmentHash: string;
+  readonly seller: string;
+  readonly amount: bigint;
+}
+
+export interface RangeRecordV1 {
+  readonly account: string;
+  readonly fromSeq: bigint;
+  readonly toSeq: bigint;
+  readonly root: string;
+  readonly counts: { readonly ok: number; readonly tainted: number; readonly mismatch: number; readonly notDelivered: number };
+  readonly anchoredAt: number;
+}
+
+export interface CheckpointV1 {
+  readonly seq: bigint;
+  readonly chainHead: string;
+}
+
+function mapField(key: string, val: xdr.ScVal): xdr.ScMapEntry {
+  return new xdr.ScMapEntry({ key: xdr.ScVal.scvSymbol(key), val });
+}
+
+/** `RangeInput` for `anchor_range`. Struct keys sorted, as the host requires. */
+export function rangeInputScVal(
+  account: string,
+  fromSeq: bigint,
+  leaves: readonly RangeLeafInput[],
+  tail: readonly ChainStepInput[] = [],
+): xdr.ScVal {
+  const leafVals = leaves.map((leaf) =>
+    xdr.ScVal.scvMap([
+      mapField("amount", nativeToScVal(leaf.amount, { type: "i128" })),
+      mapField("commitment_hash", hashToBytes(leaf.commitmentHash, "commitment_hash")),
+      mapField("content_hash", hashToBytes(leaf.contentHash, "content_hash")),
+      mapField("seller", new Address(leaf.seller).toScVal()),
+      mapField("seq", nativeToScVal(leaf.seq, { type: "u64" })),
+      mapField("verdict", xdr.ScVal.scvVec([xdr.ScVal.scvSymbol(VERDICT_ARM[leaf.verdict])])),
+    ]),
+  );
+  return xdr.ScVal.scvMap([
+    mapField("account", new Address(account).toScVal()),
+    mapField("from_seq", nativeToScVal(fromSeq, { type: "u64" })),
+    mapField("leaves", xdr.ScVal.scvVec(leafVals)),
+    mapField(
+      "tail",
+      xdr.ScVal.scvVec(
+        tail.map((step) =>
+          xdr.ScVal.scvMap([
+            mapField("amount", nativeToScVal(step.amount, { type: "i128" })),
+            mapField("commitment_hash", hashToBytes(step.commitmentHash, "commitment_hash")),
+            mapField("seller", new Address(step.seller).toScVal()),
+          ]),
+        ),
+      ),
+    ),
+  ]);
+}
+
+export function decodeRangeRecord(native: unknown): RangeRecordV1 | undefined {
+  if (native === null || native === undefined) return undefined;
+  const raw = native as Record<string, unknown>;
+  if (typeof raw["account"] !== "string") throw new AnchorClientError("BAD_RECORD", "range account missing.");
+  return Object.freeze({
+    account: raw["account"],
+    fromSeq: BigInt(raw["from_seq"] as bigint | number),
+    toSeq: BigInt(raw["to_seq"] as bigint | number),
+    root: bytesToHex(raw["root"], "root"),
+    counts: {
+      ok: Number(raw["ok"] ?? 0),
+      tainted: Number(raw["tainted"] ?? 0),
+      mismatch: Number(raw["mismatch"] ?? 0),
+      notDelivered: Number(raw["not_delivered"] ?? 0),
+    },
     anchoredAt: Number(raw["anchored_at"] ?? 0),
   });
 }
@@ -266,6 +363,12 @@ export class AegisAnchorClient {
       disputed: count("disputed"),
       total: count("total"),
       batchedOk: count("batched_ok"),
+      verified: {
+        ok: count("verified_ok"),
+        tainted: count("verified_tainted"),
+        mismatch: count("verified_mismatch"),
+        notDelivered: count("verified_not_delivered"),
+      },
       asOf: new Date().toISOString(),
     });
   }
@@ -316,6 +419,72 @@ export class AegisAnchorClient {
       field("seller", new Address(seller).toScVal()),
     ]);
     return this.#submit(this.#contract.call("anchor_batch", arg), buyer, onBehalfOf);
+  }
+
+  /**
+   * Create an AegisOS account through this registry, which is what makes its
+   * notarization trusted: the registry only deploys the account wasm it was
+   * constructed with. `source` pays; the account is controlled by the keys.
+   */
+  public async createAccount(
+    keys: { readonly owner: Buffer; readonly authority: Buffer; readonly session: Buffer },
+    allowedAssets: readonly string[],
+    source: Keypair,
+  ): Promise<{ readonly address: string; readonly transactionHash: string }> {
+    const operation = this.#contract.call(
+      "create_account",
+      xdr.ScVal.scvBytes(keys.owner),
+      xdr.ScVal.scvBytes(keys.authority),
+      xdr.ScVal.scvBytes(keys.session),
+      xdr.ScVal.scvVec(allowedAssets.map((a) => new Address(a).toScVal())),
+      xdr.ScVal.scvBytes(randomBytes(32)),
+    );
+    const result = await submitSorobanOperation({
+      server: this.#server, passphrase: this.#passphrase, source, operation,
+    });
+    if (result.returnValue === undefined) throw new AnchorClientError("NO_RESULT", "create_account returned nothing.");
+    return { address: Address.fromScVal(result.returnValue).toString(), transactionHash: result.transactionHash };
+  }
+
+  /**
+   * Anchor the next contiguous run of the account's notarized payments. The
+   * registry recomputes the payment chain over `leaves` and accepts only if it
+   * lands on the account's current head.
+   */
+  public async anchorRange(
+    account: string,
+    fromSeq: bigint,
+    leaves: readonly RangeLeafInput[],
+    session: Keypair,
+    tail: readonly ChainStepInput[] = [],
+  ): Promise<AnchorResult> {
+    if (leaves.length === 0 || leaves.length > MAX_RANGE_LEAVES) {
+      throw new AnchorClientError("BAD_RANGE", `A range holds 1..${String(MAX_RANGE_LEAVES)} payments.`);
+    }
+    if (tail.length > MAX_RANGE_TAIL) {
+      throw new AnchorClientError("BAD_RANGE", `A range tail holds at most ${String(MAX_RANGE_TAIL)} payments.`);
+    }
+    return this.#submit(
+      this.#contract.call("anchor_range", rangeInputScVal(account, fromSeq, leaves, tail)),
+      session,
+      account,
+    );
+  }
+
+  public async getRange(account: string, fromSeq: bigint, readerAccount: string): Promise<RangeRecordV1 | undefined> {
+    const retval = await this.#simulateRead(
+      "get_range",
+      [new Address(account).toScVal(), nativeToScVal(fromSeq, { type: "u64" })],
+      readerAccount,
+    );
+    return retval === undefined ? undefined : decodeRangeRecord(scValToNative(retval));
+  }
+
+  public async getCheckpoint(account: string, readerAccount: string): Promise<CheckpointV1> {
+    const retval = await this.#simulateRead("checkpoint", [new Address(account).toScVal()], readerAccount);
+    if (retval === undefined) throw new AnchorClientError("NO_RESULT", "checkpoint returned nothing.");
+    const raw = scValToNative(retval) as { seq: bigint | number; chain_head: Uint8Array };
+    return { seq: BigInt(raw.seq), chainHead: Buffer.from(raw.chain_head).toString("hex") };
   }
 
   /** Read an anchored batch by root, or `undefined`. Needs no secret. */

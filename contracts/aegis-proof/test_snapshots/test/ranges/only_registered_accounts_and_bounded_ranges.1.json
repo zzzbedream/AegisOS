@@ -1,10 +1,15 @@
 {
   "generators": {
-    "address": 4,
+    "address": 7,
     "nonce": 0,
     "mux_id": 0
   },
   "auth": [
+    [],
+    [],
+    [],
+    [],
+    [],
     [],
     [],
     []
@@ -25,7 +30,97 @@
           "data": {
             "contract_data": {
               "ext": "v0",
-              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": {
+                "vec": [
+                  {
+                    "symbol": "Account"
+                  },
+                  {
+                    "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM"
+                  }
+                ]
+              },
+              "durability": "persistent",
+              "val": {
+                "bool": true
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": "ledger_key_contract_instance",
+              "durability": "persistent",
+              "val": {
+                "contract_instance": {
+                  "executable": {
+                    "wasm": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  "storage": [
+                    {
+                      "key": {
+                        "vec": [
+                          {
+                            "symbol": "AccountWasm"
+                          }
+                        ]
+                      },
+                      "val": {
+                        "bytes": "0707070707070707070707070707070707070707070707070707070707070707"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM",
+              "key": {
+                "vec": [
+                  {
+                    "symbol": "Spent"
+                  },
+                  {
+                    "bytes": "0101010101010101010101010101010101010101010101010101010101010101"
+                  }
+                ]
+              },
+              "durability": "temporary",
+              "val": {
+                "bool": true
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 1440
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM",
               "key": "ledger_key_contract_instance",
               "durability": "persistent",
               "val": {
@@ -51,7 +146,7 @@
                             "val": {
                               "vec": [
                                 {
-                                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
+                                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4"
                                 }
                               ]
                             }
@@ -61,7 +156,7 @@
                               "symbol": "authority"
                             },
                             "val": {
-                              "bytes": "954d954e1211b680b68ff3a5b9076718145101b208305147942f9012ee3930bf"
+                              "bytes": "4d286b9f97b501fa08ca923ccc2266d01dfcf4ce24f80311345a019e2d8cddac"
                             }
                           },
                           {
@@ -69,7 +164,7 @@
                               "symbol": "owner"
                             },
                             "val": {
-                              "bytes": "8af193e9306d02ce9ac4d5d2307339fdbc3230796e11dcc5a3ddfc216d7e6cc0"
+                              "bytes": "f9e7f237d4cab8d26cb55f5f054d3dd80ae4b0d8806c81e6f720be618a45f60a"
                             }
                           },
                           {
@@ -77,7 +172,7 @@
                               "symbol": "registry"
                             },
                             "val": {
-                              "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
+                              "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
                             }
                           },
                           {
@@ -85,7 +180,7 @@
                               "symbol": "session"
                             },
                             "val": {
-                              "bytes": "8c97dccff714624ce8d7376f98f619b419c38e2192b13010a189ec201346c9bc"
+                              "bytes": "b9a53f76ba62248549514b5ad9ce8abcf776d96d0ab030f43790efafd418025b"
                             }
                           }
                         ]
@@ -106,7 +201,7 @@
                               "symbol": "chain_head"
                             },
                             "val": {
-                              "bytes": "0000000000000000000000000000000000000000000000000000000000000000"
+                              "bytes": "7ca9c9cd92038a28bb8e418f9b1e2f5b8dbd1bf3f1706533477cbdc15e56e015"
                             }
                           },
                           {
@@ -114,7 +209,7 @@
                               "symbol": "seq"
                             },
                             "val": {
-                              "u64": "0"
+                              "u64": "1"
                             }
                           }
                         ]

@@ -9,7 +9,12 @@ import {
   type DeliveryReceiptV1,
   type MerkleProofV1,
 } from "../../../packages/proof/src/index.js";
-import type { AnchoredBatchV1, AnchoredDeliveryV1 } from "../../../packages/x402/src/index.js";
+import {
+  rangeLeafHash,
+  type AnchoredBatchV1,
+  type AnchoredDeliveryV1,
+  type RangeRecordV1,
+} from "../../../packages/x402/src/index.js";
 import type { PaymentNotarization } from "./agent.js";
 import type { PublishedAttesterV1 } from "./attester.js";
 
@@ -26,12 +31,25 @@ export type AnchorRefV1 =
       readonly tx?: string;
     };
 
+/** Where the receipt's payment was anchored as part of an account range. */
+export interface RangeRefV1 {
+  readonly contractId: string;
+  readonly account: string;
+  readonly fromSeq: string;
+  readonly toSeq: string;
+  readonly root: string;
+  readonly proof: MerkleProofV1;
+  readonly tx?: string;
+}
+
 export interface ReceiptFileV1 {
   readonly version: "1";
   readonly receipt: DeliveryReceiptV1;
   readonly anchor?: AnchorRefV1;
   /** Smart-account mode: the account's own record of this payment. */
   readonly notarization?: PaymentNotarization;
+  /** Smart-account mode: the account range this payment was counted in. */
+  readonly range?: RangeRefV1;
 }
 
 export interface ReceiptCheck {
@@ -133,10 +151,53 @@ export function batchChecks(
   ];
 }
 
+/**
+ * Prove the receipt was counted in an account range. The leaf is rebuilt from
+ * the notarized payment (seq, commitment, seller, amount) and the receipt
+ * (content hash, verdict); the root comes from `get_range`, never the file.
+ */
+export function rangeChecks(
+  receipt: DeliveryReceiptV1,
+  notarization: PaymentNotarization,
+  ref: RangeRefV1,
+  record: RangeRecordV1,
+): readonly ReceiptCheck[] {
+  const seq = BigInt(notarization.seq);
+  let computed = "";
+  try {
+    computed = rootFromProof(
+      rangeLeafHash({
+        seq,
+        commitmentHash: notarization.commitmentHash,
+        seller: notarization.seller,
+        amount: BigInt(notarization.amount),
+        contentHash: receipt.contentHash,
+        verdict: receipt.verdict,
+      }),
+      ref.proof.steps,
+    );
+  } catch (error: unknown) {
+    computed = `error: ${error instanceof Error ? error.message : String(error)}`;
+  }
+  return [
+    matches("range belongs to the paying account", notarization.account, record.account),
+    {
+      name: "payment falls inside the anchored range",
+      pass: seq >= record.fromSeq && seq <= record.toSeq,
+      detail: `seq ${seq.toString()} in ${record.fromSeq.toString()}..${record.toSeq.toString()}`,
+    },
+    matches("receipt proves into the range root the registry computed", computed, record.root),
+  ];
+}
+
 /** Keep the receipt where a verifier can be pointed at it. Public data only. */
 export function saveReceipt(
   receipt: DeliveryReceiptV1,
-  extras: { readonly anchor?: AnchorRefV1; readonly notarization?: PaymentNotarization } = {},
+  extras: {
+    readonly anchor?: AnchorRefV1;
+    readonly notarization?: PaymentNotarization;
+    readonly range?: RangeRefV1;
+  } = {},
   dir: string = RECEIPTS_DIR,
 ): string {
   mkdirSync(dir, { recursive: true });
@@ -146,6 +207,7 @@ export function saveReceipt(
     receipt,
     ...(extras.anchor === undefined ? {} : { anchor: extras.anchor }),
     ...(extras.notarization === undefined ? {} : { notarization: extras.notarization }),
+    ...(extras.range === undefined ? {} : { range: extras.range }),
   };
   writeFileSync(path, `${JSON.stringify(file, null, 2)}\n`, "utf8");
   return path;

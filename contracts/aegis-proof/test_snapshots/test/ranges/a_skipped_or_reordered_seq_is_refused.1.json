@@ -1,10 +1,15 @@
 {
   "generators": {
-    "address": 4,
+    "address": 6,
     "nonce": 0,
     "mux_id": 0
   },
   "auth": [
+    [],
+    [],
+    [],
+    [],
+    [],
     [],
     [],
     [],
@@ -26,14 +31,77 @@
           "data": {
             "contract_data": {
               "ext": "v0",
-              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": {
+                "vec": [
+                  {
+                    "symbol": "Account"
+                  },
+                  {
+                    "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM"
+                  }
+                ]
+              },
+              "durability": "persistent",
+              "val": {
+                "bool": true
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": "ledger_key_contract_instance",
+              "durability": "persistent",
+              "val": {
+                "contract_instance": {
+                  "executable": {
+                    "wasm": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  "storage": [
+                    {
+                      "key": {
+                        "vec": [
+                          {
+                            "symbol": "AccountWasm"
+                          }
+                        ]
+                      },
+                      "val": {
+                        "bytes": "0707070707070707070707070707070707070707070707070707070707070707"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM",
               "key": {
                 "vec": [
                   {
                     "symbol": "Spent"
                   },
                   {
-                    "bytes": "0606060606060606060606060606060606060606060606060606060606060606"
+                    "bytes": "0101010101010101010101010101010101010101010101010101010101010101"
                   }
                 ]
               },
@@ -53,7 +121,34 @@
           "data": {
             "contract_data": {
               "ext": "v0",
-              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM",
+              "key": {
+                "vec": [
+                  {
+                    "symbol": "Spent"
+                  },
+                  {
+                    "bytes": "0202020202020202020202020202020202020202020202020202020202020202"
+                  }
+                ]
+              },
+              "durability": "temporary",
+              "val": {
+                "bool": true
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 1440
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM",
               "key": "ledger_key_contract_instance",
               "durability": "persistent",
               "val": {
@@ -79,7 +174,7 @@
                             "val": {
                               "vec": [
                                 {
-                                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
+                                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4"
                                 }
                               ]
                             }
@@ -89,7 +184,7 @@
                               "symbol": "authority"
                             },
                             "val": {
-                              "bytes": "f2bad863f9f8a5ce79106f3dff3ed060742685540bac5431e96964f0cd50ee4e"
+                              "bytes": "c55b9f795042e7c3484f417bfa8735270379abd3ee4775ba3f18958db20bb162"
                             }
                           },
                           {
@@ -97,7 +192,7 @@
                               "symbol": "owner"
                             },
                             "val": {
-                              "bytes": "63fb2d9c93f2df70403b0bcb330cf46cac8a1042a459f8d6ab460ac2688f8573"
+                              "bytes": "2c2f66099e6e999cef84ba4b5cab5ac038fe775c0228c2401a36f59b84da16a0"
                             }
                           },
                           {
@@ -105,7 +200,7 @@
                               "symbol": "registry"
                             },
                             "val": {
-                              "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
+                              "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
                             }
                           },
                           {
@@ -113,7 +208,7 @@
                               "symbol": "session"
                             },
                             "val": {
-                              "bytes": "e6937f926861cab3def1e967a97728bb0aa5efe20b985bd5fd36bfd276cd7ba3"
+                              "bytes": "bd4beae7e5b5e5aaff086522e20d250d95faa8f380a170e60b26b450bb86259b"
                             }
                           }
                         ]
@@ -134,7 +229,7 @@
                               "symbol": "chain_head"
                             },
                             "val": {
-                              "bytes": "172163ea6ed07fb4b05a879785173f4dce5fe81c09daddd36bf386a8c85d023e"
+                              "bytes": "ee68455f18f52894f13593eab2910de126e07a6347b95dd25bf1c99f91df3cfb"
                             }
                           },
                           {
@@ -142,7 +237,7 @@
                               "symbol": "seq"
                             },
                             "val": {
-                              "u64": "1"
+                              "u64": "2"
                             }
                           }
                         ]

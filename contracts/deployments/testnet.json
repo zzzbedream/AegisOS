@@ -5,6 +5,38 @@
   "rpcUrl": "https://soroban-testnet.stellar.org",
   "contracts": {
     "aegis-proof": {
+      "contractId": "CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN",
+      "version": 3,
+      "wasmHash": "5f7b9f89bfe3919d63f09055c78312b069bcccfb632369e45e90bf755c320a21",
+      "wasmBytes": 20686,
+      "deployedAt": "2026-09-25",
+      "deployer": "GDVDUXJL7S2QPIASC5AMEKMW3T5VRZNLFMMQAKLLZZDXK645FDYTYUSZ",
+      "accountWasmHash": "933a1d46734fd70578c31182305de666830185fe0d81301ccedfe4429a02662a",
+      "exportedFunctions": [
+        "create_account",
+        "is_account",
+        "anchor_range",
+        "get_range",
+        "checkpoint",
+        "anchor_delivery",
+        "anchor_batch",
+        "get_delivery",
+        "get_batch",
+        "seller_score",
+        "account_wasm"
+      ],
+      "maxRangeLeaves": 64,
+      "maxBatchCount": 1024,
+      "toolchain": {
+        "stellarCli": "27.0.0",
+        "sorobanSdk": "27.0.6",
+        "rustc": "1.92.0",
+        "target": "wasm32v1-none"
+      },
+      "maxRangeTail": 192,
+      "note": "Replaces CAKMDD22UUZJ33MJWQXRI62HC24XMHYNXYREZD7A3PN6CN4AUVGG46PE (same day, before any range was anchored) to add the range tail."
+    },
+    "aegis-proof-v2": {
       "contractId": "CD4BMCIKKOCVM66NYSC4LGWUWS4Z5ZMBU3KCVCSGZYI726ZVL7NZ2ZOF",
       "version": 2,
       "wasmHash": "1b99534ee1a560e135d49663932350f7a6e590b82b23a6a8e7655d4f912ed1b5",
@@ -25,7 +57,10 @@
         "sorobanSdk": "27.0.6",
         "rustc": "1.92.0",
         "target": "wasm32v1-none"
-      }
+      },
+      "status": "superseded",
+      "supersededBy": "CAKMDD22UUZJ33MJWQXRI62HC24XMHYNXYREZD7A3PN6CN4AUVGG46PE",
+      "note": "Individual and batch anchors. Receipts anchored here remain verifiable."
     },
     "aegis-proof-v1": {
       "contractId": "CBG2DFZBHC3MEBN4UIVIVVNZX4YGI6TMRVRIK3TD4CVFKHMIKDXIJXZV",
@@ -62,11 +97,11 @@
     "createdAt": "2026-09-24T22:07:03.649Z"
   },
   "accountWasm": {
-    "wasmHash": "f0518a77631562ba3624515a9c8feb54522f7ea08bfc359972f94febf2c68e62",
-    "wasmBytes": 11063,
+    "wasmHash": "933a1d46734fd70578c31182305de666830185fe0d81301ccedfe4429a02662a",
+    "wasmBytes": 11064,
     "deployedAt": "2026-09-25"
   },
-  "account": {
+  "accountV2": {
     "address": "CD4BYLBB4YYX24YLNIDDUAPLKQC3RHJNXP4BRTWQ3UHCQYPXHP3WLA72",
     "wasmHash": "f0518a77631562ba3624515a9c8feb54522f7ea08bfc359972f94febf2c68e62",
     "registry": "CD4BMCIKKOCVM66NYSC4LGWUWS4Z5ZMBU3KCVCSGZYI726ZVL7NZ2ZOF",
@@ -75,6 +110,18 @@
       "keyId": "ed25519:368d997062f8e6c068017465",
       "publicKey": "MCowBQYDK2VwAyEAAC0YUVgtLD6mCYaYA-s4xAbyxVnjx2a-AoO5VABDpig"
     },
-    "deployTx": "70a024fd2b81b40e3fedc60e6ae73da13ad1fd275e7600cf17de1953271cbe9e"
+    "deployTx": "70a024fd2b81b40e3fedc60e6ae73da13ad1fd275e7600cf17de1953271cbe9e",
+    "status": "superseded: created before the v3 factory"
+  },
+  "account": {
+    "address": "CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ",
+    "wasmHash": "933a1d46734fd70578c31182305de666830185fe0d81301ccedfe4429a02662a",
+    "registry": "CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN",
+    "session": "GD5D7WRG6SIXIZHNAUOXCTR3MSV5QIM2AM52WRNYX7VBRO76D6V3SVPG",
+    "authority": {
+      "keyId": "ed25519:368d997062f8e6c068017465",
+      "publicKey": "MCowBQYDK2VwAyEAAC0YUVgtLD6mCYaYA-s4xAbyxVnjx2a-AoO5VABDpig"
+    },
+    "createTx": "5730caeef7e80e49f24f62d4b09611b839a64f40a6659532f20429c37bc51687"
   }
 }

@@ -39,7 +39,8 @@ import {
 } from "../../../packages/x402/src/index.js";
 import { DemoAgent, type PurchaseOutcome } from "./agent.js";
 import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
-import { describeNotarization, reportFlushedBatches, saveIndividualReceipt } from "./anchor-report.js";
+import { describeNotarization, reportFlushedBatches, reportRange, saveIndividualReceipt } from "./anchor-report.js";
+import { anchorPendingRange } from "./range.js";
 import { loadSmartAccount, type SmartAccountSetup } from "./smart-account-config.js";
 import { honestMarketData, poisonedMarketData } from "./catalog.js";
 import { startSeller, type PaymentRequirements, type SellerHandle } from "./resource-server.js";
@@ -120,6 +121,7 @@ function reportPurchase(outcome: PurchaseOutcome, contractId: string): void {
   if (outcome.anchorTx !== undefined) console.log(`  anclado on-chain : ${tx(outcome.anchorTx)}`);
   if (outcome.anchorError !== undefined) console.log(`  anclaje falló    : ${outcome.anchorError}`);
   if (outcome.anchorPending === true) console.log("  anclaje          : OK → en lote (se ancla junto con otras compras)");
+  if (outcome.anchorInRange === true) console.log("  anclaje          : OK → en el rango de la cuenta (junto con todos sus pagos)");
   if (outcome.notarization !== undefined) console.log(`  notarizado       : ${describeNotarization(outcome.notarization)}`);
 }
 
@@ -283,6 +285,12 @@ async function main(): Promise<void> {
       console.log("  se agrupan: una raíz Merkle por vendedor, una sola transacción.");
       reportFlushedBatches(await agent.flushBatches(), contractId);
     }
+    if (smart !== undefined && anchorClient !== undefined) {
+      console.log("");
+      console.log("  Todas las compras de la cuenta se anclan como un rango: en orden, una");
+      console.log("  vez cada una, ninguna omitida. El contrato recalcula la cadena y cuenta.");
+      reportRange(await anchorPendingRange({ client: anchorClient, contractId, account: smart.address, session: buyer }));
+    }
 
     // ---------------------------------------------------------------- paso 3
     step(3, "corte de cascada — el gasto siguiente no llega a existir");
@@ -355,6 +363,9 @@ async function main(): Promise<void> {
     } else {
       const score = await anchorClient.sellerScore(sellerId, buyer);
       console.log(`  seller_score     : ok=${String(score.ok)} tainted=${String(score.tainted)} mismatch=${String(score.mismatch)} total=${String(score.total)} · ok en lotes=${String(score.batchedOk ?? 0)}`);
+      if (score.verified !== undefined) {
+        console.log(`  verificados      : ok=${String(score.verified.ok)} tainted=${String(score.verified.tainted)} mismatch=${String(score.verified.mismatch)}  (contados por el contrato sobre pagos notarizados)`);
+      }
       const abstention = shouldAbstainFromPurchase(score, { maxTainted: 0 });
       console.log(`  política local   : ${abstention.abstain ? "ABSTENERSE" : "comprar"}  [${abstention.reasons.join(", ")}]`);
       console.log("");

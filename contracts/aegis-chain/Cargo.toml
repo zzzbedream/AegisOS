@@ -1,19 +1,17 @@
 [package]
-name = "aegis-proof"
+name = "aegis-chain"
 version = "0.1.0"
 edition = "2021"
 publish = false
 
+# A plain library shared by aegis-account and aegis-proof: the payment chain
+# and the range Merkle tree must be byte-identical in both, and in TypeScript.
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["rlib"]
 doctest = false
 
 [dependencies]
 soroban-sdk = { workspace = true }
-aegis-chain = { path = "../aegis-chain" }
 
 [dev-dependencies]
 soroban-sdk = { workspace = true, features = ["testutils"] }
-aegis-account = { path = "../aegis-account" }
-ed25519-dalek = { version = "2", features = ["rand_core"] }
-rand = "0.8"

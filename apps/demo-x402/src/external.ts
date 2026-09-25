@@ -33,7 +33,8 @@ import {
 import { DemoAgent, discoverOffer, type PurchaseOutcome } from "./agent.js";
 import { loadSmartAccount } from "./smart-account-config.js";
 import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
-import { reportFlushedBatches, saveIndividualReceipt } from "./anchor-report.js";
+import { reportFlushedBatches, reportRange, saveIndividualReceipt } from "./anchor-report.js";
+import { anchorPendingRange } from "./range.js";
 import { describeErrorChain } from "./error-chain.js";
 
 const USDC_SAC = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA";
@@ -258,6 +259,20 @@ async function main(): Promise<void> {
         anchored ? "PASS" : "FAIL",
         anchored ? `${String(saved.length)} receipt(s) saved with inclusion proofs` : "batch anchor failed",
       );
+    }
+
+    if (smart !== undefined && anchorClient !== undefined && bought !== undefined) {
+      line();
+      console.log("   rango de la cuenta — el contrato recalcula la cadena y cuenta");
+      line();
+      try {
+        const range = await anchorPendingRange({ client: anchorClient, contractId, account: smart.address, session: buyer });
+        reportRange(range);
+        record("range", "account range anchored and counted on-chain", range === undefined ? "SKIP" : "PASS",
+          range === undefined ? "nothing pending" : `seq ${range.fromSeq.toString()}..${range.toSeq.toString()}`);
+      } catch (error: unknown) {
+        record("range", "account range anchored and counted on-chain", "FAIL", error instanceof Error ? error.message : String(error));
+      }
     }
 
     // --------------------------------------- local: tamper our own copy

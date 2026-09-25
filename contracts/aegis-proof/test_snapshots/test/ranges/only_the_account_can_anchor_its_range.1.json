@@ -1,10 +1,13 @@
 {
   "generators": {
-    "address": 4,
-    "nonce": 0,
+    "address": 7,
+    "nonce": 1,
     "mux_id": 0
   },
   "auth": [
+    [],
+    [],
+    [],
     [],
     [],
     [],
@@ -26,14 +29,77 @@
           "data": {
             "contract_data": {
               "ext": "v0",
-              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": {
+                "vec": [
+                  {
+                    "symbol": "Account"
+                  },
+                  {
+                    "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM"
+                  }
+                ]
+              },
+              "durability": "persistent",
+              "val": {
+                "bool": true
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
+              "key": "ledger_key_contract_instance",
+              "durability": "persistent",
+              "val": {
+                "contract_instance": {
+                  "executable": {
+                    "wasm": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  "storage": [
+                    {
+                      "key": {
+                        "vec": [
+                          {
+                            "symbol": "AccountWasm"
+                          }
+                        ]
+                      },
+                      "val": {
+                        "bytes": "0707070707070707070707070707070707070707070707070707070707070707"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM",
               "key": {
                 "vec": [
                   {
                     "symbol": "Spent"
                   },
                   {
-                    "bytes": "0606060606060606060606060606060606060606060606060606060606060606"
+                    "bytes": "0101010101010101010101010101010101010101010101010101010101010101"
                   }
                 ]
               },
@@ -53,7 +119,7 @@
           "data": {
             "contract_data": {
               "ext": "v0",
-              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHK3M",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM",
               "key": "ledger_key_contract_instance",
               "durability": "persistent",
               "val": {
@@ -79,7 +145,7 @@
                             "val": {
                               "vec": [
                                 {
-                                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
+                                  "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4"
                                 }
                               ]
                             }
@@ -89,7 +155,7 @@
                               "symbol": "authority"
                             },
                             "val": {
-                              "bytes": "f2bad863f9f8a5ce79106f3dff3ed060742685540bac5431e96964f0cd50ee4e"
+                              "bytes": "0e7e0fa4912c399dc11d3ba64219926707e057038521e6c7dcf2e3034a1fd37a"
                             }
                           },
                           {
@@ -97,7 +163,7 @@
                               "symbol": "owner"
                             },
                             "val": {
-                              "bytes": "63fb2d9c93f2df70403b0bcb330cf46cac8a1042a459f8d6ab460ac2688f8573"
+                              "bytes": "68441af644e471ec07656f7a4edcec6657b450f31ba816f1b6d7bac1b88c6e33"
                             }
                           },
                           {
@@ -105,7 +171,7 @@
                               "symbol": "registry"
                             },
                             "val": {
-                              "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCT4"
+                              "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM"
                             }
                           },
                           {
@@ -113,7 +179,7 @@
                               "symbol": "session"
                             },
                             "val": {
-                              "bytes": "e6937f926861cab3def1e967a97728bb0aa5efe20b985bd5fd36bfd276cd7ba3"
+                              "bytes": "b8f9712faf48f827a21e83a44e13b6eb15e1b882fa60fde6d9f1e7e25ab4f029"
                             }
                           }
                         ]
@@ -134,7 +200,7 @@
                               "symbol": "chain_head"
                             },
                             "val": {
-                              "bytes": "172163ea6ed07fb4b05a879785173f4dce5fe81c09daddd36bf386a8c85d023e"
+                              "bytes": "7ca9c9cd92038a28bb8e418f9b1e2f5b8dbd1bf3f1706533477cbdc15e56e015"
                             }
                           },
                           {
@@ -149,6 +215,29 @@
                       }
                     }
                   ]
+                }
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 4095
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOLZM",
+              "key": "ledger_key_contract_instance",
+              "durability": "persistent",
+              "val": {
+                "contract_instance": {
+                  "executable": {
+                    "wasm": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  "storage": null
                 }
               }
             }

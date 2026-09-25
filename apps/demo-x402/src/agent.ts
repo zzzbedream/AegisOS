@@ -106,6 +106,8 @@ export interface PurchaseOutcome {
   readonly anchorError?: string;
   /** OK receipt waiting in a batch; anchored by `flushBatches()`. */
   readonly anchorPending?: boolean;
+  /** Smart-account mode: an OK receipt, anchored only by the account's range. */
+  readonly anchorInRange?: boolean;
   /** Smart-account mode: what the account recorded, atomically with the payment. */
   readonly notarization?: PaymentNotarization;
 }
@@ -337,11 +339,14 @@ export class DemoAgent {
 
     let anchorTx: string | undefined;
     let anchorError: string | undefined;
-    const batchable =
-      admission.receipt.verdict === "OK" && this.#options.anchorEachReceipt !== true;
+    // With a smart account, every payment is counted by an account range, so
+    // OK receipts wait for that instead of a per-seller batch.
+    const isOk = admission.receipt.verdict === "OK" && this.#options.anchorEachReceipt !== true;
+    const batchable = isOk && smart === undefined;
+    const inRange = isOk && smart !== undefined;
     if (this.#options.anchorClient !== undefined && batchable) {
       this.#batcher.add(admission.receipt);
-    } else if (this.#options.anchorClient !== undefined) {
+    } else if (this.#options.anchorClient !== undefined && !inRange) {
       try {
         const anchored = await this.#options.anchorClient.anchorDelivery(
           admission.receipt,
@@ -373,6 +378,7 @@ export class DemoAgent {
       ...(anchorError === undefined ? {} : { anchorError }),
       ...(this.#options.anchorClient !== undefined && batchable ? { anchorPending: true } : {}),
       ...(notarization === undefined ? {} : { notarization }),
+      ...(this.#options.anchorClient !== undefined && inRange ? { anchorInRange: true } : {}),
     };
   }
 

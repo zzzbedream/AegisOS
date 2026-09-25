@@ -6,8 +6,16 @@ version = 4
 name = "aegis-account"
 version = "0.1.0"
 dependencies = [
+ "aegis-chain",
  "ed25519-dalek",
  "rand",
+ "soroban-sdk",
+]
+
+[[package]]
+name = "aegis-chain"
+version = "0.1.0"
+dependencies = [
  "soroban-sdk",
 ]
 
@@ -15,6 +23,10 @@ dependencies = [
 name = "aegis-proof"
 version = "0.1.0"
 dependencies = [
+ "aegis-account",
+ "aegis-chain",
+ "ed25519-dalek",
+ "rand",
  "soroban-sdk",
 ]
 

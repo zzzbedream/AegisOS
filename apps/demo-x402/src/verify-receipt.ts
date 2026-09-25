@@ -26,6 +26,7 @@ import { notarizationChecks, readPaymentLog } from "./notarization.js";
 import {
   batchChecks,
   individualChecks,
+  rangeChecks,
   readReceiptFile,
   signatureChecks,
   type ReceiptCheck,
@@ -47,7 +48,7 @@ async function main(): Promise<void> {
   if (file === undefined || file.length === 0) {
     throw new Error("Usage: npm run verify:receipt -- <receipt.json>");
   }
-  const { receipt, anchor, notarization } = readReceiptFile(JSON.parse(readFileSync(file, "utf8")) as unknown);
+  const { receipt, anchor, notarization, range } = readReceiptFile(JSON.parse(readFileSync(file, "utf8")) as unknown);
   const deploymentsRaw = JSON.parse(readFileSync(DEPLOYMENTS, "utf8")) as unknown;
   const published = readPublishedAttester(deploymentsRaw);
   if (published === undefined) {
@@ -117,6 +118,19 @@ async function main(): Promise<void> {
       const log = readPaymentLog(notarization.account);
       checks.push(...notarizationChecks(receipt, notarization, { deployedWasm, publishedWasm, log, onChainHead }));
       notarizationNote = `pago seq ${notarization.seq} de la cuenta ${notarization.account} (cabeza on-chain seq ${onChainHead.seq.toString()})`;
+    }
+    if (range !== undefined) {
+      const known = contracts.some((c) => c.contractId === range.contractId);
+      checks.push({ name: "range anchored in a published AegisOS registry", pass: known, detail: range.contractId });
+      if (known) {
+        const record = await clientFor(range.contractId).getRange(range.account, BigInt(range.fromSeq), reader);
+        if (record === undefined) {
+          checks.push({ name: "range exists on-chain", pass: false, detail: `no range from seq ${range.fromSeq}` });
+        } else {
+          checks.push(...rangeChecks(receipt, notarization, range, record));
+          notarizationNote = `${notarizationNote ?? ""} · rango ${record.fromSeq.toString()}..${record.toSeq.toString()} (ok=${String(record.counts.ok)} tainted=${String(record.counts.tainted)})`;
+        }
+      }
     }
   }
 

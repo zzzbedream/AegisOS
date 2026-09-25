@@ -7,20 +7,21 @@
  *   process at run time; the agent never loads it)
  * - owner key (recovery):     .aegis/owner.json
  * - session key:              the buyer key, which also pays fees
- * Then deploys the account pointing at the published registry, keeps it
- * alive, funds it with USDC, and publishes the PUBLIC parts to
- * contracts/deployments/testnet.json.
+ *
+ * The account is created by the published registry's factory, which deploys
+ * only the account wasm it was constructed with — that is what lets the
+ * registry, and any verifier, trust the account's notarization. Then keeps it
+ * alive, funds it with USDC, and publishes the PUBLIC parts.
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { Contract, Keypair, nativeToScVal, rpc } from "@stellar/stellar-sdk";
 import {
-  deployAccount,
+  AegisAnchorClient,
   extendAccountTtl,
   rawFromSpki,
   submitSorobanOperation,
-  uploadWasm,
 } from "../../../packages/x402/src/index.js";
 import { initAttester, loadAttester } from "./attester.js";
 import { describeErrorChain } from "./error-chain.js";
@@ -29,7 +30,6 @@ import { ACCOUNT_FILE, AUTHORITY_FILE, OWNER_FILE } from "./smart-account-config
 const USDC_SAC = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA";
 const PASSPHRASE = "Test SDF Network ; September 2015";
 const RPC_URL = "https://soroban-testnet.stellar.org";
-const WASM = fileURLToPath(new URL("../../../contracts/target/wasm32v1-none/release/aegis_account.wasm", import.meta.url));
 const DEPLOYMENTS = fileURLToPath(new URL("../../../contracts/deployments/testnet.json", import.meta.url));
 const FUND_ATOMIC = BigInt(process.env["AEGIS_ACCOUNT_FUND_ATOMIC"] ?? "5000000");
 
@@ -46,34 +46,26 @@ async function main(): Promise<void> {
   const session = Keypair.fromSecret(secret);
   const server = new rpc.Server(RPC_URL);
   const deployments = JSON.parse(readFileSync(DEPLOYMENTS, "utf8")) as Record<string, unknown> & {
-    contracts: Record<string, { contractId: string }>;
-    accountWasm?: { wasmHash: string };
+    contracts: Record<string, { contractId: string; accountWasmHash?: string }>;
   };
-  const registry = deployments.contracts["aegis-proof"]?.contractId;
-  if (registry === undefined) throw new Error("No aegis-proof registry published.");
+  const registry = deployments.contracts["aegis-proof"];
+  if (registry?.accountWasmHash === undefined) {
+    throw new Error("The published registry has no account factory (needs aegis-proof v3).");
+  }
 
   const authority = keyFile(AUTHORITY_FILE);
   const owner = keyFile(OWNER_FILE);
 
-  let wasmHash: string;
-  let wasmBytes: number | undefined;
-  if (existsSync(WASM)) {
-    const wasm = readFileSync(WASM);
-    wasmHash = await uploadWasm(server, PASSPHRASE, session, wasm);
-    wasmBytes = wasm.length;
-  } else if (deployments.accountWasm !== undefined) {
-    wasmHash = deployments.accountWasm.wasmHash;
-  } else {
-    throw new Error("No account wasm: run `stellar contract build` in contracts/ first.");
-  }
-
-  const { address, transactionHash } = await deployAccount(server, PASSPHRASE, session, wasmHash, {
-    owner: rawFromSpki(owner.publicKey),
-    authority: rawFromSpki(authority.publicKey),
-    session: session.rawPublicKey(),
-    allowedAssets: [USDC_SAC],
-    registry,
-  });
+  const client = new AegisAnchorClient({ contractId: registry.contractId });
+  const { address, transactionHash } = await client.createAccount(
+    {
+      owner: rawFromSpki(owner.publicKey),
+      authority: rawFromSpki(authority.publicKey),
+      session: session.rawPublicKey(),
+    },
+    [USDC_SAC],
+    session,
+  );
   await extendAccountTtl(server, PASSPHRASE, session, address);
   await submitSorobanOperation({
     server,
@@ -88,27 +80,32 @@ async function main(): Promise<void> {
   });
 
   writeFileSync(ACCOUNT_FILE, `${JSON.stringify({ address, createdAt: new Date().toISOString() }, null, 2)}\n`, "utf8");
-  const published = {
-    ...deployments,
-    ...(wasmBytes === undefined ? {} : { accountWasm: { wasmHash, wasmBytes, deployedAt: new Date().toISOString().slice(0, 10) } }),
-    account: {
-      address,
-      wasmHash,
-      registry,
-      session: session.publicKey(),
-      authority: { keyId: authority.keyId, publicKey: authority.publicKey },
-      deployTx: transactionHash,
-    },
-  };
-  writeFileSync(DEPLOYMENTS, `${JSON.stringify(published, null, 2)}\n`, "utf8");
+  writeFileSync(
+    DEPLOYMENTS,
+    `${JSON.stringify(
+      {
+        ...deployments,
+        account: {
+          address,
+          wasmHash: registry.accountWasmHash,
+          registry: registry.contractId,
+          session: session.publicKey(),
+          authority: { keyId: authority.keyId, publicKey: authority.publicKey },
+          createTx: transactionHash,
+        },
+      },
+      null,
+      2,
+    )}\n`,
+    "utf8",
+  );
 
   console.log(`cuenta         : ${address}`);
-  console.log(`wasm           : ${wasmHash}`);
-  console.log(`registro       : ${registry}`);
+  console.log(`creada por     : registro ${registry.contractId} (factory)`);
+  console.log(`wasm           : ${registry.accountWasmHash}`);
   console.log(`fondeada con   : ${(Number(FUND_ATOMIC) / 1e7).toFixed(7)} USDC`);
   console.log(`autoridad      : ${authority.keyId} (${AUTHORITY_FILE}, solo para el proceso signer)`);
-  console.log(`publicado en   : contracts/deployments/testnet.json`);
-  console.log(`deploy         : https://stellar.expert/explorer/testnet/tx/${transactionHash}`);
+  console.log(`create         : https://stellar.expert/explorer/testnet/tx/${transactionHash}`);
 }
 
 main().catch((error: unknown) => {
