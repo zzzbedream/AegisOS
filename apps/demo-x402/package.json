@@ -14,7 +14,12 @@
     "@aegisos/plugin-eliza": "file:../../packages/plugin-eliza",
     "@aegisos/proof": "file:../../packages/proof",
     "@aegisos/x402": "file:../../packages/x402",
+    "@reclaimprotocol/zk-fetch": "^1.1.0",
     "@stellar/stellar-sdk": "^16.3.0",
-    "@x402/stellar": "^2.26.0"
+    "@x402/stellar": "^2.26.0",
+    "ethers": "^5.8.0"
+  },
+  "devDependencies": {
+    "@reclaimprotocol/attestor-core": "^5.1.4"
   }
 }
