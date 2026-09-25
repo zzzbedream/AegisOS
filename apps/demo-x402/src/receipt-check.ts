@@ -52,6 +52,17 @@ export interface ReceiptFileV1 {
   readonly range?: RangeRefV1;
 }
 
+/** Which on-chain record proves that a receipt was anchored. */
+export type AnchorRoute = "individual" | "batch" | "range" | "search";
+
+export function anchorRoute(file: Pick<ReceiptFileV1, "anchor" | "notarization" | "range">): AnchorRoute {
+  if (file.anchor !== undefined) return file.anchor.mode;
+  // A range proves anchoring only with the notarization the registry recomputed.
+  if (file.range !== undefined && file.notarization !== undefined) return "range";
+  // Legacy receipts carry no reference: search every published contract.
+  return "search";
+}
+
 export interface ReceiptCheck {
   readonly name: string;
   readonly pass: boolean;

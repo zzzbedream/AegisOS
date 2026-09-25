@@ -24,6 +24,7 @@ import { readPublishedAttester } from "./attester.js";
 import { describeErrorChain } from "./error-chain.js";
 import { notarizationChecks, readPaymentLog } from "./notarization.js";
 import {
+  anchorRoute,
   batchChecks,
   individualChecks,
   rangeChecks,
@@ -41,6 +42,15 @@ interface Deployments {
   readonly rpcUrl?: string;
   readonly contracts: Record<string, { readonly contractId: string; readonly deployer?: string }>;
   readonly accountWasm?: { readonly wasmHash: string };
+}
+
+/** Account wasms published before the current one (e.g. `accountV2`). */
+function supersededAccountWasms(raw: unknown, current: string): readonly string[] {
+  if (typeof raw !== "object" || raw === null) return [];
+  return Object.entries(raw)
+    .filter(([key]) => key.startsWith("account"))
+    .map(([, entry]) => (entry as { wasmHash?: unknown } | null)?.wasmHash)
+    .filter((hash): hash is string => typeof hash === "string" && hash !== current);
 }
 
 async function main(): Promise<void> {
@@ -67,7 +77,14 @@ async function main(): Promise<void> {
   const checks: ReceiptCheck[] = [...signatureChecks(receipt, published)];
   let chainNote = "omitido (AEGIS_SKIP_CHAIN=1)";
 
-  if (!SKIP_CHAIN) {
+  const route = anchorRoute({
+    ...(anchor === undefined ? {} : { anchor }),
+    ...(notarization === undefined ? {} : { notarization }),
+    ...(range === undefined ? {} : { range }),
+  });
+  if (!SKIP_CHAIN && route === "range") {
+    chainNote = "anclado en el rango de su cuenta (ver billetera)";
+  } else if (!SKIP_CHAIN) {
     const known = anchor === undefined || contracts.some((c) => c.contractId === anchor.contractId);
     checks.push({
       name: "anchored in a published AegisOS contract",
@@ -116,7 +133,8 @@ async function main(): Promise<void> {
         readAccountHead(server, TESTNET_PASSPHRASE, notarization.account, reader),
       ]);
       const log = readPaymentLog(notarization.account);
-      checks.push(...notarizationChecks(receipt, notarization, { deployedWasm, publishedWasm, log, onChainHead }));
+      const publishedWasms = { current: publishedWasm, superseded: supersededAccountWasms(deploymentsRaw, publishedWasm) };
+      checks.push(...notarizationChecks(receipt, notarization, { deployedWasm, publishedWasms, log, onChainHead }));
       notarizationNote = `pago seq ${notarization.seq} de la cuenta ${notarization.account} (cabeza on-chain seq ${onChainHead.seq.toString()})`;
     }
     if (range !== undefined) {

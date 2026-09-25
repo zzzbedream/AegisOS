@@ -86,7 +86,8 @@ export function notarizationChecks(
   n: PaymentNotarization,
   evidence: {
     readonly deployedWasm: string;
-    readonly publishedWasm: string;
+    /** Every account wasm AegisOS published: the current one and any it replaced. */
+    readonly publishedWasms: { readonly current: string; readonly superseded: readonly string[] };
     readonly log: readonly PaymentLogEntry[];
     readonly onChainHead: AccountHead;
   },
@@ -102,11 +103,13 @@ export function notarizationChecks(
   const inLog = evidence.log.some((e) => e.seq === n.seq && e.chainHead === n.chainHead);
   const reachesHead =
     replay.ok && replay.seq === evidence.onChainHead.seq && replay.head === evidence.onChainHead.chainHead;
+  const isCurrent = evidence.deployedWasm === evidence.publishedWasms.current;
+  const isSuperseded = evidence.publishedWasms.superseded.includes(evidence.deployedWasm);
   return [
     {
       name: "account runs the published AegisOS wasm",
-      pass: evidence.deployedWasm === evidence.publishedWasm,
-      detail: evidence.deployedWasm,
+      pass: isCurrent || isSuperseded,
+      detail: `${evidence.deployedWasm}${isSuperseded ? " (superseded, still published)" : ""}`,
     },
     {
       name: "notarized commitment is the receipt's",

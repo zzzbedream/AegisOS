@@ -94,14 +94,18 @@ test("a receipt verifies only when its payment is a link of a chain that reaches
   const n: PaymentNotarization = { ...second, account, consistent: true };
   const evidence = {
     deployedWasm: "a".repeat(64),
-    publishedWasm: "a".repeat(64),
+    publishedWasms: { current: "a".repeat(64), superseded: ["c".repeat(64)] },
     log,
     onChainHead: { seq: 2n, chainHead: second.chainHead },
   };
   assert.ok(notarizationChecks(receipt, n, evidence).every((c) => c.pass));
 
-  const wrongWasm = notarizationChecks(receipt, n, { ...evidence, deployedWasm: "b".repeat(64) });
-  assert.equal(wrongWasm.find((c) => c.name.startsWith("account runs"))?.pass, false);
+  const wasmCheck = (deployedWasm: string) =>
+    notarizationChecks(receipt, n, { ...evidence, deployedWasm }).find((c) => c.name.startsWith("account runs"));
+  assert.equal(wasmCheck("b".repeat(64))?.pass, false, "a wasm AegisOS never published");
+  // An account from before a redeploy keeps verifying, and says so.
+  assert.equal(wasmCheck("c".repeat(64))?.pass, true);
+  assert.match(wasmCheck("c".repeat(64))?.detail ?? "", /superseded/);
 
   // The chain moved on (a third payment the log does not show): the replay no
   // longer lands on the head, so the log is incomplete and the check fails.
