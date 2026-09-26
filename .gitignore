@@ -11,3 +11,5 @@ target/
 .stitch/
 # Vercel project link
 .vercel/
+# Internal application drafts (hackathon, cyber.Fund, SCF): never commit
+postulaciones/

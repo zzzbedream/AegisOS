@@ -2,6 +2,8 @@
 
 **Procedencia verificable para agentes que compran con x402 en Stellar.**
 
+**Demo verificable:** https://aegisos-stellar.vercel.app
+
 x402 prueba que el dinero se movió. No dice nada sobre si lo que llegó es lo que se pagó.
 AegisOS decide si lo que un agente compró puede entrar en su memoria, respaldar una decisión
 o desbloquear el siguiente pago.
