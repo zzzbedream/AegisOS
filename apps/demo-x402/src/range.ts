@@ -136,6 +136,7 @@ export async function anchorPendingRange(options: {
     saveReceipt(file.receipt, {
       ...(file.anchor === undefined ? {} : { anchor: file.anchor }),
       ...(file.notarization === undefined ? {} : { notarization: file.notarization }),
+      ...(file.contentProof === undefined ? {} : { contentProof: file.contentProof }),
       range: {
         contractId: options.contractId,
         account: options.account,

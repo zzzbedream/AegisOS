@@ -36,6 +36,8 @@ import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js
 import { reportFlushedBatches, reportRange, saveIndividualReceipt } from "./anchor-report.js";
 import { anchorPendingRange } from "./range.js";
 import { describeErrorChain } from "./error-chain.js";
+import { contentProofChecks } from "./content-proof.js";
+import { reclaimCredentialsFromEnv, reclaimPaidFetch } from "./reclaim-fetch.js";
 
 const USDC_SAC = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA";
 const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
@@ -120,9 +122,12 @@ async function main(): Promise<void> {
   const attester = loadAttester(attesterPath());
   const deployments = JSON.parse(
     readFileSync(new URL("../../../contracts/deployments/testnet.json", import.meta.url), "utf8"),
-  ) as { contracts: Record<string, { contractId: string }> };
+  ) as { contracts: Record<string, { contractId: string }>; reclaim?: { witnesses: string[] } };
   const contractId = deployments.contracts["aegis-proof"]?.contractId ?? "";
   const published = readPublishedAttester(deployments);
+  // Guarantee D: with Reclaim credentials, the paid request goes through an
+  // attestor and the delivery arrives with a proof of origin.
+  const reclaim = process.env["AEGIS_CONTENT_PROOF"] === "0" ? undefined : reclaimCredentialsFromEnv();
 
   const dir = mkdtempSync(join(tmpdir(), "aegis-external-"));
   const secretFile = join(dir, "buyer.secret");
@@ -159,6 +164,7 @@ async function main(): Promise<void> {
       signer, buyer, attester, rpcUrl: RPC_URL,
       ...(anchorClient === undefined ? {} : { anchorClient }),
       ...(smart === undefined ? {} : { smartAccount: { address: smart.address } }),
+      ...(reclaim === undefined ? {} : { paidFetch: reclaimPaidFetch(reclaim) }),
     });
 
     console.log("AegisOS · interoperabilidad con un vendedor x402 que no controlamos");
@@ -218,7 +224,7 @@ async function main(): Promise<void> {
 
     // ----------------------------------------------- paid: happy path
     line();
-    console.log("1  compra real — 402 → firma aislada → 200");
+    console.log(`1  compra real — 402 → firma aislada → 200${reclaim === undefined ? "" : " (vía attestor Reclaim)"}`);
     line();
     let bought: PurchaseOutcome | undefined;
     if (SKIP_PURCHASE) {
@@ -230,6 +236,30 @@ async function main(): Promise<void> {
       console.log(`  veredicto  : ${a.verdict}  (taint ${String(a.taintScore)}, umbral 60)`);
       console.log(`  contentHash: ${a.contentHash}`);
       console.log(`  admisión   : ${bought.admission.admission}`);
+      if (reclaim !== undefined) {
+        const receipt = bought.admission.receipt;
+        const proofChecks =
+          bought.contentProof === undefined
+            ? []
+            : contentProofChecks(bought.contentProof.proof, {
+                commitmentHash: receipt.commitmentHash,
+                contentHash: receipt.contentHash,
+                canonicalization: receipt.contentCanonicalization,
+                trustedWitnesses: deployments.reclaim?.witnesses ?? [],
+              });
+        const proven = proofChecks.length > 0 && proofChecks.every((c) => c.pass);
+        const witness = bought.contentProof?.proof.witnesses[0];
+        console.log(`  origen     : ${proven ? "PROBADO" : "NO probado"} por Reclaim (attestor ${witness?.id ?? "—"})`);
+        for (const c of proofChecks) console.log(`               ${c.pass ? "PASS" : "FAIL"}  ${c.name}`);
+        record(
+          "origin",
+          "content proven to come from the seller (Reclaim zkFetch)",
+          proven ? "PASS" : "FAIL",
+          proven
+            ? "attestor signature, commitment binding and content hash all verify against the pinned witness"
+            : (proofChecks.find((c) => !c.pass)?.detail ?? "no proof returned"),
+        );
+      }
       const savedNow = saveIndividualReceipt(bought, contractId);
       if (savedNow !== undefined) console.log(`  receipt    : ${savedNow}  (npm run verify:receipt -- <ruta>)`);
       if (bought.anchorTx !== undefined) console.log(`  anclado    : ${tx(bought.anchorTx)}`);
@@ -336,7 +366,11 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((error: unknown) => {
-  console.error(describeErrorChain(error));
-  process.exitCode = 1;
-});
+main()
+  .catch((error: unknown) => {
+    console.error(describeErrorChain(error));
+    process.exitCode = 1;
+  })
+  // The Reclaim client keeps its attestor connection open after the proof.
+  // Everything of ours is closed by now, so leave once stdout has drained.
+  .finally(() => process.stdout.write("", () => process.exit(process.exitCode ?? 0)));

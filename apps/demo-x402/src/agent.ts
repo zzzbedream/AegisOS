@@ -36,6 +36,7 @@ import {
   type PaymentRequiredV2,
   type PaymentRequirements,
 } from "../../../packages/x402/src/index.js";
+import type { ContentProofRefV1 } from "./receipt-check.js";
 
 const COMMITMENT_TTL_MS = 900_000;
 const PAYABLE = { scheme: "exact", network: "stellar:testnet" } as const;
@@ -94,6 +95,33 @@ export interface CommitmentOverrides {
   readonly commitmentSigner?: SigningIdentityV1;
 }
 
+/** What a paid request returned: the seller's answer, and any proof of it. */
+export interface PaidResponse {
+  readonly ok: boolean;
+  readonly header: (name: string) => string | null;
+  readonly body: Uint8Array;
+  readonly contentProof?: ContentProofRefV1;
+}
+
+/**
+ * Send the paid request. `commitmentHash` lets a proving fetcher bind its
+ * proof to this purchase. The default is a plain fetch with no proof.
+ */
+export type PaidFetch = (
+  url: string,
+  paymentHeaders: Readonly<Record<string, string>>,
+  commitmentHash: string,
+) => Promise<PaidResponse>;
+
+export const plainPaidFetch: PaidFetch = async (url, paymentHeaders) => {
+  const response = await fetch(url, { headers: { ...paymentHeaders } });
+  return {
+    ok: response.ok,
+    header: (name) => response.headers.get(name),
+    body: new Uint8Array(await response.arrayBuffer()),
+  };
+};
+
 export interface PurchaseOutcome {
   readonly commitment: PurchaseCommitmentV1;
   readonly paymentHash: string;
@@ -110,6 +138,8 @@ export interface PurchaseOutcome {
   readonly anchorInRange?: boolean;
   /** Smart-account mode: what the account recorded, atomically with the payment. */
   readonly notarization?: PaymentNotarization;
+  /** Guarantee D: proof that the seller served this body over TLS. */
+  readonly contentProof?: ContentProofRefV1;
 }
 
 /**
@@ -150,6 +180,8 @@ export interface AgentOptions {
    */
   readonly smartAccount?: { readonly address: string };
   readonly networkPassphrase?: string;
+  /** How the paid request is sent. Defaults to a plain fetch. */
+  readonly paidFetch?: PaidFetch;
 }
 
 const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
@@ -294,15 +326,18 @@ export class DemoAgent {
     }
 
     const started = Date.now();
-    const response = await fetch(input.resourceUrl, {
-      headers: { ...encodePaymentSignature(paymentPayload) },
-    });
-    const bodyBytes = new Uint8Array(await response.arrayBuffer());
+    const paidFetch = this.#options.paidFetch ?? plainPaidFetch;
+    const response = await paidFetch(
+      input.resourceUrl,
+      encodePaymentSignature(paymentPayload),
+      hashPurchaseCommitment(commitment),
+    );
+    const bodyBytes = response.body;
     const elapsedMs = Date.now() - started;
     // Reads PAYMENT-RESPONSE, falling back to the legacy name. Our first version
     // read only the legacy name, so a spec-compliant seller's settlement came
     // back undefined and the payment hash silently said "unsettled".
-    const settlement = decodePaymentResponse((name) => response.headers.get(name));
+    const settlement = decodePaymentResponse(response.header);
 
     const paymentHash = computePaymentHash({
       scheme: input.requirements.scheme,
@@ -320,9 +355,9 @@ export class DemoAgent {
       {
         responseReceived: response.ok,
         bodyBytes,
-        ...(response.headers.get("content-type") === null
+        ...(response.header("content-type") === null
           ? {}
-          : { contentType: response.headers.get("content-type") as string }),
+          : { contentType: response.header("content-type") as string }),
         sellerId: commitment.sellerId,
         receivedAt: new Date().toISOString(),
         elapsedMs,
@@ -366,7 +401,7 @@ export class DemoAgent {
         ? await this.#notarization(smart.address, before, onChain, BigInt(input.requirements.amount))
         : undefined;
 
-    const deliveredContentType = response.headers.get("content-type");
+    const deliveredContentType = response.header("content-type");
     return {
       commitment,
       paymentHash,
@@ -379,6 +414,7 @@ export class DemoAgent {
       ...(this.#options.anchorClient !== undefined && batchable ? { anchorPending: true } : {}),
       ...(notarization === undefined ? {} : { notarization }),
       ...(this.#options.anchorClient !== undefined && inRange ? { anchorInRange: true } : {}),
+      ...(response.contentProof === undefined ? {} : { contentProof: response.contentProof }),
     };
   }
 

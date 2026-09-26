@@ -79,11 +79,46 @@ Medido en testnet el 24-sep-2026:
 Anclar cada micropago cuesta más que el pago. En lote, anclar cuesta unas 47 veces menos que
 liquidar.
 
+## Demo en vivo: una compra real con las cuatro garantías
+
+El 26-sep-2026 el agente le compró a un vendedor x402 **que no controlamos** (Stellar Bazaar,
+servicio *Swap Risk Quote*, 0,001 USDC de testnet), pagando desde la smart account de AegisOS
+y pidiendo la respuesta **a través de un attestor de Reclaim**. Un solo receipt demuestra:
+
+| Garantía | Qué se probó | Evidencia |
+|---|---|---|
+| **C** · el pago es real y autorizado | La cuenta solo paga bajo un commitment firmado por la autoridad; notarizó el pago (seq 5) en la misma transacción | liquidación [`0aa433be…`](https://stellar.expert/explorer/testnet/tx/0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082) |
+| **A + B** · contado una vez, sin omisiones | El registro recalculó la cadena de pagos de la cuenta hasta su cabeza y contó el veredicto él mismo | rango 5..5 [`d3039f4d…`](https://stellar.expert/explorer/testnet/tx/d3039f4d6b374cfafe91d7e0f6f0c8ec99307da389d708d554b44bc8919b9595) |
+| **D** · el contenido vino del vendedor | El attestor de Reclaim `0x2448…9072` firmó la respuesta HTTP que vio por TLS, ligada al commitment de esta compra | prueba dentro del receipt |
+| Receipt | Firmado por el attester publicado; veredicto `OK` | [`docs/evidence/2026-09-26-bazaar-reclaim/receipt.json`](docs/evidence/2026-09-26-bazaar-reclaim/receipt.json) |
+
+Lo verifica cualquiera, sin secretos ni servicios de AegisOS o de Reclaim:
+
+```bash
+npm run verify:receipt -- docs/evidence/2026-09-26-bazaar-reclaim/receipt.json
+```
+
+Son 16 comprobaciones: firma del receipt, wasm de la cuenta, eslabón de la cadena, log de
+pagos contra la cabeza on-chain, pertenencia al rango anclado, y las cinco de la prueba de
+Reclaim (identificador, witness fijado en
+[`testnet.json`](contracts/deployments/testnet.json), commitment, HTTP 200 y hash del cuerpo).
+
+Un detalle que vale la pena: la respuesta probada incluye la cabecera `Payment-Response` del
+vendedor, que dice `{"success":true, "payer":"CDUZ2FIO…", "transaction":"0aa433be…"}`. Es el
+**propio vendedor**, por TLS y firmado por el attestor, confirmando que esta cuenta le pagó en
+esa transacción. La firma de pago del comprador viajó en cabeceras privadas y no aparece en
+la prueba.
+
+**Límite de D:** el attestor tiene que poder llegar a la URL del vendedor, así que aplica a
+vendedores públicos (como el Bazaar), no a los vendedores locales de `demo:attack`.
+
 ## Evidencia en testnet
 
 | Qué | Dónde |
 |---|---|
-| Contrato v2 (lotes) | [`CD4BMCIK…ZZOF`](https://stellar.expert/explorer/testnet/contract/CD4BMCIKKOCVM66NYSC4LGWUWS4Z5ZMBU3KCVCSGZYI726ZVL7NZ2ZOF) · [contracts/deployments/testnet.json](contracts/deployments/testnet.json) |
+| Registro v3 (factory de cuentas, rangos verificados, lotes) | [`CBPGIT7F…U4NN`](https://stellar.expert/explorer/testnet/contract/CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN) · [contracts/deployments/testnet.json](contracts/deployments/testnet.json) |
+| Smart account de la demo (creada por el factory) | [`CDUZ2FIO…APVZ`](https://stellar.expert/explorer/testnet/contract/CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ) |
+| Contrato v2 (histórico, lotes) | [`CD4BMCIK…ZZOF`](https://stellar.expert/explorer/testnet/contract/CD4BMCIKKOCVM66NYSC4LGWUWS4Z5ZMBU3KCVCSGZYI726ZVL7NZ2ZOF) · [contracts/deployments/testnet.json](contracts/deployments/testnet.json) |
 | Lote de 1.024 receipts en 1 transacción | [`238f3737…`](https://stellar.expert/explorer/testnet/tx/238f3737b91b765835f0d8a535312c40c1a82a169e8de91f8f7198cdde0cc48d) |
 | Contrato v1 (histórico) | [`CBG2DFZB…XJXZV`](https://stellar.expert/explorer/testnet/contract/CBG2DFZBHC3MEBN4UIVIVVNZX4YGI6TMRVRIK3TD4CVFKHMIKDXIJXZV); los receipts anclados ahí siguen verificando |
 | Clave pública del attester | `ed25519:6848dcb2068c11bd1771b88e`, publicada en el mismo archivo |
@@ -102,7 +137,8 @@ el [Stellar CLI](https://developers.stellar.org/docs/tools/cli).
 ```bash
 npm install
 npm run typecheck
-npm test                 # 162 tests TS, sin red
+npm test                 # 202 tests TS, sin red
+(cd contracts && cargo test)   # 47 tests de contratos
 npm run benchmark        # corpus de ataques + métrica, sin red
 ```
 
@@ -123,6 +159,11 @@ npm run verify:deployment  # contrato de punta a punta, incluido un lote de 1.02
 
 `AEGIS_SKIP_ANCHOR=1` omite el anclaje on-chain (ensayos rápidos), y `AEGIS_SKIP_PURCHASE=1`
 corre `demo:external` sin gastar nada.
+
+Con `AEGIS_RECLAIM_APP_ID` y `AEGIS_RECLAIM_APP_SECRET` en `.env` (ver [.env.example](.env.example);
+la app necesita zkFetch habilitado en el portal de Reclaim), `demo:external` pide la
+respuesta pagada a través de un attestor y guarda la prueba de origen en el receipt.
+`AEGIS_CONTENT_PROOF=0` lo desactiva.
 
 **Sobre el vendedor externo.** El Bazaar es un servicio de otro desarrollador del ecosistema.
 `demo:external` hace **una sola** compra de 0,001 USDC de testnet. Las pruebas de rechazo no
@@ -152,13 +193,17 @@ veredicto; el contenido envenenado quedó en cuarentena; el gasto siguiente fue 
 veredicto quedó anclado en Soroban y cualquiera puede verificarlo.
 
 **No:**
-- El contrato **no** verifica el contenido ni que el pago haya liquidado: ancla una
-  *atestación del comprador*.
+- En modo clásico (cuenta `G…`), el contrato **no** verifica que el pago haya liquidado: ancla
+  una *atestación del comprador*. Con la smart account, el pago y su conteo sí los verifica
+  la cadena (garantías C y A+B), y con Reclaim el origen del contenido (D).
+- Ninguna capa verifica que el contenido sea **verdadero**: D prueba que el vendedor lo envió,
+  no que sea correcto.
 - `seller_score` **no** es reputación objetiva. Es un agregado de atestaciones, y se puede
   inflar o atacar (colusión, griefing). Los OK de lotes se cuentan aparte (`batched_ok`):
   el contrato no ve las hojas, así que ese conteo es la palabra del comprador, con un tope de
   1.024 por lote.
-- El contrato **no** impide que un mismo pago aparezca en dos lotes: nunca ve las hojas.
+- En los **lotes** (modo clásico) el contrato no impide que un mismo pago aparezca en dos: nunca
+  ve las hojas. Los **rangos** de la smart account sí lo impiden.
 - La firma del receipt es del comprador, **no** prueba que el vendedor haya incumplido.
 - Datos plausibles pero sutilmente falsos (un precio manipulado) **no** son detectables por
   esta capa; eso requiere oráculos o arbitraje.

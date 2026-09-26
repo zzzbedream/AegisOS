@@ -6,7 +6,13 @@ import test from "node:test";
 import { getIdentifierFromClaimInfo } from "@reclaimprotocol/attestor-core";
 import { Wallet } from "ethers";
 
-import { claimIdentifier, contentProofChecks, type ReclaimProofV1 } from "../src/content-proof.js";
+import {
+  claimIdentifier,
+  contentProofChecks,
+  parseProvenResponse,
+  provenResponse,
+  type ReclaimProofV1,
+} from "../src/content-proof.js";
 
 const witness = Wallet.createRandom();
 const stranger = Wallet.createRandom();
@@ -14,15 +20,24 @@ const commitmentHash = "ab".repeat(32);
 const body = '{"network_passphrase":"Test SDF Network ; September 2015"}';
 const contentHash = createHash("sha256").update(body, "utf8").digest("hex");
 
+/** What a whole-response match captures: status line, headers, body. */
+function http(content: string, status = "200 OK", extra = ""): string {
+  return `HTTP/1.1 ${status}\r\nContent-Type: application/json\r\n${extra}\r\n${content}`;
+}
+
 /** A proof shaped like zkFetch's, signed the way a Reclaim attestor signs. */
-async function proofSignedBy(signer: Wallet, overrides: { body?: string; message?: string } = {}): Promise<ReclaimProofV1> {
+async function proofSignedBy(
+  signer: Wallet,
+  overrides: { body?: string; message?: string; status?: string } = {},
+): Promise<ReclaimProofV1> {
+  const captured = http(overrides.body ?? body, overrides.status);
   const claim = {
     provider: "http",
     parameters: JSON.stringify({ method: "GET", url: "https://horizon-testnet.stellar.org/" }),
     context: JSON.stringify({
       contextAddress: "0x0000000000000000000000000000000000000000",
       contextMessage: overrides.message ?? commitmentHash,
-      extractedParameters: { body: overrides.body ?? body },
+      extractedParameters: { body: captured },
       providerHash: "0x01",
     }),
     owner: "0x00000000000000000000000000000000000000aa",
@@ -36,7 +51,7 @@ async function proofSignedBy(signer: Wallet, overrides: { body?: string; message
     claimData: { ...claim, identifier },
     signatures: [await signer.signMessage(signData)],
     witnesses: [{ id: signer.address.toLowerCase(), url: "wss://attestor.example" }],
-    extractedParameterValues: { body: overrides.body ?? body },
+    extractedParameterValues: { body: captured },
   };
 }
 
@@ -75,9 +90,13 @@ test("a real zkFetch proof verifies against the witness published in deployments
     readFileSync(new URL("../../../contracts/deployments/testnet.json", import.meta.url), "utf8"),
   ) as { reclaim: { witnesses: string[] } };
   const context = JSON.parse(fixture.proof.claimData.context) as { extractedParameters: { body: string } };
+  const response = provenResponse(fixture.proof);
+  assert.equal(response?.status, 200);
+  assert.match(response?.header("content-type") ?? "", /application\/hal\+json/);
+  assert.ok(response?.body.startsWith("{"), "the body, without the status line and headers");
   const real = {
     commitmentHash: fixture.commitmentHash,
-    contentHash: createHash("sha256").update(context.extractedParameters.body, "utf8").digest("hex"),
+    contentHash: createHash("sha256").update(response?.body ?? "", "utf8").digest("hex"),
     canonicalization: "raw-bytes-v1" as const,
     trustedWitnesses: deployments.reclaim.witnesses,
   };
@@ -93,6 +112,18 @@ test("a real zkFetch proof verifies against the witness published in deployments
   assert.deepEqual(failing(contentProofChecks(fixture.proof, { ...real, commitmentHash: "00".repeat(32) })), [
     "proof is bound to this commitment",
   ]);
+});
+
+test("the seller's settlement header is proven along with the content", () => {
+  const response = parseProvenResponse(http(body, "200 OK", "PAYMENT-RESPONSE: eyJ0eCI6ImFiYyJ9\r\n"));
+  assert.equal(response?.header("payment-response"), "eyJ0eCI6ImFiYyJ9");
+  assert.equal(response?.body, body);
+  assert.equal(parseProvenResponse("no http here"), undefined);
+});
+
+test("an error response is not a delivery, even if properly signed", async () => {
+  const proof = await proofSignedBy(witness, { status: "402 Payment Required" });
+  assert.deepEqual(failing(contentProofChecks(proof, expected)), ["the seller answered 2xx over TLS"]);
 });
 
 test("editing the claim after signing breaks the identifier and the signature", async () => {

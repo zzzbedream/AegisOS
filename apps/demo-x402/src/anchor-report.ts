@@ -2,7 +2,7 @@ import type { FlushedBatch } from "../../../packages/x402/src/index.js";
 import type { PaymentNotarization, PurchaseOutcome } from "./agent.js";
 import { appendPaymentLog } from "./notarization.js";
 import type { AnchoredRange } from "./range.js";
-import { saveReceipt } from "./receipt-check.js";
+import { saveReceipt, type ContentProofRefV1 } from "./receipt-check.js";
 
 const EXPLORER = "https://stellar.expert/explorer/testnet/tx/";
 
@@ -13,19 +13,25 @@ const EXPLORER = "https://stellar.expert/explorer/testnet/tx/";
  */
 export function saveIndividualReceipt(outcome: PurchaseOutcome, contractId: string): string | undefined {
   if (outcome.notarization !== undefined) appendPaymentLog(outcome.notarization);
+  const extras = {
+    ...(outcome.notarization === undefined ? {} : { notarization: outcome.notarization }),
+    ...(outcome.contentProof === undefined ? {} : { contentProof: outcome.contentProof }),
+  };
   if (outcome.anchorPending === true) {
-    if (outcome.notarization !== undefined) pendingNotarizations.set(outcome.admission.receipt.paymentHash, outcome.notarization);
+    pendingExtras.set(outcome.admission.receipt.paymentHash, extras);
     return undefined;
   }
-  const receipt = outcome.admission.receipt;
-  return saveReceipt(receipt, {
+  return saveReceipt(outcome.admission.receipt, {
     ...(outcome.anchorTx === undefined ? {} : { anchor: { mode: "individual" as const, contractId, tx: outcome.anchorTx } }),
-    ...(outcome.notarization === undefined ? {} : { notarization: outcome.notarization }),
+    ...extras,
   });
 }
 
-/** Notarizations of receipts waiting in a batch, saved with them on flush. */
-const pendingNotarizations = new Map<string, PaymentNotarization>();
+/** What receipts waiting in a batch carry besides the receipt, saved on flush. */
+const pendingExtras = new Map<
+  string,
+  { readonly notarization?: PaymentNotarization; readonly contentProof?: ContentProofRefV1 }
+>();
 
 /** Print an anchored account range. */
 export function reportRange(range: AnchoredRange | undefined): void {
@@ -58,12 +64,12 @@ export function reportFlushedBatches(
     if (batch.anchorTx !== undefined) {
       console.log(`  anclado on-chain : ${EXPLORER}${batch.anchorTx}`);
       for (const { receipt, proof } of batch.entries) {
-        const notarization = pendingNotarizations.get(receipt.paymentHash);
-        pendingNotarizations.delete(receipt.paymentHash);
+        const extras = pendingExtras.get(receipt.paymentHash) ?? {};
+        pendingExtras.delete(receipt.paymentHash);
         saved.push(
           saveReceipt(receipt, {
             anchor: { mode: "batch", contractId, root: batch.root, proof, tx: batch.anchorTx },
-            ...(notarization === undefined ? {} : { notarization }),
+            ...extras,
           }),
         );
       }

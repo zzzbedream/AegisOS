@@ -9,7 +9,8 @@
  * path up to the root `get_batch` returns. Needs no secret; set
  * AEGIS_SKIP_CHAIN=1 to check the signature offline.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { rpc } from "@stellar/stellar-sdk";
@@ -22,6 +23,7 @@ import {
 } from "../../../packages/x402/src/index.js";
 import { readPublishedAttester } from "./attester.js";
 import { describeErrorChain } from "./error-chain.js";
+import { contentProofChecks } from "./content-proof.js";
 import { notarizationChecks, readPaymentLog } from "./notarization.js";
 import {
   anchorRoute,
@@ -42,6 +44,7 @@ interface Deployments {
   readonly rpcUrl?: string;
   readonly contracts: Record<string, { readonly contractId: string; readonly deployer?: string }>;
   readonly accountWasm?: { readonly wasmHash: string };
+  readonly reclaim?: { readonly witnesses: readonly string[] };
 }
 
 /** Account wasms published before the current one (e.g. `accountV2`). */
@@ -58,7 +61,7 @@ async function main(): Promise<void> {
   if (file === undefined || file.length === 0) {
     throw new Error("Usage: npm run verify:receipt -- <receipt.json>");
   }
-  const { receipt, anchor, notarization, range } = readReceiptFile(JSON.parse(readFileSync(file, "utf8")) as unknown);
+  const { receipt, anchor, notarization, range, contentProof } = readReceiptFile(JSON.parse(readFileSync(file, "utf8")) as unknown);
   const deploymentsRaw = JSON.parse(readFileSync(DEPLOYMENTS, "utf8")) as unknown;
   const published = readPublishedAttester(deploymentsRaw);
   if (published === undefined) {
@@ -132,7 +135,11 @@ async function main(): Promise<void> {
         deployedWasmHash(server, notarization.account),
         readAccountHead(server, TESTNET_PASSPHRASE, notarization.account, reader),
       ]);
-      const log = readPaymentLog(notarization.account);
+      // A published receipt ships its account's payment log next to it.
+      const siblingLog = join(dirname(file), "payment-log");
+      const log = existsSync(siblingLog)
+        ? readPaymentLog(notarization.account, siblingLog)
+        : readPaymentLog(notarization.account);
       const publishedWasms = { current: publishedWasm, superseded: supersededAccountWasms(deploymentsRaw, publishedWasm) };
       checks.push(...notarizationChecks(receipt, notarization, { deployedWasm, publishedWasms, log, onChainHead }));
       notarizationNote = `pago seq ${notarization.seq} de la cuenta ${notarization.account} (cabeza on-chain seq ${onChainHead.seq.toString()})`;
@@ -152,11 +159,26 @@ async function main(): Promise<void> {
     }
   }
 
+  // Guarantee D needs no chain: the attestor's signature and a pinned witness.
+  let originNote: string | undefined;
+  if (contentProof !== undefined) {
+    checks.push(
+      ...contentProofChecks(contentProof.proof, {
+        commitmentHash: receipt.commitmentHash,
+        contentHash: receipt.contentHash,
+        canonicalization: receipt.contentCanonicalization,
+        trustedWitnesses: deployments.reclaim?.witnesses ?? [],
+      }),
+    );
+    originNote = `prueba Reclaim (${contentProof.kind}) del attestor ${contentProof.proof.witnesses[0]?.id ?? "—"}`;
+  }
+
   console.log("AegisOS · verificación de receipt con datos públicos");
   console.log(`  receipt  : ${file}`);
   console.log(`  veredicto: ${receipt.verdict} (atestación del comprador, no prueba contra el vendedor)`);
   console.log(`  cadena   : ${chainNote}`);
   if (notarizationNote !== undefined) console.log(`  billetera: ${notarizationNote}`);
+  if (originNote !== undefined) console.log(`  origen   : ${originNote}`);
   for (const check of checks) {
     console.log(`  ${check.pass ? "PASS" : "FAIL"}  ${check.name} — ${check.detail}`);
   }

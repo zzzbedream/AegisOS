@@ -84,8 +84,39 @@ function recoverSigners(proof: ReclaimProofV1): readonly string[] {
   });
 }
 
-function provenContentHash(body: unknown, canonicalization: ContentCanonicalization): string | undefined {
-  if (typeof body !== "string") return undefined;
+/** The HTTP response the attestor saw, as captured by a whole-response match. */
+export interface ProvenResponse {
+  readonly status: number;
+  readonly header: (name: string) => string | null;
+  readonly body: string;
+}
+
+/**
+ * Split a proven response into status, headers and body. The attestor signs
+ * the status line and headers too, so a seller's PAYMENT-RESPONSE header is
+ * proven along with the content.
+ */
+export function parseProvenResponse(text: string): ProvenResponse | undefined {
+  const split = text.indexOf("\r\n\r\n");
+  if (split === -1 || !text.startsWith("HTTP/")) return undefined;
+  const [statusLine = "", ...lines] = text.slice(0, split).split("\r\n");
+  const status = Number(statusLine.split(" ")[1]);
+  if (!Number.isInteger(status)) return undefined;
+  const headers = new Map<string, string>();
+  for (const line of lines) {
+    const colon = line.indexOf(":");
+    if (colon > 0) headers.set(line.slice(0, colon).trim().toLowerCase(), line.slice(colon + 1).trim());
+  }
+  return { status, header: (name) => headers.get(name.toLowerCase()) ?? null, body: text.slice(split + 4) };
+}
+
+/** The response inside a proof's signed context, or undefined. */
+export function provenResponse(proof: ReclaimProofV1): ProvenResponse | undefined {
+  const captured = signedContext(proof.claimData).extractedParameters?.body;
+  return typeof captured === "string" ? parseProvenResponse(captured) : undefined;
+}
+
+function provenContentHash(body: string, canonicalization: ContentCanonicalization): string | undefined {
   try {
     return hashDeliveredContent({ bodyBytes: new TextEncoder().encode(body), canonicalization }).contentHash;
   } catch {
@@ -107,7 +138,8 @@ export function contentProofChecks(proof: ReclaimProofV1, expected: ContentProof
   const pinned = signers.find((s) => trusted.has(s));
 
   const context = signedContext(proof.claimData);
-  const proven = provenContentHash(context.extractedParameters?.body, expected.canonicalization);
+  const response = provenResponse(proof);
+  const proven = response === undefined ? undefined : provenContentHash(response.body, expected.canonicalization);
 
   return [
     {
@@ -124,6 +156,11 @@ export function contentProofChecks(proof: ReclaimProofV1, expected: ContentProof
       name: "proof is bound to this commitment",
       pass: context.contextMessage === expected.commitmentHash,
       detail: typeof context.contextMessage === "string" ? context.contextMessage : "no context message",
+    },
+    {
+      name: "the seller answered 2xx over TLS",
+      pass: response !== undefined && response.status >= 200 && response.status < 300,
+      detail: response === undefined ? "no proven HTTP response in the signed context" : `HTTP ${String(response.status)}`,
     },
     {
       name: "proven body is the receipt's content",

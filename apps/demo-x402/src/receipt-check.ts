@@ -17,6 +17,7 @@ import {
 } from "../../../packages/x402/src/index.js";
 import type { PaymentNotarization } from "./agent.js";
 import type { PublishedAttesterV1 } from "./attester.js";
+import type { ReclaimProofV1 } from "./content-proof.js";
 
 export const RECEIPTS_DIR = ".aegis/receipts";
 
@@ -50,6 +51,13 @@ export interface ReceiptFileV1 {
   readonly notarization?: PaymentNotarization;
   /** Smart-account mode: the account range this payment was counted in. */
   readonly range?: RangeRefV1;
+  /** Guarantee D: an attestor's proof that the seller served this content over TLS. */
+  readonly contentProof?: ContentProofRefV1;
+}
+
+export interface ContentProofRefV1 {
+  readonly kind: "reclaim-zkfetch-v1";
+  readonly proof: ReclaimProofV1;
 }
 
 /** Which on-chain record proves that a receipt was anchored. */
@@ -208,6 +216,7 @@ export function saveReceipt(
     readonly anchor?: AnchorRefV1;
     readonly notarization?: PaymentNotarization;
     readonly range?: RangeRefV1;
+    readonly contentProof?: ContentProofRefV1;
   } = {},
   dir: string = RECEIPTS_DIR,
 ): string {
@@ -219,6 +228,7 @@ export function saveReceipt(
     ...(extras.anchor === undefined ? {} : { anchor: extras.anchor }),
     ...(extras.notarization === undefined ? {} : { notarization: extras.notarization }),
     ...(extras.range === undefined ? {} : { range: extras.range }),
+    ...(extras.contentProof === undefined ? {} : { contentProof: extras.contentProof }),
   };
   writeFileSync(path, `${JSON.stringify(file, null, 2)}\n`, "utf8");
   return path;

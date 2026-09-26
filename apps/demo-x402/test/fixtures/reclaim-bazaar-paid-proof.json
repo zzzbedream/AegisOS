@@ -1,0 +1,35 @@
+{
+  "note": "Real paid purchase from the Stellar Bazaar through a Reclaim attestor, 2026-09-26. Receipt fields needed to verify the proof.",
+  "receipt": {
+    "commitmentHash": "9d09c8cbc72adf366a9cfdc872d5c72cd3444f00b08ec702fdb8cca6bad5511f",
+    "contentHash": "cb61d70f16bca0fda67d9e65916e373c8292b56d3aae28286b09f30be37794eb",
+    "contentCanonicalization": "json-canonical-v1",
+    "paymentHash": "2144a891f768880f21b1472dff8adaaf4416f14ee2f67d7d75062fa6a177b4ae"
+  },
+  "settlementTx": "0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082",
+  "payer": "CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ",
+  "proof": {
+    "claimData": {
+      "provider": "http",
+      "parameters": "{\"body\":\"\",\"method\":\"GET\",\"responseMatches\":[{\"type\":\"regex\",\"value\":\"(?<body>[\\\\s\\\\S]*)\"}],\"responseRedactions\":[],\"url\":\"https://bazaar.browns.studio/api/x402/swap-risk?pair=XLM/USDC&amount=2500&side=buy\"}",
+      "owner": "0xab78057e6224965646ce36f94ee882e680b63378",
+      "timestampS": 1790381531,
+      "context": "{\"contextAddress\":\"0x0000000000000000000000000000000000000000\",\"contextMessage\":\"9d09c8cbc72adf366a9cfdc872d5c72cd3444f00b08ec702fdb8cca6bad5511f\",\"extractedParameters\":{\"body\":\"HTTP/1.1 200 OK\\r\\nAge: 0\\r\\nCache-Control: no-store\\r\\nContent-Type: application/json\\r\\nDate: Sat, 26 Sep 2026 00:12:10 GMT\\r\\nPayment-Response: eyJzdWNjZXNzIjp0cnVlLCJwYXllciI6IkNEVVoyRklPVk5HMjVWVTVaR05DRFQyNkMyTjJMTjVTMjRGSkRIWEVEWE5ZM0pUSVBBWkpBUFZaIiwidHJhbnNhY3Rpb24iOiIwYWE0MzNiZTY5MjY0NjFiNjA3ZTg5YThlZDgyYmUyMmM2OTI5MTIzZWVlMWQwMTk5NGE4NDc1YWJjODBiMDgyIiwibmV0d29yayI6InN0ZWxsYXI6dGVzdG5ldCJ9\\r\\nServer: Vercel\\r\\nStrict-Transport-Security: max-age=63072000\\r\\nX-Matched-Path: /api/x402/swap-risk\\r\\nX-Vercel-Cache: MISS\\r\\nX-Vercel-Id: bom1::iad1::2r2pj-1790381522156-d365f5eb626d\\r\\nConnection: close\\r\\nTransfer-Encoding: chunked\\r\\n\\r\\n{\\\"ok\\\":true,\\\"result\\\":{\\\"pair\\\":\\\"XLM/USDC\\\",\\\"amount\\\":2500,\\\"side\\\":\\\"buy\\\",\\\"routeRisk\\\":\\\"low\\\",\\\"priceImpactPct\\\":0.221,\\\"liquidityBand\\\":\\\"deep\\\",\\\"factors\\\":[\\\"pair:XLM/USDC\\\",\\\"size_bucket:medium\\\",\\\"side:buy\\\"],\\\"methodology\\\":\\\"deterministic-reference-v1\\\",\\\"informationalOnly\\\":true},\\\"payment\\\":{\\\"network\\\":\\\"stellar:testnet\\\",\\\"transaction\\\":\\\"0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082\\\",\\\"payer\\\":\\\"CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ\\\",\\\"amount\\\":\\\"10000\\\",\\\"asset\\\":\\\"CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA\\\",\\\"recipient\\\":\\\"GDVR2KDK5DSMNYZJKNISUIOBDC6FZK3XZOIQWSS7KL4BRMD5BMW6RMCQ\\\",\\\"facilitator\\\":\\\"OpenZeppelin hosted Testnet\\\"},\\\"delivery\\\":{\\\"model\\\":\\\"sync\\\",\\\"status\\\":\\\"result-returned\\\",\\\"evidence\\\":\\\"provider-response\\\",\\\"resultAvailable\\\":true,\\\"independentlyVerified\\\":false,\\\"resultHash\\\":{\\\"algorithm\\\":\\\"sha256\\\",\\\"scope\\\":\\\"canonical-result\\\",\\\"value\\\":\\\"9f93f93f0ede23704e86bc1f21a98074553533a021024f1f304754417c0b8ba5\\\"},\\\"message\\\":\\\"Provider returned this synchronous response after settlement; Bazaar does not independently verify result quality.\\\"}}\"},\"providerHash\":\"0x6483b9bb3c6763d4808d697e047b26b6e1928b8d024350ae2cea797ef8c55611\"}",
+      "identifier": "0x14e77b6fbe7bc14cb2f10c91cf8b293eb553afc99741ce008aa186b15ffc387e",
+      "epoch": 1
+    },
+    "identifier": "0x14e77b6fbe7bc14cb2f10c91cf8b293eb553afc99741ce008aa186b15ffc387e",
+    "signatures": [
+      "0xf3127d81f6c99039fa6c104ffc652a090614f7bad2e6b2d7762778b059b05b1a14bfbb36e266248f2391b0cb9ee6b762fd226de73d684e8ddf38bf8b571e731c1c"
+    ],
+    "extractedParameterValues": {
+      "body": "HTTP/1.1 200 OK\r\nAge: 0\r\nCache-Control: no-store\r\nContent-Type: application/json\r\nDate: Sat, 26 Sep 2026 00:12:10 GMT\r\nPayment-Response: eyJzdWNjZXNzIjp0cnVlLCJwYXllciI6IkNEVVoyRklPVk5HMjVWVTVaR05DRFQyNkMyTjJMTjVTMjRGSkRIWEVEWE5ZM0pUSVBBWkpBUFZaIiwidHJhbnNhY3Rpb24iOiIwYWE0MzNiZTY5MjY0NjFiNjA3ZTg5YThlZDgyYmUyMmM2OTI5MTIzZWVlMWQwMTk5NGE4NDc1YWJjODBiMDgyIiwibmV0d29yayI6InN0ZWxsYXI6dGVzdG5ldCJ9\r\nServer: Vercel\r\nStrict-Transport-Security: max-age=63072000\r\nX-Matched-Path: /api/x402/swap-risk\r\nX-Vercel-Cache: MISS\r\nX-Vercel-Id: bom1::iad1::2r2pj-1790381522156-d365f5eb626d\r\nConnection: close\r\nTransfer-Encoding: chunked\r\n\r\n{\"ok\":true,\"result\":{\"pair\":\"XLM/USDC\",\"amount\":2500,\"side\":\"buy\",\"routeRisk\":\"low\",\"priceImpactPct\":0.221,\"liquidityBand\":\"deep\",\"factors\":[\"pair:XLM/USDC\",\"size_bucket:medium\",\"side:buy\"],\"methodology\":\"deterministic-reference-v1\",\"informationalOnly\":true},\"payment\":{\"network\":\"stellar:testnet\",\"transaction\":\"0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082\",\"payer\":\"CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ\",\"amount\":\"10000\",\"asset\":\"CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA\",\"recipient\":\"GDVR2KDK5DSMNYZJKNISUIOBDC6FZK3XZOIQWSS7KL4BRMD5BMW6RMCQ\",\"facilitator\":\"OpenZeppelin hosted Testnet\"},\"delivery\":{\"model\":\"sync\",\"status\":\"result-returned\",\"evidence\":\"provider-response\",\"resultAvailable\":true,\"independentlyVerified\":false,\"resultHash\":{\"algorithm\":\"sha256\",\"scope\":\"canonical-result\",\"value\":\"9f93f93f0ede23704e86bc1f21a98074553533a021024f1f304754417c0b8ba5\"},\"message\":\"Provider returned this synchronous response after settlement; Bazaar does not independently verify result quality.\"}}"
+    },
+    "witnesses": [
+      {
+        "id": "0x244897572368eadf65bfbc5aec98d8e5443a9072",
+        "url": "wss://attestor.reclaimprotocol.org:444/ws"
+      }
+    ]
+  }
+}
