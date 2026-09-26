@@ -3,7 +3,7 @@
  *
  *   npm run landing:check
  *
- * Every transaction linked on site/index.html must exist and have succeeded,
+ * Every transaction linked on the landing (/ and /es/) must exist and have succeeded,
  * and every contract linked must be deployed. Reads public data only.
  */
 import { readFileSync } from "node:fs";
@@ -14,7 +14,9 @@ import { TESTNET_RPC_URL, deployedWasmHash } from "../../../packages/x402/src/in
 import { describeErrorChain } from "./error-chain.js";
 
 const HORIZON = "https://horizon-testnet.stellar.org";
-const html = readFileSync(fileURLToPath(new URL("../../../site/index.html", import.meta.url)), "utf8");
+const html = ["../../../site/index.html", "../../../site/es/index.html"]
+  .map((page) => readFileSync(fileURLToPath(new URL(page, import.meta.url)), "utf8"))
+  .join("\n");
 
 async function main(): Promise<void> {
   const txs = [...new Set([...html.matchAll(/explorer\/testnet\/tx\/([0-9a-f]{64})/g)].map((m) => m[1] as string))];

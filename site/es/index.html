@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AegisOS — Verifiable provenance for agentic purchases</title>
-<meta name="description" content="AI agents pay for data with x402. AegisOS proves what was bought, that it was paid under a signed commitment, counted once, and that the content came from the seller. Real demo on Stellar testnet.">
-<meta property="og:title" content="AegisOS — A perfect payment is not enough">
-<meta property="og:description" content="Verifiable provenance for agentic x402 purchases on Stellar. Real testnet evidence anyone can verify.">
+<title>AegisOS — Procedencia verificable para compras agénticas</title>
+<meta name="description" content="Los agentes pagan por datos con x402. AegisOS prueba qué se compró, que se pagó bajo un compromiso firmado, que se contó una vez y que el contenido vino del vendedor. Demo real en Stellar testnet.">
+<meta property="og:title" content="AegisOS — Un pago perfecto no basta">
+<meta property="og:description" content="Procedencia verificable para compras agénticas x402 en Stellar. Evidencia real en testnet, verificable por cualquiera.">
 <link rel="alternate" hreflang="en" href="https://aegisos-stellar.vercel.app/">
 <link rel="alternate" hreflang="es" href="https://aegisos-stellar.vercel.app/es/">
 <link rel="alternate" hreflang="x-default" href="https://aegisos-stellar.vercel.app/">
@@ -199,15 +199,15 @@
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="/">AegisOS</a>
-    <span class="tag">CASE FILE 2026-09-26 · STELLAR TESTNET</span>
-    <nav class="primary" aria-label="Sections">
-      <a href="#problem">The problem</a>
-      <a href="#guarantees">Guarantees</a>
-      <a href="#demo">Live demo</a>
-      <a href="#verify">Verify</a>
+    <a class="brand" href="/es/">AegisOS</a>
+    <span class="tag">EXPEDIENTE 2026-09-26 · STELLAR TESTNET</span>
+    <nav class="primary" aria-label="Secciones">
+      <a href="#problema">El problema</a>
+      <a href="#garantias">Garantías</a>
+      <a href="#demo">Demo en vivo</a>
+      <a href="#verificar">Verificar</a>
       <a href="https://github.com/zzzbedream/AegisOS">GitHub</a>
-      <span class="lang" aria-label="Language"><strong aria-current="page">EN</strong> · <a href="/es/" hreflang="es" lang="es">ES</a></span>
+      <span class="lang" aria-label="Idioma"><a href="/" hreflang="en" lang="en">EN</a> · <strong aria-current="page">ES</strong></span>
     </nav>
   </div>
 </header>
@@ -218,115 +218,115 @@
   <!-- ============================================================ HERO -->
   <section class="hero" aria-labelledby="hero-title">
     <div>
-      <div class="kicker">Verifiable provenance for agentic purchases · x402 on Stellar</div>
-      <h1 id="hero-title">A perfect payment is not enough.</h1>
+      <div class="kicker">Procedencia verificable para compras agénticas · x402 en Stellar</div>
+      <h1 id="hero-title">Un pago perfecto no basta.</h1>
       <p class="lede">
-        AI agents already pay for data with <span class="mono">x402</span>. The payment proves the money moved,
-        <strong>not what the agent received</strong>. If the seller delivers poisoned content, that content becomes
-        the context for the next decision, and the next payment.
+        Los agentes de IA ya pagan por datos con <span class="mono">x402</span>. El pago prueba que el dinero se movió,
+        <strong>no qué recibió el agente</strong>. Si el vendedor entrega contenido envenenado, ese contenido se vuelve
+        el contexto de la próxima decisión, y del próximo pago.
       </p>
       <p class="lede">
-        AegisOS cuts that chain: it proves each purchase was paid under a signed commitment, counted exactly once,
-        and that the content came from the seller. If the content is tainted, the agent may have paid, but it cannot
-        let that content drive its next action.
+        AegisOS lo corta: prueba que se pagó bajo un compromiso firmado, que cada pago se contó una vez, y que el
+        contenido vino del vendedor. Y si el contenido está contaminado, el agente puede haber pagado, pero no puede
+        dejar que ese contenido controle su siguiente acción.
       </p>
       <div class="actions">
-        <a class="btn" href="#verify">Verify the receipt →</a>
-        <a href="#problem">See the real attack</a>
+        <a class="btn" href="#verificar">Verificar el receipt →</a>
+        <a href="#problema">Ver el ataque real</a>
       </div>
     </div>
 
-    <aside class="seal" aria-label="Demo receipt status">
-      <svg viewBox="0 0 200 200" role="img" aria-label="Seal: receipt verified, 16 of 16 checks">
+    <aside class="seal" aria-label="Estado del receipt de la demo">
+      <svg viewBox="0 0 200 200" role="img" aria-label="Sello: receipt verificado, 16 de 16 comprobaciones">
         <defs><path id="ring" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
         <circle cx="100" cy="100" r="94" fill="none" stroke="#0B6E4F" stroke-width="1.5"/>
         <circle cx="100" cy="100" r="64" fill="none" stroke="#0B6E4F" stroke-width="1"/>
         <text font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="3" fill="#0B6E4F">
-          <textPath href="#ring">RECEIPT VERIFIED · STELLAR TESTNET · 2026-09-26 ·</textPath>
+          <textPath href="#ring">RECEIPT VERIFICADO · STELLAR TESTNET · 2026-09-26 ·</textPath>
         </text>
         <text x="100" y="96" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="38" fill="#0B6E4F">16/16</text>
         <text x="100" y="118" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" fill="#0B6E4F">CHECKS PASS</text>
       </svg>
       <dl>
-        <dt>seller</dt><dd>Stellar Bazaar (not ours)</dd>
-        <dt>amount</dt><dd>0.001 USDC testnet</dd>
-        <dt>payer</dt><dd>smart account CDUZ2FIO…APVZ</dd>
-        <dt>verdict</dt><dd class="ok">OK</dd>
-        <dt>guarantees</dt><dd class="ok">C · A+B · D</dd>
+        <dt>vendedor</dt><dd>Stellar Bazaar (no es nuestro)</dd>
+        <dt>monto</dt><dd>0,001 USDC testnet</dd>
+        <dt>pagador</dt><dd>smart account CDUZ2FIO…APVZ</dd>
+        <dt>veredicto</dt><dd class="ok">OK</dd>
+        <dt>garantías</dt><dd class="ok">C · A+B · D</dd>
       </dl>
     </aside>
   </section>
 
   <!-- ======================================================== PROBLEM -->
-  <section class="block" id="problem" aria-labelledby="problem-title">
+  <section class="block" id="problema" aria-labelledby="problema-title">
     <div class="sec-head">
       <div>
-        <div class="kicker">01 — The problem</div>
-        <h2 id="problem-title">x402 did its job. The content did not.</h2>
+        <div class="kicker">01 — El problema</div>
+        <h2 id="problema-title">x402 hizo su trabajo. El contenido, no.</h2>
       </div>
-      <p class="sec-note">When paying costs a fraction of a cent, an agent buys thousands of times, and each purchase feeds the next. A hostile seller doesn't need to steal a key: selling poisoned data is enough.</p>
+      <p class="sec-note">Cuando pagar cuesta fracciones de centavo, un agente compra miles de veces, y cada compra alimenta la siguiente. Un vendedor hostil no necesita robar la clave: le basta con vender datos envenenados.</p>
     </div>
 
     <ol class="cascade">
-      <li><span class="n">01</span><h3>The agent pays</h3><p>x402 payment settled on Stellar. The rail worked perfectly.</p><span class="mark ok">PAYMENT OK</span></li>
-      <li><span class="n">02</span><h3>It receives poisoned content</h3><p>The response carries hidden instructions for the agent.</p><span class="mark bad">INJECTION</span></li>
-      <li><span class="n">03</span><h3>It stores it as context</h3><p>Without a provenance layer, it becomes "trusted memory".</p><span class="mark bad">TAINTS</span></li>
-      <li><span class="n">04</span><h3>It pays the attacker</h3><p>The next spend is based on that context. The cascade continues.</p><span class="mark bad">CASCADE</span></li>
+      <li><span class="n">01</span><h3>El agente paga</h3><p>Pago x402 liquidado en Stellar. El riel funcionó perfecto.</p><span class="mark ok">PAGO OK</span></li>
+      <li><span class="n">02</span><h3>Recibe contenido envenenado</h3><p>La respuesta trae instrucciones escondidas para el agente.</p><span class="mark bad">INYECCIÓN</span></li>
+      <li><span class="n">03</span><h3>Lo guarda como contexto</h3><p>Sin una capa de procedencia, eso se vuelve "memoria confiable".</p><span class="mark bad">CONTAMINA</span></li>
+      <li><span class="n">04</span><h3>Paga al atacante</h3><p>El siguiente gasto se funda en ese contexto. La cascada sigue.</p><span class="mark bad">CASCADA</span></li>
     </ol>
 
     <div class="case">
       <div>
-        <p class="wide">This isn't hypothetical. In the demo, a hostile seller (ours, simulated for the test) charged for a response that carried, among other things, an instruction override and a swap of the funds recipient, written in Spanish. The payment settled without a hitch: <a class="hash" href="https://stellar.expert/explorer/testnet/tx/b4aed37bd55be50047cbd9c1b871e0b31c74ed857718e500bbd9085c0e7f1562">b4aed37b…1562 ↗</a>. What AegisOS detected:</p>
+        <p class="wide">Esto no es hipotético. En la demo, un vendedor hostil (uno nuestro, simulado para la prueba) cobró por una respuesta que traía, entre otras cosas, una anulación de instrucciones y una sustitución del destinatario de fondos, en español. El pago liquidó sin problemas: <a class="hash" href="https://stellar.expert/explorer/testnet/tx/b4aed37bd55be50047cbd9c1b871e0b31c74ed857718e500bbd9085c0e7f1562">b4aed37b…1562 ↗</a>. Lo que AegisOS detectó:</p>
         <p class="quote-poison">
-          PROMPT_INJECTION · Instruction hierarchy override (es)<br>
-          PROMPT_INJECTION · System channel impersonation (es)<br>
-          FINANCIAL_AUTHORITY_CLAIM · Tries to remove financial approval (es)<br>
-          FINANCIAL_AUTHORITY_CLAIM · Funds recipient substitution (es)
+          PROMPT_INJECTION · Anulación de jerarquía de instrucciones (es)<br>
+          PROMPT_INJECTION · Suplantación de canal de sistema (es)<br>
+          FINANCIAL_AUTHORITY_CLAIM · Intenta eliminar la aprobación financiera (es)<br>
+          FINANCIAL_AUTHORITY_CLAIM · Sustitución de destinatario de fondos (es)
         </p>
       </div>
       <table class="ledger">
-        <caption>What happened next</caption>
+        <caption>Qué pasó después</caption>
         <tbody>
-          <tr><th scope="row">Verdict</th><td class="mono">taint 90 / threshold 60</td><td class="status bad">TAINTED</td></tr>
-          <tr><th scope="row">Memory</th><td>kept for review, redacted</td><td class="status bad">QUARANTINED</td></tr>
-          <tr><th scope="row">Next spend</th><td class="mono">TAINTED_PROVENANCE_REQUIRES_OWNER</td><td class="status bad">DENIED</td></tr>
-          <tr><th scope="row">Anchored on-chain</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/tx/bc6b1da6034ffcc4a423d7c604c1b6717e64ca7a1db6622d14344d82ae6a87c7">bc6b1da6…87c7 ↗</a></td><td class="status ok">PUBLIC</td></tr>
-          <tr><th scope="row">Receipt</th><td><a class="hash" href="https://github.com/zzzbedream/AegisOS/blob/dev/docs/evidence/2026-09-25-poisoned-purchase/receipt.json">receipt.json ↗</a></td><td class="status ok">VERIFIES</td></tr>
+          <tr><th scope="row">Veredicto</th><td class="mono">taint 90 / umbral 60</td><td class="status bad">TAINTED</td></tr>
+          <tr><th scope="row">Memoria</th><td>guardado para revisión, redactado</td><td class="status bad">CUARENTENA</td></tr>
+          <tr><th scope="row">Gasto siguiente</th><td class="mono">TAINTED_PROVENANCE_REQUIRES_OWNER</td><td class="status bad">DENEGADO</td></tr>
+          <tr><th scope="row">Anclado on-chain</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/tx/bc6b1da6034ffcc4a423d7c604c1b6717e64ca7a1db6622d14344d82ae6a87c7">bc6b1da6…87c7 ↗</a></td><td class="status ok">PÚBLICO</td></tr>
+          <tr><th scope="row">Receipt</th><td><a class="hash" href="https://github.com/zzzbedream/AegisOS/blob/dev/docs/evidence/2026-09-25-poisoned-purchase/receipt.json">receipt.json ↗</a></td><td class="status ok">VERIFICA</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <!-- ===================================================== GUARANTEES -->
-  <section class="block" id="guarantees" aria-labelledby="guarantees-title">
+  <section class="block" id="garantias" aria-labelledby="garantias-title">
     <div class="sec-head">
       <div>
-        <div class="kicker">02 — What AegisOS guarantees</div>
-        <h2 id="guarantees-title">Four things a third party can check, without taking the buyer's word.</h2>
+        <div class="kicker">02 — Qué garantiza AegisOS</div>
+        <h2 id="garantias-title">Cuatro cosas que un tercero puede comprobar, sin creerle al comprador.</h2>
       </div>
-      <p class="sec-note">No paid content may ground a later spend unless there is a prior commitment, a verifiable payment–delivery binding and a deterministic risk assessment.</p>
+      <p class="sec-note">Ningún contenido pagado puede convertirse en fundamento de un gasto posterior salvo que exista un commitment previo, un binding verificable pago–entrega y una evaluación determinista de riesgo.</p>
     </div>
 
     <div class="guarantees">
       <div class="g">
         <div class="letter">C</div>
-        <div><h3>The payment is real and was authorized</h3><p>A compromised agent cannot pay outside a commitment signed by the owner's authority.</p></div>
-        <div class="how">The wallet is a <b>Soroban smart account</b>: its <span class="mono">__check_auth</span> requires that commitment and <b>notarizes every payment</b> (sequence number and hash chain) in the same transaction.</div>
+        <div><h3>El pago es real y estaba autorizado</h3><p>Un agente comprometido no puede pagar fuera de un compromiso firmado por la autoridad del dueño.</p></div>
+        <div class="how">La billetera es una <b>smart account de Soroban</b>: su <span class="mono">__check_auth</span> exige ese compromiso y <b>notariza cada pago</b> (número de secuencia y cadena de hashes) en la misma transacción.</div>
       </div>
       <div class="g">
         <div class="letter">A+B</div>
-        <div><h3>Every payment is counted once, none is left out</h3><p>The tally of good and bad purchases is not the buyer's word.</p></div>
-        <div class="how">The <b>registry recomputes on-chain</b> the account's payment chain up to its head and counts the verdicts itself. Omitting, inventing, editing or reordering a payment breaks the chain.</div>
+        <div><h3>Cada pago se cuenta una vez, ninguno se omite</h3><p>El conteo de compras buenas y malas no es la palabra del comprador.</p></div>
+        <div class="how">El <b>registro recalcula on-chain</b> la cadena de pagos de la cuenta hasta su cabeza y cuenta los veredictos él mismo. Omitir, inventar, editar o reordenar un pago rompe la cadena.</div>
       </div>
       <div class="g">
         <div class="letter">D</div>
-        <div><h3>The content came from the seller</h3><p>Nobody can claim "the seller sent me this" without proof.</p></div>
-        <div class="how">The paid request goes through a <b>Reclaim attestor</b>, which signs the HTTP response it saw over TLS, bound to that purchase's commitment.</div>
+        <div><h3>El contenido vino del vendedor</h3><p>Nadie puede decir "el vendedor me mandó esto" sin prueba.</p></div>
+        <div class="how">La petición pagada pasa por un <b>attestor de Reclaim</b>, que firma la respuesta HTTP que vio por TLS, ligada al compromiso de esa compra.</div>
       </div>
       <div class="g">
         <div class="letter">✂</div>
-        <div><h3>The cascade is cut</h3><p>What was bought never becomes authority on its own.</p></div>
-        <div class="how"><span class="bad mono">TAINTED</span> content is quarantined, cannot back spend drafts, and the next payment is denied until the owner reviews it.</div>
+        <div><h3>La cascada se corta</h3><p>Lo comprado nunca se vuelve autoridad por sí solo.</p></div>
+        <div class="how">Contenido <span class="bad mono">TAINTED</span> queda en cuarentena, no respalda borradores de gasto y el siguiente pago se deniega hasta que el dueño lo revise.</div>
       </div>
     </div>
   </section>
@@ -335,56 +335,56 @@
   <section class="block" id="demo" aria-labelledby="demo-title">
     <div class="sec-head">
       <div>
-        <div class="kicker">03 — Live demo · 2026-09-26</div>
-        <h2 id="demo-title">A real purchase from a seller we don't control.</h2>
+        <div class="kicker">03 — Demo en vivo · 26-sep-2026</div>
+        <h2 id="demo-title">Una compra real a un vendedor que no controlamos.</h2>
       </div>
-      <p class="sec-note">Stellar Bazaar, <span class="mono">Swap Risk Quote</span> service (built by another developer in the ecosystem). 0.001 testnet USDC. A single purchase.</p>
+      <p class="sec-note">Stellar Bazaar, servicio <span class="mono">Swap Risk Quote</span> (de otro desarrollador del ecosistema). 0,001 USDC de testnet. Una sola compra.</p>
     </div>
 
     <div class="exhibits">
       <article class="exhibit">
-        <header><span class="label">EXHIBIT C</span><h3>The payment is real and was authorized</h3><span class="verified">VERIFIED</span></header>
-        <p>The smart account paid under a commitment signed by its authority and notarized the payment as sequence 5, in the same transaction.</p>
+        <header><span class="label">EXHIBIT C</span><h3>El pago es real y estaba autorizado</h3><span class="verified">VERIFIED</span></header>
+        <p>La smart account pagó bajo un compromiso firmado por su autoridad y notarizó el pago como secuencia 5, en la misma transacción.</p>
         <table class="ledger">
           <tbody>
-            <tr><th scope="row">x402 settlement</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/tx/0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082">0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082 ↗</a></td></tr>
-            <tr><th scope="row">Paying account</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/contract/CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ">CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ ↗</a></td></tr>
-            <tr><th scope="row">Seller (payTo)</th><td class="hash">GDVR2KDK5DSMNYZJKNISUIOBDC6FZK3XZOIQWSS7KL4BRMD5BMW6RMCQ</td></tr>
-            <tr><th scope="row">Commitment</th><td class="hash">9d09c8cbc72adf366a9cfdc872d5c72cd3444f00b08ec702fdb8cca6bad5511f</td></tr>
-            <tr><th scope="row">Notarization</th><td class="hash">seq 5 · head fba9996dab12e2b3aa94c6ba6591c9b9396adfe775f2958fb08929aebd1d88cf</td></tr>
+            <tr><th scope="row">Liquidación x402</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/tx/0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082">0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082 ↗</a></td></tr>
+            <tr><th scope="row">Cuenta pagadora</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/contract/CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ">CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ ↗</a></td></tr>
+            <tr><th scope="row">Vendedor (payTo)</th><td class="hash">GDVR2KDK5DSMNYZJKNISUIOBDC6FZK3XZOIQWSS7KL4BRMD5BMW6RMCQ</td></tr>
+            <tr><th scope="row">Compromiso</th><td class="hash">9d09c8cbc72adf366a9cfdc872d5c72cd3444f00b08ec702fdb8cca6bad5511f</td></tr>
+            <tr><th scope="row">Notarización</th><td class="hash">seq 5 · cabeza fba9996dab12e2b3aa94c6ba6591c9b9396adfe775f2958fb08929aebd1d88cf</td></tr>
           </tbody>
         </table>
       </article>
 
       <article class="exhibit">
-        <header><span class="label">EXHIBIT A+B</span><h3>Counted once, nothing left out</h3><span class="verified">VERIFIED</span></header>
-        <p>The registry recomputed the account's payment chain up to its on-chain head and counted the verdict itself.</p>
+        <header><span class="label">EXHIBIT A+B</span><h3>Contado una vez, sin omisiones</h3><span class="verified">VERIFIED</span></header>
+        <p>El registro recalculó la cadena de pagos de la cuenta hasta su cabeza on-chain y contó el veredicto él mismo.</p>
         <table class="ledger">
           <tbody>
-            <tr><th scope="row">Anchored range</th><td class="hash">account payments 5..5</td></tr>
-            <tr><th scope="row">Transaction</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/tx/d3039f4d6b374cfafe91d7e0f6f0c8ec99307da389d708d554b44bc8919b9595">d3039f4d6b374cfafe91d7e0f6f0c8ec99307da389d708d554b44bc8919b9595 ↗</a></td></tr>
-            <tr><th scope="row">Range root</th><td class="hash">e4f2c3b92e7fa4c15ae28293f0c639216e66907b45055b42edf3018d2a37f522</td></tr>
-            <tr><th scope="row">Registry v3</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/contract/CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN">CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN ↗</a></td></tr>
+            <tr><th scope="row">Rango anclado</th><td class="hash">pagos 5..5 de la cuenta</td></tr>
+            <tr><th scope="row">Transacción</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/tx/d3039f4d6b374cfafe91d7e0f6f0c8ec99307da389d708d554b44bc8919b9595">d3039f4d6b374cfafe91d7e0f6f0c8ec99307da389d708d554b44bc8919b9595 ↗</a></td></tr>
+            <tr><th scope="row">Raíz del rango</th><td class="hash">e4f2c3b92e7fa4c15ae28293f0c639216e66907b45055b42edf3018d2a37f522</td></tr>
+            <tr><th scope="row">Registro v3</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/contract/CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN">CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN ↗</a></td></tr>
           </tbody>
         </table>
       </article>
 
       <article class="exhibit">
-        <header><span class="label">EXHIBIT D</span><h3>The content came from the seller</h3><span class="verified">VERIFIED</span></header>
-        <p>The Reclaim attestor signed the HTTP response it saw over TLS from <span class="mono">bazaar.browns.studio</span>, with this purchase's commitment inside the signed context.</p>
+        <header><span class="label">EXHIBIT D</span><h3>El contenido vino del vendedor</h3><span class="verified">VERIFIED</span></header>
+        <p>El attestor de Reclaim firmó la respuesta HTTP que vio por TLS desde <span class="mono">bazaar.browns.studio</span>, con el compromiso de esta compra dentro del contexto firmado.</p>
         <table class="ledger">
           <tbody>
-            <tr><th scope="row">Attestor (pinned)</th><td class="hash">0x244897572368eadf65bfbc5aec98d8e5443a9072</td></tr>
+            <tr><th scope="row">Attestor (fijado)</th><td class="hash">0x244897572368eadf65bfbc5aec98d8e5443a9072</td></tr>
             <tr><th scope="row">Claim</th><td class="hash">0x14e77b6fbe7bc14cb2f10c91cf8b293eb553afc99741ce008aa186b15ffc387e</td></tr>
-            <tr><th scope="row">Response</th><td class="hash">HTTP 200 · application/json</td></tr>
+            <tr><th scope="row">Respuesta</th><td class="hash">HTTP 200 · application/json</td></tr>
             <tr><th scope="row">contentHash</th><td class="hash">cb61d70f16bca0fda67d9e65916e373c8292b56d3aae28286b09f30be37794eb</td></tr>
           </tbody>
         </table>
       </article>
 
       <article class="exhibit">
-        <header><span class="label">EXHIBIT R</span><h3>One receipt binds it all</h3><span class="verified">VERIFIED</span></header>
-        <p>Signed by the published attester. It holds the commitment, the payment, the content, the verdict, the notarization, the range proof and the Reclaim proof.</p>
+        <header><span class="label">EXHIBIT R</span><h3>Un solo receipt lo liga todo</h3><span class="verified">VERIFIED</span></header>
+        <p>Firmado por el attester publicado. Contiene el compromiso, el pago, el contenido, el veredicto, la notarización, la prueba de rango y la prueba de Reclaim.</p>
         <table class="ledger">
           <tbody>
             <tr><th scope="row">Receipt</th><td><a class="hash" href="https://github.com/zzzbedream/AegisOS/blob/dev/docs/evidence/2026-09-26-bazaar-reclaim/receipt.json">docs/evidence/2026-09-26-bazaar-reclaim/receipt.json ↗</a></td></tr>
@@ -396,29 +396,29 @@
     </div>
 
     <div class="proven">
-      <pre aria-label="Proven Payment-Response header">Payment-Response (decoded, inside the proof):
+      <pre aria-label="Cabecera Payment-Response probada">Payment-Response (decodificada, dentro de la prueba):
 {"success": true,
  "payer": "CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ",
  "transaction": "0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082",
  "network": "stellar:testnet"}</pre>
-      <p><strong>It is the seller itself, over TLS and signed by the attestor, confirming that this account paid it in that transaction.</strong> The buyer's payment signature traveled in private headers and does not appear in the proof.</p>
+      <p><strong>Es el propio vendedor, por TLS y firmado por el attestor, confirmando que esta cuenta le pagó en esa transacción.</strong> La firma de pago del comprador viajó en cabeceras privadas y no aparece en la prueba.</p>
     </div>
   </section>
 
   <!-- ========================================================= VERIFY -->
-  <section class="block" id="verify" aria-labelledby="verify-title">
+  <section class="block" id="verificar" aria-labelledby="verificar-title">
     <div class="sec-head">
       <div>
-        <div class="kicker">04 — Verify it yourself</div>
-        <h2 id="verify-title">No secrets, none of our servers.</h2>
+        <div class="kicker">04 — Verifícalo tú</div>
+        <h2 id="verificar-title">Sin secretos, sin nuestros servidores.</h2>
       </div>
-      <p class="sec-note">It reads public Stellar testnet data and the files published in the repo. It uses no key and no AegisOS or Reclaim service.</p>
+      <p class="sec-note">Lee datos públicos de Stellar testnet y los archivos publicados en el repo. No usa ninguna clave ni ningún servicio de AegisOS o de Reclaim.</p>
     </div>
 
-    <div class="terminal" role="region" aria-label="Real verify:receipt output">
+    <div class="terminal" role="region" aria-label="Salida real de verify:receipt">
       <div class="bar">
         <span class="cmd"><span class="prompt">$</span> <span id="cmd">git clone https://github.com/zzzbedream/AegisOS &amp;&amp; cd AegisOS &amp;&amp; npm install &amp;&amp; npm run verify:receipt -- docs/evidence/2026-09-26-bazaar-reclaim/receipt.json</span></span>
-        <button class="copy" type="button" data-copy="cmd" data-done="Copied" data-failed="Select and copy">Copy</button>
+        <button class="copy" type="button" data-copy="cmd" data-done="Copiado" data-failed="Selecciona y copia">Copiar</button>
       </div>
       <ol>
         <li style="animation-delay:.15s"><span class="p">PASS</span>signed by the published attester</li>
@@ -443,23 +443,23 @@
   </section>
 
   <!-- ======================================================= REFUSALS -->
-  <section class="block" id="refusals" aria-labelledby="refusals-title">
+  <section class="block" id="rechazos" aria-labelledby="rechazos-title">
     <div class="sec-head">
       <div>
-        <div class="kicker">05 — What it refuses</div>
-        <h2 id="refusals-title">Tested against a compromised agent.</h2>
+        <div class="kicker">05 — Lo que rechaza</div>
+        <h2 id="rechazos-title">Probado contra un agente comprometido.</h2>
       </div>
-      <p class="sec-note">Each row is a real refusal, with the code the system returns. Signer refusals happen before signing: the seller is never paid.</p>
+      <p class="sec-note">Cada fila es un rechazo real, con el código que devuelve el sistema. Los rechazos del signer ocurren antes de firmar: el vendedor nunca cobra.</p>
     </div>
     <table class="refusals">
       <tbody>
-        <tr><td>01</td><td>The agent asks for a commitment to pay the attacker</td><td class="code">COMMITMENT_POLICY_DENIED</td></tr>
-        <tr><td>02</td><td>The agent bypasses the signer, signing with the session key and a commitment of its own</td><td class="code">the account rejects it on-chain · Error(Auth, InvalidAction)</td></tr>
-        <tr><td>03</td><td>The agent signs its own commitment with a key the signer doesn't trust</td><td class="code">COMMITMENT_KEY_UNTRUSTED</td></tr>
-        <tr><td>04</td><td>The commitment's ceiling is below the seller's price</td><td class="code">AMOUNT_EXCEEDS_COMMITMENT</td></tr>
-        <tr><td>05</td><td>A range that includes an invented payment</td><td class="code">Error(Contract, #12) · RangeNotAtHead</td></tr>
-        <tr><td>06</td><td>Anchoring a range for an account the registry didn't create</td><td class="code">Error(Contract, #8) · UnknownAccount</td></tr>
-        <tr><td>07</td><td>Spending based on tainted content</td><td class="code">TAINTED_PROVENANCE_REQUIRES_OWNER</td></tr>
+        <tr><td>01</td><td>El agente pide un compromiso para pagarle al atacante</td><td class="code">COMMITMENT_POLICY_DENIED</td></tr>
+        <tr><td>02</td><td>El agente se salta el signer y firma con la clave de sesión y un compromiso propio</td><td class="code">la cuenta lo rechaza on-chain · Error(Auth, InvalidAction)</td></tr>
+        <tr><td>03</td><td>El agente firma su propio compromiso con una clave que el signer no conoce</td><td class="code">COMMITMENT_KEY_UNTRUSTED</td></tr>
+        <tr><td>04</td><td>El compromiso tiene un techo menor que el precio del vendedor</td><td class="code">AMOUNT_EXCEEDS_COMMITMENT</td></tr>
+        <tr><td>05</td><td>Un rango que incluye un pago inventado</td><td class="code">Error(Contract, #12) · RangeNotAtHead</td></tr>
+        <tr><td>06</td><td>Anclar un rango de una cuenta que el registro no creó</td><td class="code">Error(Contract, #8) · UnknownAccount</td></tr>
+        <tr><td>07</td><td>Gastar basándose en contenido contaminado</td><td class="code">TAINTED_PROVENANCE_REQUIRES_OWNER</td></tr>
       </tbody>
     </table>
   </section>
@@ -468,26 +468,26 @@
   <section class="block" id="stellar" aria-labelledby="stellar-title">
     <div class="sec-head">
       <div>
-        <div class="kicker">06 — Why Stellar, and what it costs</div>
-        <h2 id="stellar-title">Built for micropayments at machine speed.</h2>
+        <div class="kicker">06 — Por qué Stellar, y cuánto cuesta</div>
+        <h2 id="stellar-title">Hecho para micropagos a velocidad de máquina.</h2>
       </div>
-      <p class="sec-note">Stellar makes per-request payments viable; that is exactly what lets poisoned content spread fast. Verification has to cost less than the problem.</p>
+      <p class="sec-note">Stellar hace viables los pagos por request; eso es justo lo que hace que el contenido envenenado se propague rápido. La verificación tiene que costar menos que el problema.</p>
     </div>
     <div class="facts">
-      <div><div class="big mono">0.104</div><div class="small">XLM to anchor a real 2-payment range on testnet. One range counts up to 64 payments in a single transaction.</div></div>
-      <div><div class="big mono">43 M</div><div class="small">instructions for the largest range (64 + a 192-payment tail), out of 400 M allowed per transaction.</div></div>
-      <div><div class="big mono">15/15</div><div class="small">attacks blocked in the covered families (95% lower bound: 81.9%). 0/5 false positives.</div></div>
-      <div><div class="big mono">200+</div><div class="small">automated TypeScript tests, plus 47 for the Soroban contracts.</div></div>
+      <div><div class="big mono">0,104</div><div class="small">XLM costó anclar un rango real de 2 pagos en testnet. Un rango admite hasta 64 pagos contados en una transacción.</div></div>
+      <div><div class="big mono">43 M</div><div class="small">instrucciones para el rango máximo (64 + 192 de cola), de 400 M permitidas por transacción.</div></div>
+      <div><div class="big mono">15/15</div><div class="small">ataques bloqueados en las familias cubiertas (cota inferior 95 %: 81,9 %). 0/5 falsos positivos.</div></div>
+      <div><div class="big mono">200+</div><div class="small">tests automatizados de TypeScript, más 47 de los contratos Soroban.</div></div>
     </div>
 
     <div class="limits">
-      <h3 class="bad">Stated limits</h3>
+      <h3 class="bad">Límites declarados</h3>
       <ul>
-        <li>Guarantee D only applies to public sellers: the attestor has to reach the seller's URL.</li>
-        <li>No layer proves the content is <em>true</em>. D proves the seller sent it; plausible but false data needs oracles or arbitration.</li>
-        <li>Injection detection uses known patterns and publishes its misses: 5 of 20 corpus attacks get through (encoded payloads, homoglyphs, multi-turn attacks).</li>
-        <li>The receipt's verdict is the buyer's attestation, not proof against the seller.</li>
-        <li>Everything runs on Stellar testnet.</li>
+        <li>La garantía D solo aplica a vendedores públicos: el attestor tiene que poder llegar a su URL.</li>
+        <li>Ninguna capa prueba que el contenido sea <em>verdadero</em>. D prueba que el vendedor lo envió; datos plausibles pero falsos requieren oráculos o arbitraje.</li>
+        <li>La detección de inyección usa patrones conocidos y publica sus residuales: 5 de 20 ataques del corpus pasan (payloads codificados, homoglifos, ataques en varios turnos).</li>
+        <li>El veredicto del receipt es una atestación del comprador, no una prueba contra el vendedor.</li>
+        <li>Todo corre en Stellar testnet.</li>
       </ul>
     </div>
   </section>
@@ -499,16 +499,16 @@
   <div class="wrap grid">
     <div>
       <div class="brand">AegisOS</div>
-      <p class="muted">x402 answers whether the payment happened. AegisOS answers whether what was received may enter memory, back a decision or unlock a later spend.</p>
-      <p><a href="https://github.com/zzzbedream/AegisOS">Code and README</a> · <a href="https://github.com/zzzbedream/AegisOS/blob/dev/contracts/deployments/testnet.json">Deployments</a></p>
+      <p class="muted">x402 responde si el pago ocurrió. AegisOS responde si lo recibido puede entrar en memoria, respaldar una decisión o desbloquear un gasto posterior.</p>
+      <p><a href="https://github.com/zzzbedream/AegisOS">Código y README</a> · <a href="https://github.com/zzzbedream/AegisOS/blob/dev/contracts/deployments/testnet.json">Despliegues</a></p>
     </div>
     <dl>
-      <dt>registry v3</dt><dd>CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN</dd>
-      <dt>demo account</dt><dd>CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ</dd>
-      <dt>account wasm</dt><dd>933a1d46734fd70578c31182305de666830185fe0d81301ccedfe4429a02662a</dd>
+      <dt>registro v3</dt><dd>CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN</dd>
+      <dt>cuenta demo</dt><dd>CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ</dd>
+      <dt>wasm cuenta</dt><dd>933a1d46734fd70578c31182305de666830185fe0d81301ccedfe4429a02662a</dd>
       <dt>attester</dt><dd>ed25519:6848dcb2068c11bd1771b88e</dd>
-      <dt>Reclaim witness</dt><dd>0x244897572368eadf65bfbc5aec98d8e5443a9072</dd>
-      <dt>network</dt><dd>Stellar testnet</dd>
+      <dt>witness Reclaim</dt><dd>0x244897572368eadf65bfbc5aec98d8e5443a9072</dd>
+      <dt>red</dt><dd>Stellar testnet</dd>
     </dl>
   </div>
 </footer>
