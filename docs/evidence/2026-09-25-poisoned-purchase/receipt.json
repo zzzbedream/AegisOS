@@ -1,0 +1,84 @@
+{
+  "version": "1",
+  "receipt": {
+    "version": "1",
+    "commitmentHash": "26ac58bffa22d6d13a51bc9e4cb4f9e439ff97efca781453439c17010fa81236",
+    "paymentHash": "62248df9343d2980345ec2da47bae60e788b917757a3132a01612624b1a7f283",
+    "sellerId": "stellar:GDARKECJYS4TXQ3AZOOKA4HCQ5AEJEPZBKQAUXQSDOCO5EEZ76F377WJ",
+    "contentHash": "846f67756b77f20f2841af04cdc3717aa45fcc58c26f1deb71b582fcb9d8cb15",
+    "contentBytes": 344,
+    "contentCanonicalization": "json-canonical-v1",
+    "receivedAt": "2026-09-25T19:30:57.486Z",
+    "verdict": "TAINTED",
+    "riskSignals": [
+      {
+        "kind": "PROMPT_INJECTION",
+        "score": 85,
+        "evidence": "Anulacion de jerarquia de instrucciones (es)"
+      },
+      {
+        "kind": "PROMPT_INJECTION",
+        "score": 70,
+        "evidence": "Suplantacion de canal de sistema (es)"
+      },
+      {
+        "kind": "FINANCIAL_AUTHORITY_CLAIM",
+        "score": 90,
+        "evidence": "Intenta eliminar la aprobacion financiera (es)"
+      },
+      {
+        "kind": "FINANCIAL_AUTHORITY_CLAIM",
+        "score": 90,
+        "evidence": "Sustitucion de destinatario de fondos (es)"
+      }
+    ],
+    "taintScore": 90,
+    "reasons": [
+      "RISK_THRESHOLD_EXCEEDED"
+    ],
+    "assuranceTier": "T2",
+    "attesterId": "buyer:CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ",
+    "attesterRole": "buyer",
+    "signature": {
+      "algorithm": "ed25519",
+      "keyId": "ed25519:6848dcb2068c11bd1771b88e",
+      "value": "Daa5bt-hGUTLXQJqo8jwniDfPOqF-mLWYn9H1vtNSU_P5ETbjOdMT-yLAmx6K5Ol45Az8KGP4ff-sHciihVRCg"
+    }
+  },
+  "anchor": {
+    "mode": "individual",
+    "contractId": "CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN",
+    "tx": "bc6b1da6034ffcc4a423d7c604c1b6717e64ca7a1db6622d14344d82ae6a87c7"
+  },
+  "notarization": {
+    "account": "CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ",
+    "seq": "4",
+    "previousHead": "490abc40e92b563f98f484433ef34aa7558ab74e43b86dcef1f6d94a19b9d538",
+    "chainHead": "b787662cfb98acca49974b5993e00c426da5413260def0085c4ceaeabff8e218",
+    "commitmentHash": "26ac58bffa22d6d13a51bc9e4cb4f9e439ff97efca781453439c17010fa81236",
+    "seller": "GDARKECJYS4TXQ3AZOOKA4HCQ5AEJEPZBKQAUXQSDOCO5EEZ76F377WJ",
+    "amount": "100000",
+    "consistent": true
+  },
+  "range": {
+    "contractId": "CBPGIT7F2LU3PDDHWW7QIBEKVVDQVRME4WEUUHNU7YQLINZBR24IU4NN",
+    "account": "CDUZ2FIOVNG25VU5ZGNCDT26C2N2LN5S24FJDHXEDXNY3JTIPAZJAPVZ",
+    "fromSeq": "3",
+    "toSeq": "4",
+    "root": "e29665668cfe0b3240c6433f06dc028103f77aee6024f0c793923aefc3b2097f",
+    "proof": {
+      "version": "1",
+      "leaf": "dfc00b1e1f9932cbdc2892771abd6efc56ca36e385ade497a73e59c58dbe21f4",
+      "index": 1,
+      "leafCount": 2,
+      "steps": [
+        {
+          "sibling": "71609d65a0656e00e1e16eb40ffea2cfefc46e7d6f77db5d1419e3e73f633980",
+          "side": "left"
+        }
+      ],
+      "root": "e29665668cfe0b3240c6433f06dc028103f77aee6024f0c793923aefc3b2097f"
+    },
+    "tx": "0dd58a8fa503da127d5f2330950e73ee98dd6104e8a2366b21559517df30fa7d"
+  }
+}

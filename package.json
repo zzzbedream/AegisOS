@@ -20,7 +20,8 @@
     "attester:init": "tsx --env-file-if-exists=.env apps/demo-x402/src/attester-init.ts",
     "verify:receipt": "tsx --env-file-if-exists=.env apps/demo-x402/src/verify-receipt.ts",
     "verify:deployment": "tsx --env-file-if-exists=.env packages/x402/scripts/verify-deployment.ts",
-    "account:init": "tsx --env-file-if-exists=.env apps/demo-x402/src/account-init.ts"
+    "account:init": "tsx --env-file-if-exists=.env apps/demo-x402/src/account-init.ts",
+    "landing:check": "tsx apps/demo-x402/src/check-landing.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
