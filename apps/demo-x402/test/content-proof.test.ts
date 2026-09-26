@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { getIdentifierFromClaimInfo } from "@reclaimprotocol/attestor-core";
@@ -64,6 +65,34 @@ test("a proof of different content does not back this receipt", async () => {
 test("a proof made for another commitment cannot be reused", async () => {
   const proof = await proofSignedBy(witness, { message: "cd".repeat(32) });
   assert.deepEqual(failing(contentProofChecks(proof, expected)), ["proof is bound to this commitment"]);
+});
+
+test("a real zkFetch proof verifies against the witness published in deployments", () => {
+  const fixture = JSON.parse(
+    readFileSync(new URL("./fixtures/reclaim-horizon-proof.json", import.meta.url), "utf8"),
+  ) as { commitmentHash: string; proof: ReclaimProofV1 };
+  const deployments = JSON.parse(
+    readFileSync(new URL("../../../contracts/deployments/testnet.json", import.meta.url), "utf8"),
+  ) as { reclaim: { witnesses: string[] } };
+  const context = JSON.parse(fixture.proof.claimData.context) as { extractedParameters: { body: string } };
+  const real = {
+    commitmentHash: fixture.commitmentHash,
+    contentHash: createHash("sha256").update(context.extractedParameters.body, "utf8").digest("hex"),
+    canonicalization: "raw-bytes-v1" as const,
+    trustedWitnesses: deployments.reclaim.witnesses,
+  };
+  assert.deepEqual(failing(contentProofChecks(fixture.proof, real)), []);
+
+  const edited = { ...context, extractedParameters: { body: context.extractedParameters.body.replace("Test SDF", "Evil") } };
+  const tampered = { ...fixture.proof, claimData: { ...fixture.proof.claimData, context: JSON.stringify(edited) } };
+  assert.deepEqual(failing(contentProofChecks(tampered, real)), [
+    "claim identifier recomputes",
+    "signed by a pinned Reclaim witness",
+    "proven body is the receipt's content",
+  ]);
+  assert.deepEqual(failing(contentProofChecks(fixture.proof, { ...real, commitmentHash: "00".repeat(32) })), [
+    "proof is bound to this commitment",
+  ]);
 });
 
 test("editing the claim after signing breaks the identifier and the signature", async () => {

@@ -123,5 +123,13 @@
       "publicKey": "MCowBQYDK2VwAyEAAC0YUVgtLD6mCYaYA-s4xAbyxVnjx2a-AoO5VABDpig"
     },
     "createTx": "5730caeef7e80e49f24f62d4b09611b839a64f40a6659532f20429c37bc51687"
+  },
+  "reclaim": {
+    "witnesses": [
+      "0x244897572368eadf65bfbc5aec98d8e5443a9072"
+    ],
+    "attestorUrl": "wss://attestor.reclaimprotocol.org:444/ws",
+    "pinnedAt": "2026-09-25",
+    "note": "Reclaim attestor that signed the zkFetch spike proof; content proofs verify only against these witnesses."
   }
 }
