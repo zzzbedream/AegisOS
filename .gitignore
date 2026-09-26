@@ -6,3 +6,8 @@ coverage/
 *.log
 target/
 .exponential/
+
+# Stitch design drafts (not evidence)
+.stitch/
+# Vercel project link
+.vercel/

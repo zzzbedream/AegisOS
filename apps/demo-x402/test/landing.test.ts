@@ -103,3 +103,16 @@ test("every refusal code quoted exists in the code that raises it", () => {
   assert.match(code, /RangeNotAtHead = 12/);
   assert.match(code, /UnknownAccount = 8/);
 });
+
+test("the CSP allows exactly the page's inline script, so copy still works when deployed", async () => {
+  const { createHash } = await import("node:crypto");
+  const config = JSON.parse(readFileSync(join(root, "site/vercel.json"), "utf8")) as {
+    headers: { headers: { key: string; value: string }[] }[];
+  };
+  const csp = config.headers[0]?.headers.find((h) => h.key === "Content-Security-Policy")?.value ?? "";
+  const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1] ?? "");
+  assert.equal(scripts.length, 1);
+  const hash = createHash("sha256").update(scripts[0] ?? "", "utf8").digest("base64");
+  assert.ok(csp.includes(`'sha256-${hash}'`), "site/vercel.json CSP hash is stale: recompute it");
+  assert.ok(!csp.includes("'unsafe-inline'") || !/script-src[^;]*unsafe-inline/.test(csp), "no unsafe-inline scripts");
+});
