@@ -114,6 +114,8 @@
   .g .how { font-size: 15px; }
   .g .how b { font-weight: 600; }
 
+  .second-seller { margin-top: 72px; }
+  .sub-title { font: 600 28px/1.2 var(--display); margin: 0; letter-spacing: -0.01em; }
   /* exhibits */
   .exhibit { border: 1px solid var(--rule); background: var(--stock); padding: 28px 32px; margin-bottom: -1px; position: relative; }
   .exhibit + .exhibit { margin-left: 14px; margin-right: -14px; }
@@ -402,6 +404,30 @@
  "transaction": "0aa433be6926461b607e89a8ed82be22c6929123eee1d01994a8475abc80b082",
  "network": "stellar:testnet"}</pre>
       <p><strong>Es el propio vendedor, por TLS y firmado por el attestor, confirmando que esta cuenta le pagó en esa transacción.</strong> La firma de pago del comprador viajó en cabeceras privadas y no aparece en la prueba.</p>
+    </div>
+    <div class="sec-head second-seller">
+      <div>
+        <div class="kicker">Segundo vendedor · 1-nov-2026</div>
+        <h3 class="sub-title">Nirium, el vendedor x402 de otro equipo en Stellar.</h3>
+      </div>
+      <p class="sec-note">Endpoint de señales premium en testnet, 0,02 USDC de testnet, una sola compra. El mismo receipt pasa las mismas 16 comprobaciones, y su hash queda anclado en el Audit Trail del propio Nirium.</p>
+    </div>
+    <div class="exhibits">
+      <article class="exhibit">
+        <header><span class="label">EXHIBIT N</span><h3>Las mismas garantías, otro vendedor</h3><span class="verified">VERIFIED</span></header>
+        <p>Pagado desde la misma smart account (secuencia 6), contado on-chain en el rango 6..6, contenido probado por el attestor de Reclaim por TLS desde <span class="mono">nirium-agent.fly.dev</span>.</p>
+        <table class="ledger">
+          <tbody>
+            <tr><th scope="row">Liquidación x402</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/tx/6c2adb922821cb464d03fdf46ae5c7ddb383417cf3f861b4731e48a6348a3f42">6c2adb922821cb464d03fdf46ae5c7ddb383417cf3f861b4731e48a6348a3f42 ↗</a></td></tr>
+            <tr><th scope="row">Vendedor (payTo)</th><td><span class="hash">GC4Q5TWWXI7IHN6DYCBEKCOWJWCKY4JE2NLKLU5SE3YL44IUUFPKUOPC</span></td></tr>
+            <tr><th scope="row">Transacción del rango</th><td><a class="hash" href="https://stellar.expert/explorer/testnet/tx/47bfffe44c269505f1c06f72e2779325130a4395d66cb0e08436a04df81b1373">47bfffe44c269505f1c06f72e2779325130a4395d66cb0e08436a04df81b1373 ↗</a></td></tr>
+            <tr><th scope="row">Claim</th><td><span class="hash">0xe2b08b2cc5907f8eeeaca659f80ca9829605b1e0317e68488d4e0f177dbb96fc</span></td></tr>
+            <tr><th scope="row">contentHash</th><td><span class="hash">03cae0d3fc813062c02062592cea9b6bd00a71ca5acef0fb072fa00c3fb2a9ca</span></td></tr>
+            <tr><th scope="row">CID en Nirium Audit Trail</th><td><a class="hash" href="https://gateway.pinata.cloud/ipfs/QmT7rXHMhjbHCcrPWARzjEGUXAYMHjkWRLwwd833qXmDue">QmT7rXHMhjbHCcrPWARzjEGUXAYMHjkWRLwwd833qXmDue ↗</a></td></tr>
+            <tr><th scope="row">Receipt</th><td><a class="hash" href="https://github.com/zzzbedream/AegisOS/blob/dev/docs/evidence/2026-11-01-nirium/receipt.json">docs/evidence/2026-11-01-nirium/receipt.json ↗</a></td></tr>
+          </tbody>
+        </table>
+      </article>
     </div>
   </section>
 

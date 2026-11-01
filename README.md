@@ -114,6 +114,37 @@ la prueba.
 **Límite de D:** el attestor tiene que poder llegar a la URL del vendedor, así que aplica a
 vendedores públicos (como el Bazaar), no a los vendedores locales de `demo:attack`.
 
+### Segundo vendedor ajeno: Nirium (1-nov-2026)
+
+Misma compra, otro equipo: el endpoint de señales premium de
+[Nirium](https://github.com/nirium-protocol/nirium) en testnet (0,02 USDC de testnet, una sola
+compra), pagado desde la misma smart account (seq 6) y con la respuesta probada por Reclaim.
+El receipt pasa las mismas 16 comprobaciones:
+
+| Qué | Evidencia |
+|---|---|
+| Liquidación x402 | [`6c2adb92…`](https://stellar.expert/explorer/testnet/tx/6c2adb922821cb464d03fdf46ae5c7ddb383417cf3f861b4731e48a6348a3f42) |
+| Rango 6..6 contado on-chain | [`47bfffe4…`](https://stellar.expert/explorer/testnet/tx/47bfffe44c269505f1c06f72e2779325130a4395d66cb0e08436a04df81b1373) |
+| Receipt | [`docs/evidence/2026-11-01-nirium/receipt.json`](docs/evidence/2026-11-01-nirium/receipt.json) |
+| Anclaje externo en Nirium Audit Trail | CID [`QmT7rXHM…qXmDue`](https://gateway.pinata.cloud/ipfs/QmT7rXHMhjbHCcrPWARzjEGUXAYMHjkWRLwwd833qXmDue) |
+
+El sha-256 del archivo del receipt quedó anclado en el Audit Trail de Nirium (IPFS), firmado
+con la clave del comprador sobre `nirium-audit-v1:<sha256>`. El CID prueba que el receipt no
+cambió después; la firma prueba quién lo declaró. No dice nada del contenido: eso lo prueba
+`verify:receipt`.
+
+```bash
+npm run verify:receipt -- docs/evidence/2026-11-01-nirium/receipt.json
+npm run nirium:anchor -- --verify docs/evidence/2026-11-01-nirium/receipt.json
+```
+
+**Lo que encontramos en el camino.** Tras un mes sin uso, la instancia de la smart account,
+la del registro, sus wasm y el saldo USDC de la cuenta estaban **archivados** (TTL vencido).
+El protocolo los restaura automáticamente dentro del pago, pero eso subía el fee simulado a
+~9,9 M stroops y el facilitator lo rechaza sobre 50.000 (`fee_exceeds_maximum`), sin cobrar.
+Restaurados y extendidos ~2 meses, el pago volvió a 21.051 stroops. Un keepalive periódico de
+estas entradas es parte del trabajo pendiente.
+
 ## Evidencia en testnet
 
 | Qué | Dónde |

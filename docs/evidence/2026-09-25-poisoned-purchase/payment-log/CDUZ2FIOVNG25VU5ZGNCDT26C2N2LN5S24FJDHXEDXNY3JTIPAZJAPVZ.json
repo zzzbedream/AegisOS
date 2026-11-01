@@ -38,5 +38,13 @@
     "commitmentHash": "9d09c8cbc72adf366a9cfdc872d5c72cd3444f00b08ec702fdb8cca6bad5511f",
     "seller": "GDVR2KDK5DSMNYZJKNISUIOBDC6FZK3XZOIQWSS7KL4BRMD5BMW6RMCQ",
     "amount": "10000"
+  },
+  {
+    "seq": "6",
+    "previousHead": "fba9996dab12e2b3aa94c6ba6591c9b9396adfe775f2958fb08929aebd1d88cf",
+    "chainHead": "8d979eb9c8b9ecb20b14a2eb44dfadabe10fe0bd42791a4ed836f2dbb17994d7",
+    "commitmentHash": "8c746a95f530a2b851b1c7430c6ba3f0fd0b24f8f9f64243806b6bc07d1487c4",
+    "seller": "GC4Q5TWWXI7IHN6DYCBEKCOWJWCKY4JE2NLKLU5SE3YL44IUUFPKUOPC",
+    "amount": "200000"
   }
 ]

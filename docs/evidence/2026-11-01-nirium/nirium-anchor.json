@@ -1,0 +1,24 @@
+{
+  "version": "1",
+  "node": "https://nirium-agent.fly.dev/api/audit/log",
+  "receiptFile": "receipt.json",
+  "receiptSha256": "71d690cae59710445628283847e7e8261d9b0a9b7dd4c8229cdd508c3555b51d",
+  "request": {
+    "hash": "71d690cae59710445628283847e7e8261d9b0a9b7dd4c8229cdd508c3555b51d",
+    "tag": "niriumtober",
+    "txHash": "6c2adb922821cb464d03fdf46ae5c7ddb383417cf3f861b4731e48a6348a3f42",
+    "agent": {
+      "id": "aegisos",
+      "key": "GD5D7WRG6SIXIZHNAUOXCTR3MSV5QIM2AM52WRNYX7VBRO76D6V3SVPG",
+      "signature": "knTA3OVj+yQxR34iNGKy6sR+z35pwEqYdj2toeuv0600zOjOAuM2AhWzaHrw1imBoC2rC2OMRPDpKxxGQ8pfAw=="
+    }
+  },
+  "response": {
+    "cid": "QmT7rXHMhjbHCcrPWARzjEGUXAYMHjkWRLwwd833qXmDue",
+    "gatewayUrl": "https://gateway.pinata.cloud/ipfs/QmT7rXHMhjbHCcrPWARzjEGUXAYMHjkWRLwwd833qXmDue",
+    "content_sha256": "71d690cae59710445628283847e7e8261d9b0a9b7dd4c8229cdd508c3555b51d",
+    "attestedBy": "GD5D7WRG6SIXIZHNAUOXCTR3MSV5QIM2AM52WRNYX7VBRO76D6V3SVPG",
+    "anchoredAt": "2026-11-01T20:18:03.687Z",
+    "verify": "fetch the gatewayUrl, recompute sha-256 over your original evidence, then verify agent.signature over agent.statement against agent.key"
+  }
+}
