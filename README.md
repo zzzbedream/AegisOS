@@ -1,5 +1,7 @@
 # AegisOS
 
+[![CI](https://github.com/zzzbedream/AegisOS/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/zzzbedream/AegisOS/actions/workflows/ci.yml)
+
 **Procedencia verificable para agentes que compran con x402 en Stellar.**
 
 **Demo verificable:** https://aegisos-stellar.vercel.app
