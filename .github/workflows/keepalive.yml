@@ -1,0 +1,29 @@
+name: Testnet keepalive
+
+# The public evidence reads ledger entries that Soroban archives when their TTL runs out.
+# Weekly: report every entry's TTL; with the AEGIS_KEEPALIVE_SECRET repository secret
+# (a testnet-only key that just pays rent), restore and extend whatever needs it.
+# Without the secret the job fails when something needs rent, which is the alert.
+
+on:
+  schedule:
+    - cron: "17 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run keepalive
+        env:
+          AEGIS_BUYER_SECRET: ${{ secrets.AEGIS_KEEPALIVE_SECRET }}
