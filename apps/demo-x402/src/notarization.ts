@@ -76,6 +76,24 @@ export function replayPaymentLog(log: readonly PaymentLogEntry[]): ReplayResult 
 }
 
 /**
+ * Among the published copies of an account's log, the one that replays to the
+ * head the contract holds now. A copy saved next to an older receipt goes stale
+ * as soon as the account pays again; it is not wrong, only short. If no copy
+ * reaches the head, the longest is returned and the replay check fails on it.
+ */
+export function pickPaymentLog(
+  candidates: readonly (readonly PaymentLogEntry[])[],
+  onChainHead: AccountHead,
+): readonly PaymentLogEntry[] {
+  const reaching = candidates.find((log) => {
+    const replay = replayPaymentLog(log);
+    return replay.ok && replay.seq === onChainHead.seq && replay.head === onChainHead.chainHead;
+  });
+  if (reaching !== undefined) return reaching;
+  return candidates.reduce<readonly PaymentLogEntry[]>((longest, log) => (log.length > longest.length ? log : longest), []);
+}
+
+/**
  * What a third party can establish about a payment from public data only:
  * the account runs the published wasm (so `seq` only advances inside a
  * committed, authority-signed transfer), and this payment is one link of a

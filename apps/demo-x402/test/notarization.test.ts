@@ -14,6 +14,7 @@ import type { PaymentNotarization } from "../src/agent.js";
 import {
   appendPaymentLog,
   notarizationChecks,
+  pickPaymentLog,
   readPaymentLog,
   replayPaymentLog,
   type PaymentLogEntry,
@@ -111,4 +112,29 @@ test("a receipt verifies only when its payment is a link of a chain that reaches
   // longer lands on the head, so the log is incomplete and the check fails.
   const stale = notarizationChecks(receipt, n, { ...evidence, onChainHead: { seq: 3n, chainHead: "e".repeat(64) } });
   assert.equal(stale.find((c) => c.name.startsWith("payment log"))?.pass, false);
+});
+
+test("picks the published log that reaches the on-chain head over a stale copy", () => {
+  const fresh = chain(6);
+  const stale = fresh.slice(0, 5);
+  const head = { seq: 6n, chainHead: fresh[5]?.chainHead as string };
+
+  assert.equal(pickPaymentLog([stale, fresh, []], head), fresh);
+  assert.equal(pickPaymentLog([fresh, stale], head), fresh);
+});
+
+test("with no log reaching the head, keeps the longest so the check still fails loudly", () => {
+  const log = chain(6);
+  const head = { seq: 7n, chainHead: "ff".repeat(32) };
+
+  assert.equal(pickPaymentLog([log.slice(0, 2), log, []], head), log);
+  assert.deepEqual(pickPaymentLog([], head), []);
+});
+
+test("a longer log that does not replay loses to a shorter one that reaches the head", () => {
+  const log = chain(3);
+  const forged = [...log, { ...(log[2] as PaymentLogEntry), seq: "4" }];
+  const head = { seq: 3n, chainHead: log[2]?.chainHead as string };
+
+  assert.equal(pickPaymentLog([forged, log], head), log);
 });

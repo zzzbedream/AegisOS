@@ -24,7 +24,7 @@ import {
 import { readPublishedAttester } from "./attester.js";
 import { describeErrorChain } from "./error-chain.js";
 import { contentProofChecks } from "./content-proof.js";
-import { notarizationChecks, readPaymentLog } from "./notarization.js";
+import { notarizationChecks, pickPaymentLog, readPaymentLog } from "./notarization.js";
 import {
   anchorRoute,
   batchChecks,
@@ -135,11 +135,13 @@ async function main(): Promise<void> {
         deployedWasmHash(server, notarization.account),
         readAccountHead(server, TESTNET_PASSPHRASE, notarization.account, reader),
       ]);
-      // A published receipt ships its account's payment log next to it.
-      const siblingLog = join(dirname(file), "payment-log");
-      const log = existsSync(siblingLog)
-        ? readPaymentLog(notarization.account, siblingLog)
-        : readPaymentLog(notarization.account);
+      // Published logs live next to the receipt or one level up (docs/evidence/payment-log);
+      // the local one is the agent's own. Use whichever copy reaches today's head.
+      const logDirs = [join(dirname(file), "payment-log"), join(dirname(file), "..", "payment-log")].filter((d) => existsSync(d));
+      const log = pickPaymentLog(
+        [...logDirs.map((d) => readPaymentLog(notarization.account, d)), readPaymentLog(notarization.account)],
+        onChainHead,
+      );
       const publishedWasms = { current: publishedWasm, superseded: supersededAccountWasms(deploymentsRaw, publishedWasm) };
       checks.push(...notarizationChecks(receipt, notarization, { deployedWasm, publishedWasms, log, onChainHead }));
       notarizationNote = `pago seq ${notarization.seq} de la cuenta ${notarization.account} (cabeza on-chain seq ${onChainHead.seq.toString()})`;
