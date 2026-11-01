@@ -10,10 +10,7 @@
  * Etiquette: this buys from someone else's public paid API, once, at testnet
  * prices. Nothing here sends that service anything but a normal paid request.
  */
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 
 import { Keypair } from "@stellar/stellar-sdk";
 
@@ -24,12 +21,8 @@ import {
   hashDeliveredContent,
   verifyDeliveryReceipt,
 } from "../../../packages/proof/src/index.js";
-import {
-  AegisAnchorClient,
-  SignerDeniedError,
-  forkSigner,
-  type ForkedSigner,
-} from "../../../packages/x402/src/index.js";
+import { AegisAnchorClient, SignerDeniedError } from "../../../packages/x402/src/index.js";
+import { openSignerSession, type SignerSession } from "./signer-session.js";
 import { DemoAgent, discoverOffer, type PurchaseOutcome } from "./agent.js";
 import { loadSmartAccount } from "./smart-account-config.js";
 import { attesterPath, loadAttester, readPublishedAttester } from "./attester.js";
@@ -39,8 +32,6 @@ import { describeErrorChain } from "./error-chain.js";
 import { contentProofChecks } from "./content-proof.js";
 import { reclaimCredentialsFromEnv, reclaimPaidFetch } from "./reclaim-fetch.js";
 
-const USDC_SAC = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA";
-const TESTNET_PASSPHRASE = "Test SDF Network ; September 2015";
 const RPC_URL = "https://soroban-testnet.stellar.org";
 const SKIP_ANCHOR = process.env["AEGIS_SKIP_ANCHOR"] === "1";
 const SKIP_PURCHASE = process.env["AEGIS_SKIP_PURCHASE"] === "1";
@@ -129,35 +120,19 @@ async function main(): Promise<void> {
   // attestor and the delivery arrives with a proof of origin.
   const reclaim = process.env["AEGIS_CONTENT_PROOF"] === "0" ? undefined : reclaimCredentialsFromEnv();
 
-  const dir = mkdtempSync(join(tmpdir(), "aegis-external-"));
-  const secretFile = join(dir, "buyer.secret");
-  writeFileSync(secretFile, buyer.secret(), "utf8");
-
   const smart = loadSmartAccount();
   // Discover first: in smart mode the owner approves THIS seller, and the
   // authority's policy is fixed when the signer starts.
   const offer = await discoverOffer(url);
 
-  let signer: ForkedSigner | undefined;
+  let session: SignerSession | undefined;
   try {
-    signer = await forkSigner({
-      modulePath: fileURLToPath(new URL("../../../packages/x402/src/signer-process.ts", import.meta.url)),
-      secretFile,
-      network: "stellar:testnet",
-      allowedAssets: { "stellar:USDC": USDC_SAC },
-      allowedNetworkPassphrases: [TESTNET_PASSPHRASE],
-      trustedCommitmentKeys: { [attester.keyId]: attester.publicKey },
-      ...(smart === undefined
-        ? {}
-        : {
-            payerAddress: smart.address,
-            authority: {
-              secretFile: smart.authoritySecretFile,
-              policy: { allowedSellers: [offer.requirements.payTo], maxAmountAtomic: offer.requirements.amount },
-            },
-          }),
-      execArgv: ["--import", "tsx"],
+    session = await openSignerSession({
+      buyer, attester, smart,
+      allowedSellers: [offer.requirements.payTo],
+      maxAmountAtomic: offer.requirements.amount,
     });
+    const { signer } = session;
 
     const anchorClient = SKIP_ANCHOR ? undefined : new AegisAnchorClient({ contractId });
     const agent = new DemoAgent({
@@ -361,8 +336,7 @@ async function main(): Promise<void> {
     console.log(failed.length === 0 ? "Interoperabilidad verificada contra un vendedor ajeno." : `${String(failed.length)} comprobación(es) fallaron.`);
     process.exitCode = failed.length === 0 ? 0 : 1;
   } finally {
-    await signer?.close?.();
-    rmSync(dir, { recursive: true, force: true });
+    await session?.close();
   }
 }
 

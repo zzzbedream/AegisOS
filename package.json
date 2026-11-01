@@ -23,7 +23,8 @@
     "account:init": "tsx --env-file-if-exists=.env apps/demo-x402/src/account-init.ts",
     "landing:check": "tsx apps/demo-x402/src/check-landing.ts",
     "nirium:anchor": "tsx --env-file-if-exists=.env apps/demo-x402/src/nirium-anchor.ts",
-    "keepalive": "tsx --env-file-if-exists=.env apps/demo-x402/src/keepalive-run.ts"
+    "keepalive": "tsx --env-file-if-exists=.env apps/demo-x402/src/keepalive-run.ts",
+    "monitor": "tsx --env-file-if-exists=.env apps/demo-x402/src/monitor.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

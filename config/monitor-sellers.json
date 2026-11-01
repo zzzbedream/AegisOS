@@ -1,0 +1,13 @@
+[
+  {
+    "id": "nirium-signals",
+    "name": "Nirium · premium signals (testnet)",
+    "url": "https://nirium-agent.fly.dev/api/v1/premium/signals",
+    "consent": "pending",
+    "consentNote": "Asked by X DM on 2026-11-01. Do not enable until the Nirium team agrees; then set consent to granted:<date> and their pace and price.",
+    "enabled": false,
+    "minIntervalHours": 24,
+    "maxChecksPerDay": 1,
+    "maxPriceAtomic": "200000"
+  }
+]

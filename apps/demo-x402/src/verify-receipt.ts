@@ -135,9 +135,11 @@ async function main(): Promise<void> {
         deployedWasmHash(server, notarization.account),
         readAccountHead(server, TESTNET_PASSPHRASE, notarization.account, reader),
       ]);
-      // Published logs live next to the receipt or one level up (docs/evidence/payment-log);
+      // Published logs live next to the receipt or in a folder above it (docs/evidence/payment-log);
       // the local one is the agent's own. Use whichever copy reaches today's head.
-      const logDirs = [join(dirname(file), "payment-log"), join(dirname(file), "..", "payment-log")].filter((d) => existsSync(d));
+      const logDirs = [0, 1, 2, 3]
+        .map((up) => join(dirname(file), ...Array.from({ length: up }, () => ".."), "payment-log"))
+        .filter((d) => existsSync(d));
       const log = pickPaymentLog(
         [...logDirs.map((d) => readPaymentLog(notarization.account, d)), readPaymentLog(notarization.account)],
         onChainHead,

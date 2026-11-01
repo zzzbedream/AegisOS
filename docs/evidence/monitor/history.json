@@ -1,0 +1,12 @@
+[
+  {
+    "version": "1",
+    "sellerId": "aegis-local",
+    "checkedAt": "2026-11-01T21:06:03.310Z",
+    "url": "http://127.0.0.1:4511/market-data",
+    "priceAtomic": "10000",
+    "verdict": "OK",
+    "settlementTx": "27f14a55221e04cba60998a77fc35da801e28ce8218419418872fd60c78a65ed",
+    "receiptFile": "docs/evidence/monitor/aegis-local/9b65fb9e3ef61c27a36f40acc6c74bd210d5306194e548aea9c53705c8b1d4bf.json"
+  }
+]

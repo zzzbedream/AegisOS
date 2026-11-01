@@ -7,7 +7,7 @@
  * Reads contracts/deployments/testnet.json and docs/evidence/*\/receipt.json. Restoring
  * and extending are permissionless; the source account only pays the rent.
  */
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
@@ -43,10 +43,11 @@ function loadSources(): KeepaliveSources {
   const deployments = JSON.parse(readFileSync(join(root, "contracts/deployments/testnet.json"), "utf8")) as Deployments;
   const current = Object.values(deployments.contracts).find((c) => c.status === undefined);
   if (current === undefined) throw new Error("No current registry in testnet.json.");
-  const receipts = readdirSync(EVIDENCE)
-    .map((dir) => join(EVIDENCE, dir, "receipt.json"))
-    .filter((path) => existsSync(path))
-    .map((path) => JSON.parse(readFileSync(path, "utf8")) as PublishedReceipt);
+  // Every published receipt, including the monitor's (docs/evidence/monitor/<seller>/*.json).
+  const receipts = readdirSync(EVIDENCE, { recursive: true, encoding: "utf8" })
+    .filter((path) => path.endsWith(".json"))
+    .map((path) => JSON.parse(readFileSync(join(EVIDENCE, path), "utf8")) as Partial<PublishedReceipt>)
+    .filter((r): r is PublishedReceipt => typeof r === "object" && r !== null && "receipt" in r);
   const ranged = receipts.filter((r) => r.range !== undefined);
   return {
     registry: { contractId: current.contractId, wasmHash: current.wasmHash },
