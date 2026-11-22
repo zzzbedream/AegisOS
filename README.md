@@ -12,6 +12,20 @@ o desbloquear el siguiente pago.
 
 > **Solo testnet.** Este repositorio no toca mainnet ni guarda claves privadas en el código.
 
+**In English.** AegisOS checks what an AI agent actually received when it paid per request
+with x402. Before paying, the owner signs a commitment: what to buy, from whom, and at most
+how much. After the purchase, AegisOS binds the payment to the delivered content, can prove
+over TLS that the content came from the seller (Reclaim), and returns a deterministic verdict:
+`OK`, `MISMATCH`, `TAINTED` (embedded instructions, in English or Spanish) or `NOT_DELIVERED`.
+Tainted content is quarantined, and any later spend that cites it is denied. Anyone can
+re-check a receipt with `npm run verify:receipt` (16 checks, public testnet data only).
+Testnet only.
+
+**¿Operas un marketplace, un facilitador o un vendedor x402?** Pide un chequeo de entregas de
+tus endpoints con la plantilla
+[Delivery check request](https://github.com/zzzbedream/AegisOS/issues/new?template=delivery-check.yml)
+(en español o en inglés).
+
 ---
 
 ## El problema
@@ -159,7 +173,7 @@ estas entradas es parte del trabajo pendiente.
 | Clave pública del attester | `ed25519:6848dcb2068c11bd1771b88e`, publicada en el mismo archivo |
 | Compra honesta · pago / anclaje (v1) | [`715cdfed…`](https://stellar.expert/explorer/testnet/tx/715cdfed6d32b9c136e6ea619ec520b30786b1bdaea335ada62a7a3390afa17a) · [`ac682bc0…`](https://stellar.expert/explorer/testnet/tx/ac682bc03c942612dd43ebe58b4b3201a577163ac4c0d61f844c0b1832f8eddd) |
 | Compra envenenada · pago / anclaje `TAINTED` (v1) | [`a8386b9c…`](https://stellar.expert/explorer/testnet/tx/a8386b9c6f49cc2d4d48b77b97f4e804c5fa844d679ea8e9720d7b61a7695af4) · [`c8f787c7…`](https://stellar.expert/explorer/testnet/tx/c8f787c78e16ba183299a060cbab212ee4ce5286a79ec338129bfab23c2d5397) |
-| Vendedor que **no controlamos** | Stellar Bazaar x402 (`bazaar.browns.studio`), con `npm run demo:external` |
+| Vendedores que **no controlamos** | Stellar Bazaar x402 (`bazaar.browns.studio`, 26-sep; histórico, ver «Probarlo») y Nirium (`nirium-agent.fly.dev`, 1-nov), con `npm run demo:external` |
 
 En la compra envenenada **el pago fue perfecto**: x402 hizo su trabajo. Lo que falló fue el
 contenido, y eso ningún riel de pago lo mide.
@@ -172,7 +186,7 @@ el [Stellar CLI](https://developers.stellar.org/docs/tools/cli).
 ```bash
 npm install
 npm run typecheck
-npm test                 # 202 tests TS, sin red
+npm test                 # 231 tests TS, sin red
 (cd contracts && cargo test)   # 47 tests de contratos
 npm run benchmark        # corpus de ataques + métrica, sin red
 ```
@@ -186,11 +200,18 @@ export AEGIS_BUYER_SECRET="$(stellar keys show aegis-buyer)"
 export AEGIS_SELLER_ACCOUNT="$(stellar keys address aegis-seller)"
 
 npm run demo:attack      # 4 pasos: compra honesta, vendedor hostil, corte de cascada, consulta on-chain
-npm run demo:external -- "https://bazaar.browns.studio/api/x402/swap-risk?pair=XLM/USDC&amount=2500&side=buy"
+npm run demo:external -- "https://bazaar.browns.studio/api/x402/swap-risk?pair=XLM/USDC&amount=2500&side=buy"   # histórico: ver la nota
 
 npm run verify:receipt -- .aegis/receipts/<paymentHash>.json   # verificación como tercero, sin secretos
 npm run verify:deployment  # contrato de punta a punta, incluido un lote de 1.024
 ```
+
+> **El ejemplo del Bazaar es histórico (revisado el 22-nov-2026).** Ese endpoint ya no
+> responde con 402 a un cliente anónimo: devuelve 403. Además, el contrato nuevo del Bazaar
+> exige un workspace con admisión, un intent aprobado por el dueño y un pagador clásico `G…`,
+> y pide un adaptador validado aparte para billeteras de contrato. El receipt de la compra
+> del 26-sep sigue verificando con `verify:receipt`. La compra real más reciente a un
+> vendedor ajeno es la de Nirium (1-nov).
 
 `AEGIS_SKIP_ANCHOR=1` omite el anclaje on-chain (ensayos rápidos), y `AEGIS_SKIP_PURCHASE=1`
 corre `demo:external` sin gastar nada.
@@ -271,11 +292,34 @@ veredicto quedó anclado en Soroban y cualquiera puede verificarlo.
 
 ## Trabajos relacionados
 
-Proyectos del ecosistema que miran partes del problema: *AgentOracle* (verificación de
-afirmaciones vendida vía x402), *Sentryx402* (presupuestos y seguimiento de recibos) y
-*Warden ZK Receipts* (recibos de a qué accedió un agente). Ninguno liga
-commitment–pago–contenido ni bloquea el gasto posterior. REAPP (SCF #43) cubre la
-autorización; AegisOS es complementario.
+Revisado el 22-nov-2026. Varios proyectos ya cubren partes del problema:
+
+- **Recibos ligados al contenido, en el estándar x402.** Hay propuestas abiertas, todavía sin
+  merge: delivery receipt ([#3758](https://github.com/x402-foundation/x402/issues/3758),
+  [#3783](https://github.com/x402-foundation/x402/pull/3783)), settlement-receipt binding
+  ([#2666](https://github.com/x402-foundation/x402/pull/2666)) y
+  [#3140](https://github.com/x402-foundation/x402/pull/3140). La extensión de oferta y recibo
+  que ya se mergeó no incluye el hash del contenido entregado.
+- **Registros de liquidación entre dos partes:** el Internet-Draft
+  [draft-mih-agent-settlement-records](https://datatracker.ietf.org/doc/html/draft-mih-agent-settlement-records-00)
+  (IETF, oct-2026).
+- **Reportes de entregas pagadas en Base:** [Teppi](https://dev.to/teppixyz/a-2xx-is-not-a-delivery-6l9)
+  publica qué endpoints x402 cobran sin entregar algo útil.
+- **Riesgo antes de pagar:** t54 Labs (x402-secure) evalúa al agente y al vendedor antes de
+  liquidar. Su flujo documentado no inspecciona lo entregado.
+- **En Stellar:**
+  - REAPP (SCF #43) cubre la autorización.
+  - El [Audit Trail de Nirium](https://github.com/nirium-protocol/nirium) ancla el hash de un
+    registro para probar que no cambió, no que sea verdadero.
+  - El contrato nuevo del [Stellar Bazaar](https://bazaar.browns.studio) pide un intent
+    aprobado por el dueño antes de comprar y le deja al comprador verificar la entrega por
+    separado.
+- **Otros:** *AgentOracle* (verificación de afirmaciones vendida vía x402) y *Warden ZK Receipts*
+  (prototipo de hackathon de recibos de a qué accedió un agente).
+
+Lo que AegisOS agrega encima es el commitment firmado antes de pagar, la prueba TLS de que el
+contenido salió del vendedor y el veredicto de contaminación con cuarentena: el contenido
+pagado `TAINTED` no puede justificar el siguiente gasto.
 
 ## Estructura
 
@@ -285,7 +329,7 @@ packages/proof         commitments, receipts, veredicto de entrega, admisión, �
 packages/plugin-eliza  gateway de memoria, detección de riesgo (en/es), drafts
 packages/x402          signer aislado + guard, cliente x402, cliente del contrato, lotes
 packages/signer        signer de operaciones tipadas + simulador
-contracts/aegis-proof  contrato Soroban de anclaje individual y por lotes (21 tests, 9,5 KB de wasm)
+contracts/aegis-proof  contrato Soroban de anclaje individual y por lotes (30 tests, 9,5 KB de wasm)
 apps/demo-x402         demo:attack, demo:external, verify:receipt, attester:init
 apps/benchmark         corpus de ataques y métrica
 ```
@@ -294,3 +338,8 @@ Los paquetes `core`, `proof`, `signer` y `plugin-eliza` no tienen dependencias e
 runtime: solo módulos `node:*` y `@aegisos/core`.
 
 Modelo de seguridad completo: [docs/security-model.md](docs/security-model.md).
+
+## Licencia
+
+[Apache-2.0](LICENSE). Las dependencias conservan sus propias licencias:
+`@reclaimprotocol/attestor-core` (AGPL-3.0) se usa solo en los tests, como `devDependency`.
