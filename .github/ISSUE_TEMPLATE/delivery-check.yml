@@ -1,0 +1,59 @@
+name: Delivery check request
+description: Ask AegisOS to verify what your x402 endpoints deliver for what they charge.
+title: "[Delivery check] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        AegisOS buys from your endpoints only with your written consent, at the pace and price cap you set. For each purchase it returns a deterministic verdict (OK / MISMATCH / TAINTED / NOT_DELIVERED) and a signed receipt anyone can verify. Results that name your service are published only if you agree.
+
+        Puedes escribir en español.
+
+        **This issue is public.** Do not paste keys, secrets or private data here.
+  - type: dropdown
+    id: role
+    attributes:
+      label: What do you operate?
+      options:
+        - x402 marketplace or directory
+        - x402 facilitator
+        - x402 seller (API or data endpoints)
+        - Agent that pays with x402
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: networks
+    attributes:
+      label: Network(s)
+      placeholder: "e.g. Stellar testnet, Base, Celo, Solana"
+    validations:
+      required: true
+  - type: textarea
+    id: endpoints
+    attributes:
+      label: Endpoints or catalog to check
+      description: Public URLs only. Add the price per call if you know it.
+    validations:
+      required: true
+  - type: dropdown
+    id: use
+    attributes:
+      label: What would you use the result for?
+      options:
+        - A "verified seller" badge or ranking
+        - A pre-sign policy hook (allow / deny / wait)
+        - Evidence for a funder or a client
+        - Other
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Consent
+      options:
+        - label: I operate these endpoints, or I have permission to request paid test purchases from them.
+          required: true
+  - type: input
+    id: contact
+    attributes:
+      label: How should we reach you? (optional)
+      description: A public handle (X, GitHub or similar). Do not post private data.
