@@ -13,3 +13,7 @@ target/
 .vercel/
 # Internal application drafts (hackathon, cyber.Fund, SCF): never commit
 postulaciones/
+
+# Local agent tooling (third-party plugins, local settings): not part of the product
+.claude/
+.opencode/
